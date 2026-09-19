@@ -68,6 +68,31 @@ class PerkembanganTest extends TestCase
         $this->actingAs($user)->get(route('perkembangan.index'))->assertSee('Total: <strong>100%</strong>', false);
     }
 
+    public function test_riwayat_menampilkan_perubahan_skor_hanya_dalam_kelompok_usia_sama(): void
+    {
+        $user = $this->responden();
+        $this->item();
+        $penilaian = fn (User $u, $tanggal, $kelompok, $skor) => $u->penilaianPerkembangan()->create([
+            'anak_id' => $u->anak()->first()->id, 'tanggal_penilaian' => $tanggal, 'usia_bulan' => 5, 'kelompok_usia' => $kelompok,
+            'skor_motorik_kasar' => $skor[0], 'skor_motorik_halus' => $skor[1], 'skor_bicara_bahasa' => $skor[2],
+            'skor_sosial_emosional' => $skor[3], 'skor_total' => $skor[4],
+        ]);
+        $penilaian($user, today()->subMonths(2), '3-6', [50, 50, 50, 50, 50]);
+        $penilaian($user, today()->subMonth(), '6-9', [100, 50, 0, 0, 37.5]);
+        $penilaian($user, today(), '6-9', [100, 25, 100, 100, 81.25]);
+        $penilaian($this->responden(), '2020-01-01', '6-9', [0, 0, 0, 0, 0]);
+
+        $this->actingAs($user)->get(route('perkembangan.index'))->assertOk()
+            ->assertSeeInOrder(['Riwayat penilaian', today()->translatedFormat('j F Y'), today()->subMonth()->translatedFormat('j F Y')])
+            ->assertSee('▲ +43.75')   // total 37.5 → 81.25
+            ->assertSee('▼ −25')      // motorik halus 50 → 25
+            ->assertSee('tetap')      // motorik kasar 100 → 100
+            ->assertSee('kelompok usia baru, tidak dibandingkan')
+            ->assertSee('penilaian pertama')
+            ->assertDontSee('▼ −50')  // 50 (3-6) → 0 (6-9) tidak dibandingkan
+            ->assertDontSee(\Illuminate\Support\Carbon::parse('2020-01-01')->translatedFormat('j F Y'));
+    }
+
     public function test_jawaban_kurang_atau_item_kelompok_lain_ditolak(): void
     {
         $user = $this->responden();

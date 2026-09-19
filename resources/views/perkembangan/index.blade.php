@@ -72,6 +72,50 @@
                     <x-primary-button class="w-full justify-center py-3 text-base">Simpan Penilaian</x-primary-button>
                 </form>
             @endif
+
+            @if ($riwayat->isNotEmpty())
+                <section class="bg-white shadow-sm sm:rounded-lg p-4 sm:p-6 text-gray-800">
+                    <h3 class="text-lg font-semibold text-gray-900">Riwayat penilaian</h3>
+                    <p class="text-sm text-gray-500">Tanda ▲/▼ menunjukkan perubahan dibanding penilaian sebelumnya.</p>
+
+                    <ol class="mt-3 space-y-4">
+                        @foreach ($riwayat as $p)
+                            @php
+                                $sebelum = $riwayat->get($loop->index + 1);
+                                // Beda kelompok usia = beda item checklist, jadi skor tidak dibandingkan.
+                                $banding = $sebelum && $sebelum->kelompok_usia === $p->kelompok_usia;
+                            @endphp
+                            <li class="border-t border-gray-100 pt-4">
+                                <p class="font-medium text-gray-900">{{ $p->tanggal_penilaian->translatedFormat('j F Y') }}</p>
+                                <p class="text-sm text-gray-500">
+                                    Usia {{ $p->usia_bulan }} bulan · kelompok {{ $p->kelompok_usia }} bulan
+                                    @if (! $sebelum)
+                                        · penilaian pertama
+                                    @elseif (! $banding)
+                                        · <span class="text-amber-700">kelompok usia baru, tidak dibandingkan</span>
+                                    @endif
+                                </p>
+                                <dl class="mt-2 grid grid-cols-2 sm:grid-cols-5 gap-2">
+                                    @foreach (\App\Models\Materi::ASPEK + ['total' => 'Total'] as $aspek => $label)
+                                        <div class="rounded-md bg-gray-50 p-2">
+                                            <dt class="text-xs text-gray-600">{{ $label }}</dt>
+                                            <dd class="font-semibold">
+                                                {{ $p->{"skor_$aspek"} + 0 }}%
+                                                @if ($banding)
+                                                    @php $selisih = round($p->{"skor_$aspek"} - $sebelum->{"skor_$aspek"}, 2); @endphp
+                                                    <span class="block text-xs font-normal {{ $selisih > 0 ? 'text-emerald-700' : ($selisih < 0 ? 'text-red-700' : 'text-gray-500') }}">
+                                                        {{ $selisih > 0 ? '▲ +'.$selisih : ($selisih < 0 ? '▼ −'.abs($selisih) : 'tetap') }}
+                                                    </span>
+                                                @endif
+                                            </dd>
+                                        </div>
+                                    @endforeach
+                                </dl>
+                            </li>
+                        @endforeach
+                    </ol>
+                </section>
+            @endif
         </div>
     </div>
 </x-app-layout>

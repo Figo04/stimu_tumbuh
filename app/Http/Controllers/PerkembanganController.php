@@ -17,11 +17,13 @@ class PerkembanganController extends Controller
     public function index(Request $request): View
     {
         $anak = $request->user()->anak()->firstOrFail();
+        $riwayat = $request->user()->penilaianPerkembangan()->latest('tanggal_penilaian')->latest('id')->get();
 
         return view('perkembangan.index', [
             'anak' => $anak,
             'item' => $this->item($anak->kelompok_usia)->groupBy('aspek'),
-            'terakhir' => $request->user()->penilaianPerkembangan()->latest('tanggal_penilaian')->latest('id')->first(),
+            'terakhir' => $riwayat->first(),
+            'riwayat' => $riwayat,
         ]);
     }
 
