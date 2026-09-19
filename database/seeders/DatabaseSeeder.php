@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Anak;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,9 +16,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call(AdminSeeder::class);
 
-        User::factory()->create([
+        User::factory()->has(Anak::factory(), 'anak')->create([
             'nama' => 'Test User',
             'email' => 'test@example.com',
         ]);
