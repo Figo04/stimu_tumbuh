@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\ItemPerkembangan;
 use App\Models\KuesionerSoal;
 use App\Services\SkorService;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -51,5 +52,22 @@ class SkorServiceTest extends TestCase
         $this->assertSame(66.67, $skor['skor_pengetahuan']);
         $this->assertSame('Cukup', $skor['kategori_pengetahuan']);
         $this->assertSame(9, $skor['skor_sikap']);
+    }
+
+    public function test_skor_perkembangan_per_aspek_dan_total_dari_seluruh_item(): void
+    {
+        $item = collect([
+            [1, 'motorik_kasar'], [2, 'motorik_kasar'], [3, 'motorik_kasar'],
+            [4, 'motorik_halus'],
+            [5, 'bicara_bahasa'], [6, 'bicara_bahasa'],
+        ])->map(fn ($i) => (new ItemPerkembangan)->forceFill(['id' => $i[0], 'aspek' => $i[1]]));
+
+        $skor = SkorService::skorPerkembangan($item, [1 => true, 2 => true, 3 => false, 4 => false, 5 => true, 6 => true]);
+
+        $this->assertSame(66.67, $skor['skor_motorik_kasar']);
+        $this->assertSame(0.0, $skor['skor_motorik_halus']);
+        $this->assertSame(100.0, $skor['skor_bicara_bahasa']);
+        $this->assertSame(0, $skor['skor_sosial_emosional']); // aspek tanpa item
+        $this->assertSame(66.67, $skor['skor_total']); // 4 dari 6 item, bukan rata-rata aspek
     }
 }

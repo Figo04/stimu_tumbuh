@@ -21,6 +21,9 @@
                     <x-nav-link :href="route('aktivitas.index')" :active="request()->routeIs('aktivitas.*')">
                         Kalender
                     </x-nav-link>
+                    <x-nav-link :href="route('perkembangan.index')" :active="request()->routeIs('perkembangan.*')">
+                        Perkembangan
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -81,6 +84,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('aktivitas.index')" :active="request()->routeIs('aktivitas.*')">
                 Kalender
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('perkembangan.index')" :active="request()->routeIs('perkembangan.*')">
+                Perkembangan
             </x-responsive-nav-link>
         </div>
 

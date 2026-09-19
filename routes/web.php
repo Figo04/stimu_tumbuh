@@ -3,6 +3,7 @@
 use App\Http\Controllers\AktivitasStimulasiController;
 use App\Http\Controllers\KuesionerController;
 use App\Http\Controllers\MateriController;
+use App\Http\Controllers\PerkembanganController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,9 @@ Route::middleware(['auth', 'pretest.selesai'])->group(function () {
         ->except(['create', 'show'])
         ->names('aktivitas')
         ->parameters(['kalender' => 'aktivitas']);
+
+    Route::get('/perkembangan', [PerkembanganController::class, 'index'])->name('perkembangan.index');
+    Route::post('/perkembangan', [PerkembanganController::class, 'store'])->name('perkembangan.store');
 });
 
 Route::middleware('auth')->group(function () {
