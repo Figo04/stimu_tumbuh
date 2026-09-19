@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Materi;
 use App\Models\ProgressMateri;
 use App\Models\User;
+use App\Services\UsiaAnakService;
 use Database\Seeders\MateriSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -17,7 +18,7 @@ class MateriSeederTest extends TestCase
     {
         $this->seed(MateriSeeder::class);
 
-        foreach (['0-3', '3-6'] as $kelompok) {
+        foreach (UsiaAnakService::KELOMPOK_USIA as $kelompok) {
             $this->assertEqualsCanonicalizing(
                 array_keys(Materi::ASPEK),
                 Materi::where('kelompok_usia', $kelompok)->distinct()->pluck('aspek')->all(),
