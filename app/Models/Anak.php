@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Services\UsiaAnakService;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,6 +36,12 @@ class Anak extends Model
             'pb_lahir_cm' => 'decimal:1',
             'lingkar_kepala_cm' => 'decimal:1',
         ];
+    }
+
+    /** Kelompok usia saat ini — selalu lewat UsiaAnakService agar ikut berubah saat anak bertambah usia. */
+    protected function kelompokUsia(): Attribute
+    {
+        return Attribute::get(fn () => UsiaAnakService::kelompokUsia($this->tanggal_lahir));
     }
 
     public function user(): BelongsTo

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\KuesionerController;
+use App\Http\Controllers\MateriController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -11,6 +12,11 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified', 'pretest.selesai'])->name('dashboard');
+
+Route::middleware(['auth', 'pretest.selesai'])->group(function () {
+    Route::get('/materi', [MateriController::class, 'index'])->name('materi.index');
+    Route::get('/materi/{materi:slug}', [MateriController::class, 'show'])->name('materi.show');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/pretest', [KuesionerController::class, 'pretest'])->name('pretest');
