@@ -27,6 +27,9 @@ return [
     'unique' => ':Attribute sudah terdaftar.',
 
     'custom' => [
+        'tanggal' => [
+            'before_or_equal' => 'Tanggal tidak boleh di masa depan.',
+        ],
         'no_hp' => [
             'regex' => 'Nomor HP hanya boleh berisi angka.',
         ],
@@ -56,5 +59,7 @@ return [
         'anak.jenis_persalinan' => 'jenis persalinan',
         'anak.kondisi_lahir' => 'kondisi saat lahir',
         'jawaban' => 'jawaban',
+        'tanggal' => 'tanggal',
+        'respons_anak' => 'respons anak',
     ],
 ];

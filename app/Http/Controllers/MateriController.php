@@ -36,7 +36,33 @@ class MateriController extends Controller
         // Baris progress pertama = catatan "materi dibuka" (export Tabel 5).
         $progress = $request->user()->progressMateri()->firstOrCreate(['materi_id' => $materi->id]);
 
-        return view('materi.show', compact('materi', 'progress'));
+        $riwayatPraktik = $request->user()->aktivitasStimulasi()
+            ->where('materi_id', $materi->id)
+            ->latest('tanggal')->latest('id')
+            ->get();
+
+        return view('materi.show', compact('materi', 'progress', 'riwayatPraktik'));
+    }
+
+    /** Tab Praktik: berkelanjutan, setiap kiriman = entri baru `aktivitas_stimulasi` (tanpa kunci/edit). */
+    public function praktik(Request $request, Materi $materi): RedirectResponse
+    {
+        $this->pastikanKelompokUsiaAnak($request, $materi);
+        abort_unless($request->user()->materiSelesai($materi), 403, 'Tab Praktik terbuka setelah materi selesai dibaca.');
+
+        $data = $request->validate([
+            'tanggal' => ['required', 'date', 'before_or_equal:today'],
+            'respons_anak' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $request->user()->aktivitasStimulasi()->create($data + [
+            'materi_id' => $materi->id,
+            'aspek' => $materi->aspek,
+            // Enum hubungan (ibu/ayah/pengasuh) adalah himpunan bagian enum pelaku.
+            'pelaku' => $request->user()->hubungan_dengan_anak,
+        ]);
+
+        return redirect()->route('materi.show', $materi)->with('status', 'praktik-tersimpan');
     }
 
     public function selesai(Request $request, Materi $materi): RedirectResponse

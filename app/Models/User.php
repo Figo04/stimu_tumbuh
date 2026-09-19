@@ -55,6 +55,11 @@ class User extends Authenticatable
         return $this->hasMany(ProgressMateri::class);
     }
 
+    public function aktivitasStimulasi(): HasMany
+    {
+        return $this->hasMany(AktivitasStimulasi::class);
+    }
+
     /** Basis gating tab Praktik. */
     public function materiSelesai(Materi $materi): bool
     {

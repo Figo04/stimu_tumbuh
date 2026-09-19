@@ -5,7 +5,7 @@
         <p class="text-sm text-gray-500">{{ \App\Models\Materi::ASPEK[$materi->aspek] }}</p>
     </x-slot>
 
-    <div class="py-8" x-data="{ tab: 'materi' }">
+    <div class="py-8" x-data="{ tab: @js(session('status') === 'praktik-tersimpan' || $errors->any() ? 'praktik' : 'materi') }">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="mb-4 grid grid-cols-2 gap-2" role="tablist">
                 <button type="button" role="tab" @click="tab = 'materi'" :aria-selected="tab === 'materi'"
@@ -58,9 +58,46 @@
                 </div>
             </article>
 
-            {{-- Isi & gating tab Praktik dikerjakan di Sesi 19 (setelah progress materi Sesi 13). --}}
-            <div x-show="tab === 'praktik'" style="display: none" class="bg-white shadow-sm sm:rounded-lg p-6 text-gray-600">
-                Tab Praktik terbuka setelah materi ini selesai dibaca.
+            {{-- Berkelanjutan: boleh diisi berulang, tiap kiriman = entri baru di kalender stimulasi. --}}
+            <div x-show="tab === 'praktik'" style="display: none" class="bg-white shadow-sm sm:rounded-lg p-6 text-base text-gray-800">
+                @if (! $progress->materi_selesai)
+                    <p class="text-gray-600">🔒 Tab Praktik terbuka setelah materi ini selesai dibaca.</p>
+                @else
+                    @if (session('status') === 'praktik-tersimpan')
+                        <p class="mb-4 rounded-md bg-emerald-50 px-4 py-3 text-emerald-800">✓ Praktik tersimpan. Anda bisa mencatatnya lagi kapan saja.</p>
+                    @endif
+
+                    <form method="POST" action="{{ route('materi.praktik', $materi) }}" class="space-y-4">
+                        @csrf
+                        <div>
+                            <x-input-label for="tanggal" value="Tanggal praktik" />
+                            <x-text-input id="tanggal" name="tanggal" type="date" class="mt-1 block w-full"
+                                          :value="old('tanggal', now()->toDateString())" max="{{ now()->toDateString() }}" required />
+                            <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
+                        </div>
+                        <div>
+                            <x-input-label for="respons_anak" value="Bagaimana respons anak? (opsional)" />
+                            <textarea id="respons_anak" name="respons_anak" rows="3" maxlength="1000"
+                                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('respons_anak') }}</textarea>
+                            <x-input-error :messages="$errors->get('respons_anak')" class="mt-2" />
+                        </div>
+                        <button type="submit" class="w-full rounded-md bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">
+                            Sudah saya praktikkan
+                        </button>
+                    </form>
+
+                    <h3 class="mt-8 font-semibold text-gray-800">Riwayat praktik</h3>
+                    @forelse ($riwayatPraktik as $entri)
+                        <div class="mt-3 border-t border-gray-100 pt-3">
+                            <p class="text-sm font-medium text-gray-600">{{ $entri->tanggal->translatedFormat('d F Y') }}</p>
+                            @if ($entri->respons_anak)
+                                <p class="mt-1 whitespace-pre-line">{{ $entri->respons_anak }}</p>
+                            @endif
+                        </div>
+                    @empty
+                        <p class="mt-2 text-gray-500">Belum ada catatan praktik.</p>
+                    @endforelse
+                @endif
             </div>
         </div>
     </div>
