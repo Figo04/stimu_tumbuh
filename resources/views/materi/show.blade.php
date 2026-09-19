@@ -17,6 +17,29 @@
             </div>
 
             <article x-show="tab === 'materi'" class="bg-white shadow-sm sm:rounded-lg p-6 text-base leading-relaxed text-gray-800">
+                @if ($materi->video_youtube_id)
+                    <div x-data="{ buka: false, ditonton: @js($progress->video_ditonton) }" @keydown.escape.window="buka = false" class="mb-6">
+                        <button type="button" class="w-full rounded-md bg-red-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-red-700"
+                                @click="buka = true; if (! ditonton) { ditonton = true; fetch(@js(route('materi.video', $materi)), { method: 'POST', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content } }) }">
+                            ▶ Tonton video
+                        </button>
+                        <p x-show="ditonton" class="mt-2 text-sm text-emerald-700">✓ Video sudah ditonton</p>
+
+                        {{-- x-if (bukan x-show): iframe dihapus saat popup ditutup supaya video berhenti. --}}
+                        <template x-if="buka">
+                            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4" @click.self="buka = false" role="dialog" aria-modal="true" aria-label="Video materi">
+                                <div class="w-full max-w-3xl">
+                                    <button type="button" @click="buka = false" class="mb-2 ml-auto block rounded-md bg-white px-4 py-2 text-base font-medium text-gray-800">✕ Tutup</button>
+                                    <div class="aspect-video w-full">
+                                        <iframe class="h-full w-full rounded-md" src="https://www.youtube-nocookie.com/embed/{{ $materi->video_youtube_id }}?autoplay=1&rel=0"
+                                                title="Video {{ $materi->judul }}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                @endif
+
                 @include($materi->konten_view)
 
                 <div class="mt-8 border-t border-gray-100 pt-6">

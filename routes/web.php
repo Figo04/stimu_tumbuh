@@ -17,6 +17,7 @@ Route::middleware(['auth', 'pretest.selesai'])->group(function () {
     Route::get('/materi', [MateriController::class, 'index'])->name('materi.index');
     Route::get('/materi/{materi:slug}', [MateriController::class, 'show'])->name('materi.show');
     Route::post('/materi/{materi:slug}/selesai', [MateriController::class, 'selesai'])->name('materi.selesai');
+    Route::post('/materi/{materi:slug}/video', [MateriController::class, 'video'])->name('materi.video');
 });
 
 Route::middleware('auth')->group(function () {

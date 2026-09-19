@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
                     'kelompok_usia' => $kelompok,
                     'urutan' => 1,
                     'konten_view' => 'materi.placeholder',
+                    'video_youtube_id' => 'M7lc1UVf-VE', // video contoh dokumentasi YouTube IFrame API, hanya untuk uji popup
                 ]);
             }
         }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Materi;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 class MateriController extends Controller
@@ -50,6 +51,21 @@ class MateriController extends Controller
         }
 
         return redirect()->route('materi.show', $materi);
+    }
+
+    /** Dipanggil (fetch) saat popup video dibuka; satu arah, waktu tonton pertama dipertahankan. */
+    public function video(Request $request, Materi $materi): Response
+    {
+        $this->pastikanKelompokUsiaAnak($request, $materi);
+        abort_unless($materi->video_youtube_id, 404);
+
+        $progress = $request->user()->progressMateri()->firstOrCreate(['materi_id' => $materi->id]);
+
+        if (! $progress->video_ditonton) {
+            $progress->update(['video_ditonton' => true, 'video_ditonton_at' => now()]);
+        }
+
+        return response()->noContent();
     }
 
     /** Materi kelompok usia lain disembunyikan (404), bukan sekadar ditolak. */
