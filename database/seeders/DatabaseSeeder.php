@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(AdminSeeder::class);
+        $this->call([AdminSeeder::class, KuesionerSoalSeeder::class]);
 
         User::factory()->has(Anak::factory(), 'anak')->create([
             'nama' => 'Test User',
