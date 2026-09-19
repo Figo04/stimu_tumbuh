@@ -17,6 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->alias(['pretest.selesai' => \App\Http\Middleware\PastikanSudahPretest::class]);
+
         // Guard terpisah: area /admin punya halaman login & tujuan redirect sendiri.
         $middleware->redirectGuestsTo(
             fn (Request $request) => $request->is('admin', 'admin/*') ? route('admin.login') : route('login')

@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -37,5 +38,15 @@ class User extends Authenticatable
     public function anak(): HasOne
     {
         return $this->hasOne(Anak::class);
+    }
+
+    public function hasilKuesioner(): HasMany
+    {
+        return $this->hasMany(HasilKuesioner::class);
+    }
+
+    public function sudahPretest(): bool
+    {
+        return $this->hasilKuesioner()->where('tipe_sesi', 'pre')->exists();
     }
 }

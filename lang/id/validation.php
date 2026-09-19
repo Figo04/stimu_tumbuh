@@ -3,6 +3,7 @@
 // Hanya aturan yang dipakai aplikasi; aturan lain jatuh ke fallback `en`.
 return [
     'after_or_equal' => ':Attribute harus tanggal setelah atau sama dengan :date.',
+    'array' => ':Attribute tidak valid.',
     'before_or_equal' => ':Attribute harus tanggal sebelum atau sama dengan :date.',
     'confirmed' => 'Konfirmasi :attribute tidak cocok.',
     'current_password' => 'Password salah.',
@@ -54,5 +55,6 @@ return [
         'anak.usia_gestasi_minggu' => 'usia kehamilan',
         'anak.jenis_persalinan' => 'jenis persalinan',
         'anak.kondisi_lahir' => 'kondisi saat lahir',
+        'jawaban' => 'jawaban',
     ],
 ];
