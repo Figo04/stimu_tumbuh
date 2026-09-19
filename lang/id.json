@@ -1,0 +1,17 @@
+{
+    "Password": "Password",
+    "Confirm Password": "Ulangi password",
+    "Already registered?": "Sudah punya akun?",
+    "Register": "Daftar",
+    "Remember me": "Ingat saya",
+    "Forgot your password?": "Lupa password?",
+    "Log in": "Masuk",
+    "Log Out": "Keluar",
+    "Confirm": "Konfirmasi",
+    "Reset Password": "Ganti password",
+    "Email Password Reset Link": "Kirim tautan ganti password",
+    "Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.": "Lupa password? Tidak apa-apa. Masukkan email Anda, kami akan mengirim tautan untuk membuat password baru.",
+    "This is a secure area of the application. Please confirm your password before continuing.": "Ini area yang dilindungi. Masukkan password Anda untuk melanjutkan.",
+    "Resend Verification Email": "Kirim ulang email verifikasi",
+    "A new verification link has been sent to the email address you provided during registration.": "Tautan verifikasi baru sudah dikirim ke email yang Anda daftarkan."
+}
