@@ -10,6 +10,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable(['user_id', 'materi_id', 'tanggal', 'aspek', 'jenis_stimulasi', 'durasi_menit', 'pelaku', 'respons_anak'])]
 class AktivitasStimulasi extends Model
 {
+    public const PELAKU = [
+        'ibu' => 'Ibu',
+        'ayah' => 'Ayah',
+        'pengasuh' => 'Pengasuh',
+        'lain' => 'Lainnya',
+    ];
+
     protected $table = 'aktivitas_stimulasi';
 
     protected function casts(): array

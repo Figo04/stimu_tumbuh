@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AktivitasStimulasiController;
 use App\Http\Controllers\KuesionerController;
 use App\Http\Controllers\MateriController;
 use App\Http\Controllers\ProfileController;
@@ -19,6 +20,11 @@ Route::middleware(['auth', 'pretest.selesai'])->group(function () {
     Route::post('/materi/{materi:slug}/selesai', [MateriController::class, 'selesai'])->name('materi.selesai');
     Route::post('/materi/{materi:slug}/video', [MateriController::class, 'video'])->name('materi.video');
     Route::post('/materi/{materi:slug}/praktik', [MateriController::class, 'praktik'])->name('materi.praktik');
+
+    Route::resource('kalender', AktivitasStimulasiController::class)
+        ->except(['create', 'show'])
+        ->names('aktivitas')
+        ->parameters(['kalender' => 'aktivitas']);
 });
 
 Route::middleware('auth')->group(function () {

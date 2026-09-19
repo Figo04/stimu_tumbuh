@@ -61,5 +61,9 @@ return [
         'jawaban' => 'jawaban',
         'tanggal' => 'tanggal',
         'respons_anak' => 'respons anak',
+        'aspek' => 'aspek',
+        'jenis_stimulasi' => 'jenis stimulasi',
+        'durasi_menit' => 'durasi',
+        'pelaku' => 'pelaku',
     ],
 ];
