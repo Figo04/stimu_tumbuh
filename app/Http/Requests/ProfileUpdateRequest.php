@@ -2,30 +2,19 @@
 
 namespace App\Http\Requests;
 
-use App\Models\User;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class ProfileUpdateRequest extends FormRequest
 {
     /**
-     * Get the validation rules that apply to the request.
+     * Aturan sama dengan registrasi; kode_responden sengaja tidak ada (tidak bisa diubah).
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
-        return [
-            'nama' =>['required', 'string', 'max:255'],
-            'email' => [
-                'required',
-                'string',
-                'lowercase',
-                'email',
-                'max:255',
-                Rule::unique(User::class)->ignore($this->user()->id),
-            ],
-        ];
+        return RegisteredUserController::aturanIdentitas($this->user());
     }
 }
