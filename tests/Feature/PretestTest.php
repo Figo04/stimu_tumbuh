@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\HasilKuesioner;
 use App\Models\KuesionerSoal;
 use App\Models\User;
+use App\Services\SkorService;
 use Database\Seeders\KuesionerSoalSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -45,6 +46,14 @@ class PretestTest extends TestCase
         $this->assertSame('pre', $hasil->tipe_sesi);
         $this->assertNotNull($hasil->submitted_at);
         $this->assertCount(KuesionerSoal::count(), $hasil->detail);
+
+        // Semua pengetahuan dijawab B, semua sikap SS (reverse → 1, biasa → 4).
+        $pengetahuan = KuesionerSoal::where('tipe', 'pengetahuan');
+        $persen = round((clone $pengetahuan)->where('jawaban_benar', 'B')->count() / $pengetahuan->count() * 100, 2);
+        $sikap = KuesionerSoal::where('tipe', 'sikap')->get()->sum(fn ($s) => $s->reverse_scored ? 1 : 4);
+        $this->assertEquals($persen, $hasil->skor_pengetahuan);
+        $this->assertSame(SkorService::kategoriPengetahuan($persen), $hasil->kategori_pengetahuan);
+        $this->assertEquals($sikap, $hasil->skor_sikap);
         $this->actingAs($user)->get('/dashboard')->assertOk();
     }
 

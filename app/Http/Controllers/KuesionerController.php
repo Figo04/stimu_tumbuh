@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\HasilKuesioner;
 use App\Models\KuesionerSoal;
+use App\Services\SkorService;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -47,7 +48,7 @@ class KuesionerController extends Controller
                     'user_id' => $request->user()->id,
                     'tipe_sesi' => 'pre',
                     'submitted_at' => now(),
-                ]);
+                ] + SkorService::skorKuesioner($soal, $jawaban));
                 $hasil->detail()->createMany($soal->map(fn ($s) => [
                     'soal_id' => $s->id,
                     'jawaban_responden' => $jawaban[$s->id],
