@@ -6,6 +6,7 @@ use App\Models\AktivitasStimulasi;
 use App\Models\Materi;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -20,7 +21,21 @@ class AktivitasStimulasiController extends Controller
             ->latest('tanggal')->latest('id')
             ->get();
 
-        return view('aktivitas.index', compact('riwayat'));
+        // ?bulan=YYYY-MM; format salah atau bulan di masa depan → bulan ini (entri tak boleh bertanggal masa depan).
+        $bulanIni = now()->startOfMonth();
+        $query = (string) $request->query('bulan');
+        $bulan = preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $query)
+            ? Carbon::createFromFormat('!Y-m', $query)
+            : $bulanIni;
+        if ($bulan->greaterThan($bulanIni)) {
+            $bulan = $bulanIni;
+        }
+
+        // Jumlah entri per hari di bulan tampil → penanda di grid kalender.
+        $penanda = $riwayat->filter(fn ($e) => $e->tanggal->isSameMonth($bulan))
+            ->countBy(fn ($e) => $e->tanggal->day);
+
+        return view('aktivitas.index', compact('riwayat', 'bulan', 'bulanIni', 'penanda'));
     }
 
     public function store(Request $request): RedirectResponse

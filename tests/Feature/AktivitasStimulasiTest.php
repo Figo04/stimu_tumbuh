@@ -97,6 +97,34 @@ class AktivitasStimulasiTest extends TestCase
         $this->assertSame('Meremas kertas', $entri->jenis_stimulasi);
     }
 
+    public function test_kalender_bulanan_menandai_tanggal_entri_milik_sendiri(): void
+    {
+        $this->travelTo('2026-09-19 10:00');
+        $user = $this->responden();
+        $user->aktivitasStimulasi()->create($this->entri(['tanggal' => '2026-09-05']));
+        $user->aktivitasStimulasi()->create($this->entri(['tanggal' => '2026-08-10']));
+        $this->responden()->aktivitasStimulasi()->create($this->entri(['tanggal' => '2026-09-07']));
+
+        $this->actingAs($user)->get(route('aktivitas.index'))->assertOk()
+            ->assertSee('September 2026')
+            ->assertSee('href="#tgl-2026-09-05"', false)
+            ->assertSee('id="tgl-2026-09-05"', false)
+            ->assertDontSee('href="#tgl-2026-09-07"', false)
+            ->assertDontSee('href="#tgl-2026-08-10"', false);
+
+        $this->actingAs($user)->get(route('aktivitas.index', ['bulan' => '2026-08']))->assertOk()
+            ->assertSee('Agustus 2026')
+            ->assertSee('href="#tgl-2026-08-10"', false)
+            ->assertSee('bulan=2026-09', false);
+
+        // Bulan masa depan / format salah → kembali ke bulan ini, tanpa tombol maju.
+        foreach (['2027-01', 'abc', '2026-13'] as $bulan) {
+            $this->actingAs($user)->get(route('aktivitas.index', ['bulan' => $bulan]))->assertOk()
+                ->assertSee('September 2026')
+                ->assertDontSee('bulan=2026-10', false);
+        }
+    }
+
     public function test_kalender_terkunci_sebelum_pretest(): void
     {
         $user = User::factory()->create();
