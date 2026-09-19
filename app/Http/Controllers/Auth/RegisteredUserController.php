@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Anak;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -45,16 +47,31 @@ class RegisteredUserController extends Controller
             'pekerjaan' => ['nullable', 'string', 'max:255'],
             'kecamatan' => ['nullable', 'string', 'max:255'],
             'alamat' => ['nullable', 'string', 'max:1000'],
+
+            'anak.nama_inisial' => ['required', 'string', 'max:50'],
+            // Sasaran penelitian: anak 0–36 bulan saat registrasi.
+            'anak.tanggal_lahir' => ['required', 'date', 'before_or_equal:today', 'after_or_equal:'.now()->subMonths(36)->toDateString()],
+            'anak.jenis_kelamin' => ['required', 'in:L,P'],
+            'anak.bb_lahir_gram' => ['nullable', 'integer', 'min:300', 'max:6000'],
+            'anak.pb_lahir_cm' => ['nullable', 'numeric', 'min:20', 'max:70'],
+            'anak.lingkar_kepala_cm' => ['nullable', 'numeric', 'min:20', 'max:60'],
+            'anak.usia_gestasi_minggu' => ['nullable', 'integer', 'min:20', 'max:45'],
+            'anak.jenis_persalinan' => ['nullable', Rule::in(array_keys(Anak::JENIS_PERSALINAN))],
+            'anak.kondisi_lahir' => ['nullable', Rule::in(array_keys(Anak::KONDISI_LAHIR))],
         ]);
 
+        $anak = Arr::pull($data, 'anak');
+
         // Kode dari id: berurutan (RSP-001, RSP-002, …) dan aman dari registrasi bersamaan.
-        $user = DB::transaction(function () use ($data) {
+        // User + anak satu transaksi: tidak ada akun tanpa data anak.
+        $user = DB::transaction(function () use ($data, $anak) {
             $user = User::create([
                 ...$data,
                 'kode_responden' => (string) Str::uuid(),
                 'password' => Hash::make($data['password']),
             ]);
             $user->update(['kode_responden' => sprintf('RSP-%03d', $user->id)]);
+            $user->anak()->create($anak);
 
             return $user;
         });

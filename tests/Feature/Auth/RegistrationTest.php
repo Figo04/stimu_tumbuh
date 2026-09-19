@@ -25,6 +25,11 @@ class RegistrationTest extends TestCase
             'password' => 'password',
             'password_confirmation' => 'password',
             'hubungan_dengan_anak' => 'ibu',
+            'anak' => [
+                'nama_inisial' => 'AB',
+                'tanggal_lahir' => now()->subMonths(8)->toDateString(),
+                'jenis_kelamin' => 'P',
+            ],
             ...$override,
         ];
     }
@@ -54,6 +59,38 @@ class RegistrationTest extends TestCase
         $this->post('/register', $this->payload(['email' => 'b@example.com']));
 
         $this->assertSame(['RSP-001', 'RSP-002'], User::orderBy('id')->pluck('kode_responden')->all());
+    }
+
+    public function test_registration_creates_anak(): void
+    {
+        $lahir = now()->subMonths(8)->toDateString();
+        $this->post('/register', $this->payload(['anak' => [
+            'nama_inisial' => 'AB',
+            'tanggal_lahir' => $lahir,
+            'jenis_kelamin' => 'L',
+            'bb_lahir_gram' => '2400',
+            'pb_lahir_cm' => '47.5',
+            'kondisi_lahir' => 'bblr',
+            'jenis_persalinan' => 'sc',
+        ]]));
+
+        $anak = User::firstWhere('email', 'test@example.com')->anak;
+        $this->assertSame($lahir, $anak->tanggal_lahir->toDateString());
+        $this->assertSame(['L', 2400, '47.5', 'bblr', 'sc'], [
+            $anak->jenis_kelamin, $anak->bb_lahir_gram, $anak->pb_lahir_cm, $anak->kondisi_lahir, $anak->jenis_persalinan,
+        ]);
+    }
+
+    public function test_tanggal_lahir_outside_0_36_months_is_rejected(): void
+    {
+        foreach ([now()->addDay(), now()->subMonths(36)->subDay()] as $tanggal) {
+            $this->post('/register', $this->payload(['anak' => [
+                'nama_inisial' => 'AB', 'tanggal_lahir' => $tanggal->toDateString(), 'jenis_kelamin' => 'P',
+            ]]))->assertSessionHasErrors('anak.tanggal_lahir');
+        }
+
+        $this->assertGuest();
+        $this->assertDatabaseCount('users', 0);
     }
 
     public function test_invalid_hubungan_and_no_hp_are_rejected(): void

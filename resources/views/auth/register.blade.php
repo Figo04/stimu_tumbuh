@@ -69,8 +69,72 @@
             <x-input-error :messages="$errors->get('alamat')" class="mt-2" />
         </div>
 
-        <!-- Password -->
+        <!-- Identitas anak -->
+        <h2 class="mt-8 text-lg font-medium text-gray-900">{{ __('Identitas Anak') }}</h2>
+
         <div class="mt-4">
+            <x-input-label for="anak_nama_inisial" :value="__('Nama anak (inisial)')" />
+            <x-text-input id="anak_nama_inisial" class="block mt-1 w-full" type="text" name="anak[nama_inisial]" :value="old('anak.nama_inisial')" required maxlength="50" />
+            <x-input-error :messages="$errors->get('anak.nama_inisial')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="anak_tanggal_lahir" :value="__('Tanggal lahir anak')" />
+            <x-text-input id="anak_tanggal_lahir" class="block mt-1 w-full" type="date" name="anak[tanggal_lahir]" :value="old('anak.tanggal_lahir')" required
+                min="{{ now()->subMonths(36)->toDateString() }}" max="{{ now()->toDateString() }}" />
+            <x-input-error :messages="$errors->get('anak.tanggal_lahir')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label :value="__('Jenis kelamin anak')" />
+            <div class="mt-2 flex gap-6">
+                @foreach (['L' => 'Laki-laki', 'P' => 'Perempuan'] as $value => $label)
+                    <label class="inline-flex items-center gap-2">
+                        <input type="radio" name="anak[jenis_kelamin]" value="{{ $value }}" class="text-indigo-600 focus:ring-indigo-500" @checked(old('anak.jenis_kelamin') === $value) required>
+                        <span>{{ $label }}</span>
+                    </label>
+                @endforeach
+            </div>
+            <x-input-error :messages="$errors->get('anak.jenis_kelamin')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="anak_kondisi_lahir" :value="__('Kondisi saat lahir (tidak wajib)')" />
+            <select id="anak_kondisi_lahir" name="anak[kondisi_lahir]" class="{{ $field }}">
+                <option value="">— Pilih —</option>
+                @foreach (\App\Models\Anak::KONDISI_LAHIR as $value => $label)
+                    <option value="{{ $value }}" @selected(old('anak.kondisi_lahir') === $value)>{{ $label }}</option>
+                @endforeach
+            </select>
+            <x-input-error :messages="$errors->get('anak.kondisi_lahir')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="anak_jenis_persalinan" :value="__('Jenis persalinan (tidak wajib)')" />
+            <select id="anak_jenis_persalinan" name="anak[jenis_persalinan]" class="{{ $field }}">
+                <option value="">— Pilih —</option>
+                @foreach (\App\Models\Anak::JENIS_PERSALINAN as $value => $label)
+                    <option value="{{ $value }}" @selected(old('anak.jenis_persalinan') === $value)>{{ $label }}</option>
+                @endforeach
+            </select>
+            <x-input-error :messages="$errors->get('anak.jenis_persalinan')" class="mt-2" />
+        </div>
+
+        @foreach ([
+            'bb_lahir_gram' => ['Berat lahir (gram, tidak wajib)', '1'],
+            'pb_lahir_cm' => ['Panjang lahir (cm, tidak wajib)', '0.1'],
+            'lingkar_kepala_cm' => ['Lingkar kepala saat lahir (cm, tidak wajib)', '0.1'],
+            'usia_gestasi_minggu' => ['Usia kehamilan saat lahir (minggu, tidak wajib)', '1'],
+        ] as $name => [$label, $step])
+            <div class="mt-4">
+                <x-input-label for="anak_{{ $name }}" :value="$label" />
+                <x-text-input id="anak_{{ $name }}" class="block mt-1 w-full" type="number" inputmode="decimal" step="{{ $step }}" name="anak[{{ $name }}]" :value="old('anak.'.$name)" />
+                <x-input-error :messages="$errors->get('anak.'.$name)" class="mt-2" />
+            </div>
+        @endforeach
+
+        <!-- Password -->
+        <div class="mt-8">
             <x-input-label for="password" :value="__('Password')" />
 
             <x-text-input id="password" class="block mt-1 w-full"
