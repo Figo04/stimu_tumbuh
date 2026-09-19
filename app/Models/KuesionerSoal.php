@@ -12,6 +12,8 @@ class KuesionerSoal extends Model
 
     public const JAWABAN_PENGETAHUAN = ['B' => 'Benar', 'S' => 'Salah'];
 
+    public const JAWABAN_SIKAP = ['SS' => 'Sangat Setuju', 'S' => 'Setuju', 'TS' => 'Tidak Setuju', 'STS' => 'Sangat Tidak Setuju'];
+
     protected $table = 'kuesioner_soal';
 
     protected function casts(): array
