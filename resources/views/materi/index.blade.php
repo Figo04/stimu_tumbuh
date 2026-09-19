@@ -10,6 +10,10 @@
                 otomatis saat usia anak bertambah.
             </p>
 
+            @if ($total)
+                <p class="mb-6 text-gray-700"><strong>{{ $selesai->count() }} dari {{ $total }}</strong> materi selesai.</p>
+            @endif
+
             @foreach (\App\Models\Materi::ASPEK as $aspek => $label)
                 @continue(! $materi->has($aspek))
 
@@ -21,7 +25,11 @@
                                 <a href="{{ route('materi.show', $m) }}"
                                    class="flex items-center justify-between py-4 text-base text-gray-800 hover:text-indigo-600">
                                     <span>{{ $m->judul }}</span>
-                                    <span aria-hidden="true">&rsaquo;</span>
+                                    @if ($selesai->contains($m->id))
+                                        <span class="text-sm font-medium text-emerald-700">✓ Selesai</span>
+                                    @else
+                                        <span aria-hidden="true">&rsaquo;</span>
+                                    @endif
                                 </a>
                             </li>
                         @endforeach

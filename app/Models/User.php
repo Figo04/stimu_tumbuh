@@ -49,4 +49,24 @@ class User extends Authenticatable
     {
         return $this->hasilKuesioner()->where('tipe_sesi', 'pre')->exists();
     }
+
+    public function progressMateri(): HasMany
+    {
+        return $this->hasMany(ProgressMateri::class);
+    }
+
+    /** Basis gating tab Praktik. */
+    public function materiSelesai(Materi $materi): bool
+    {
+        return $this->progressMateri()->where('materi_id', $materi->id)->where('materi_selesai', true)->exists();
+    }
+
+    /** Basis auto-switch ke post-test: seluruh materi kelompok usia anak saat ini sudah selesai. */
+    public function semuaMateriSelesai(): bool
+    {
+        $materiIds = Materi::where('kelompok_usia', $this->anak->kelompok_usia)->pluck('id');
+
+        return $materiIds->isNotEmpty()
+            && $this->progressMateri()->where('materi_selesai', true)->whereIn('materi_id', $materiIds)->count() === $materiIds->count();
+    }
 }

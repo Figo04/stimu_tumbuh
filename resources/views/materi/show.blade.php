@@ -13,11 +13,26 @@
                         class="rounded-md px-4 py-3 text-base font-medium shadow-sm">Materi</button>
                 <button type="button" role="tab" @click="tab = 'praktik'" :aria-selected="tab === 'praktik'"
                         :class="tab === 'praktik' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700'"
-                        class="rounded-md px-4 py-3 text-base font-medium shadow-sm">Praktik 🔒</button>
+                        class="rounded-md px-4 py-3 text-base font-medium shadow-sm">Praktik{{ $progress->materi_selesai ? '' : ' 🔒' }}</button>
             </div>
 
             <article x-show="tab === 'materi'" class="bg-white shadow-sm sm:rounded-lg p-6 text-base leading-relaxed text-gray-800">
                 @include($materi->konten_view)
+
+                <div class="mt-8 border-t border-gray-100 pt-6">
+                    @if ($progress->materi_selesai)
+                        <p class="rounded-md bg-emerald-50 px-4 py-3 text-emerald-800">
+                            ✓ Materi selesai dibaca pada {{ $progress->materi_selesai_at->translatedFormat('d F Y') }}.
+                        </p>
+                    @else
+                        <form method="POST" action="{{ route('materi.selesai', $materi) }}">
+                            @csrf
+                            <button type="submit" class="w-full rounded-md bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">
+                                Tandai selesai dibaca
+                            </button>
+                        </form>
+                    @endif
+                </div>
             </article>
 
             {{-- Isi & gating tab Praktik dikerjakan di Sesi 19 (setelah progress materi Sesi 13). --}}
