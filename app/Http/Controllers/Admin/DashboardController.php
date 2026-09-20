@@ -11,6 +11,7 @@ use App\Models\PenilaianPerkembangan;
 use App\Models\ProgressMateri;
 use App\Models\User;
 use App\Services\UsiaAnakService;
+use Carbon\Carbon;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -44,6 +45,7 @@ class DashboardController extends Controller
             'progresMateri' => $this->progresMateri($total),
             'sebaranUsia' => $this->sebaranUsia(),
             'rataSkorAspek' => $this->rataSkorAspek(),
+            'rataStimulasi' => $this->rataStimulasi(),
             // ponytail: 10 entri terakhir, tanpa paginasi — daftar lengkap ada di Menu Aktivitas (Sesi 32).
             'terbaru' => AktivitasStimulasi::with(['user:id,kode_responden,nama', 'materi:id,judul'])
                 ->latest('tanggal')->latest('id')->take(10)->get(),
@@ -94,6 +96,37 @@ class DashboardController extends Controller
 
         return collect(UsiaAnakService::KELOMPOK_USIA)
             ->mapWithKeys(fn ($k) => [$k.' bln' => (int) ($hitung[$k] ?? 0)])->all();
+    }
+
+    /**
+     * Rata-rata frekuensi stimulasi per minggu & rata-rata durasi per sesi (PRD §3.2).
+     * Satu query teragregasi untuk semua responden, tanpa loop query per responden.
+     *
+     * @return array{frekuensi: ?float, durasi: ?float} null bila belum ada data
+     */
+    private function rataStimulasi(): array
+    {
+        $per = AktivitasStimulasi::selectRaw('user_id, count(*) as n, min(tanggal) as mulai, max(tanggal) as akhir,
+                sum(durasi_menit) as total_durasi, count(durasi_menit) as n_durasi')
+            ->groupBy('user_id')->get();
+
+        if ($per->isEmpty()) {
+            return ['frekuensi' => null, 'durasi' => null];
+        }
+
+        // Minggu aktif = rentang entri pertama–terakhir responden itu (minimal 1 minggu),
+        // bukan sejak registrasi → mengukur intensitas saat responden aktif.
+        $frekuensi = $per->avg(fn ($r) => $r->n / max(1, ceil(
+            (Carbon::parse($r->mulai)->diffInDays(Carbon::parse($r->akhir)) + 1) / 7
+        )));
+
+        $nDurasi = (int) $per->sum('n_durasi');
+
+        return [
+            'frekuensi' => round($frekuensi, 1),
+            // Entri dari tab Praktik tidak mengisi durasi_menit → tidak ikut penyebut (Sesi 19).
+            'durasi' => $nDurasi ? round($per->sum('total_durasi') / $nDurasi, 1) : null,
+        ];
     }
 
     /** @return array<string, float> rata-rata skor tiap aspek dari penilaian TERAKHIR tiap responden. */

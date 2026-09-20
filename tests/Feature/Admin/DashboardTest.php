@@ -102,6 +102,35 @@ class DashboardTest extends TestCase
             ->assertViewHas('rataSkorAspek', array_fill_keys(array_values(Materi::ASPEK), 70.0));
     }
 
+    public function test_rata_rata_frekuensi_dan_durasi_dihitung_dari_entri_aktivitas(): void
+    {
+        [$a, $b] = [User::factory()->create(), User::factory()->create()];
+        User::factory()->create(); // Tanpa entri → tidak ikut penyebut.
+
+        // A: 2 entri dalam rentang 2 hari (1 minggu aktif) → 2 kali/minggu.
+        foreach ([['2026-09-14', 15], ['2026-09-15', 10]] as [$tanggal, $durasi]) {
+            AktivitasStimulasi::create([
+                'user_id' => $a->id, 'tanggal' => $tanggal, 'aspek' => 'motorik_kasar',
+                'jenis_stimulasi' => 'Tengkurap', 'durasi_menit' => $durasi, 'pelaku' => 'ibu',
+            ]);
+        }
+
+        // B: 2 entri berjarak 8 hari (2 minggu aktif) → 1 kali/minggu; durasi null (pola tab Praktik).
+        foreach (['2026-09-01', '2026-09-09'] as $tanggal) {
+            AktivitasStimulasi::create([
+                'user_id' => $b->id, 'tanggal' => $tanggal, 'aspek' => 'bicara_bahasa', 'pelaku' => 'ibu',
+            ]);
+        }
+
+        $admin = Admin::create(['nama' => 'Admin', 'email' => 'admin@example.com', 'password' => 'rahasia123']);
+
+        $this->actingAs($admin, 'admin')->get(route('admin.dashboard'))
+            ->assertOk()
+            // Frekuensi (2 + 1) / 2 = 1,5 · durasi (15 + 10) / 2 = 12,5 (entri B tanpa durasi diabaikan).
+            ->assertViewHas('rataStimulasi', ['frekuensi' => 1.5, 'durasi' => 12.5])
+            ->assertSeeInOrder(['Rata-rata Frekuensi Stimulasi', '1,5', 'Rata-rata Durasi per Sesi', '12,5']);
+    }
+
     /** Akses tamu/orang tua sudah ditutup 8 test Admin\AuthTest — di sini cukup keadaan kosong. */
     public function test_dashboard_tanpa_data_tidak_error(): void
     {
@@ -112,6 +141,8 @@ class DashboardTest extends TestCase
             ->assertSee('Belum ada entri stimulasi')
             // Chart tanpa data tampil sebagai pesan, bukan canvas kosong.
             ->assertSee('Belum ada data.')
-            ->assertDontSee('data-chart', false);
+            ->assertDontSee('data-chart', false)
+            // Kartu rata-rata tanpa entri → "—", bukan 0.
+            ->assertViewHas('rataStimulasi', ['frekuensi' => null, 'durasi' => null]);
     }
 }

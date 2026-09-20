@@ -1,5 +1,5 @@
 <x-admin-layout judul="Dashboard">
-    {{-- Kartu rata-rata frekuensi & durasi (Sesi 30) dan tombol Export (Sesi 35) menyusul. --}}
+    {{-- Tombol Export (Sesi 35) menyusul. --}}
     <div class="grid grid-cols-2 gap-4 lg:grid-cols-3">
         @foreach ($kartu as $label => $nilai)
             <div class="rounded-lg border border-gray-200 bg-white p-4">
@@ -37,6 +37,28 @@
     </div>
 
     @vite('resources/js/chart.js')
+
+    <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        @foreach ([
+            ['Rata-rata Frekuensi Stimulasi', $rataStimulasi['frekuensi'], 'kali/minggu',
+                'Dihitung per responden selama rentang aktifnya (entri pertama sampai terakhir).'],
+            ['Rata-rata Durasi per Sesi', $rataStimulasi['durasi'], 'menit',
+                'Entri dari tab Praktik tidak mencatat durasi, jadi tidak ikut dihitung.'],
+        ] as [$label, $nilai, $satuan, $catatan])
+            <div class="rounded-lg border border-gray-200 bg-white p-4">
+                <p class="text-sm text-gray-500">{{ $label }}</p>
+                <p class="mt-1 text-3xl font-semibold text-gray-800">
+                    @if ($nilai === null)
+                        —
+                    @else
+                        {{ number_format($nilai, 1, ',', '.') }}
+                        <span class="text-base font-normal text-gray-500">{{ $satuan }}</span>
+                    @endif
+                </p>
+                <p class="mt-1 text-xs text-gray-400">{{ $catatan }}</p>
+            </div>
+        @endforeach
+    </div>
 
     <section class="mt-6 rounded-lg border border-gray-200 bg-white">
         <h2 class="border-b border-gray-200 px-4 py-3 font-semibold text-gray-800">Aktivitas Terbaru</h2>
