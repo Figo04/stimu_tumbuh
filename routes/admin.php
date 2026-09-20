@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AktivitasController;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\HasilTestController;
+use App\Http\Controllers\Admin\MateriController;
 use App\Http\Controllers\Admin\PerkembanganController;
 use App\Http\Controllers\Admin\RespondenController;
 use App\Http\Controllers\Admin\SoalController;
@@ -28,6 +29,11 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('aktivitas/{responden}', [AktivitasController::class, 'show'])->name('aktivitas.show');
     Route::get('perkembangan', [PerkembanganController::class, 'index'])->name('perkembangan.index');
     Route::get('perkembangan/{responden}', [PerkembanganController::class, 'show'])->name('perkembangan.show');
+
+    // View-only, kecuali satu field: video_youtube_id boleh diganti admin (Sesi 34).
+    Route::get('materi', [MateriController::class, 'index'])->name('materi.index');
+    Route::get('materi/{materi:slug}', [MateriController::class, 'show'])->name('materi.show');
+    Route::patch('materi/{materi:slug}', [MateriController::class, 'update'])->name('materi.update');
 
     // Satu-satunya CRUD penuh admin (PRD §3.2); `show` tak dipakai — daftarnya sudah memuat isi soal.
     Route::resource('soal', SoalController::class)->except('show');

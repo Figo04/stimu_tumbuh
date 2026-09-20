@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['judul', 'slug', 'aspek', 'kelompok_usia', 'urutan', 'konten_view', 'video_youtube_id'])]
 class Materi extends Model
@@ -20,4 +21,9 @@ class Materi extends Model
     ];
 
     protected $table = 'materi';
+
+    public function progress(): HasMany
+    {
+        return $this->hasMany(ProgressMateri::class);
+    }
 }

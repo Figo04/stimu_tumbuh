@@ -49,17 +49,24 @@ class MateriSeeder extends Seeder
 
     public function run(): void
     {
-        // updateOrCreate per slug (bukan hapus-isi ulang): FK progress_materi cascadeOnDelete
-        // akan ikut menghapus progres responden. Seeding ulang cukup memperbarui judul/view/video.
+        // Per slug (bukan hapus-isi ulang): FK progress_materi cascadeOnDelete
+        // akan ikut menghapus progres responden. Seeding ulang cukup memperbarui judul/view.
         foreach (self::MATERI as [$slug, $judul, $aspek, $kelompok, $urutan, $view, $video]) {
-            Materi::updateOrCreate(['slug' => $slug], [
+            $materi = Materi::firstOrNew(['slug' => $slug]);
+
+            $materi->fill([
                 'judul' => $judul,
                 'aspek' => $aspek,
                 'kelompok_usia' => $kelompok,
                 'urutan' => $urutan,
                 'konten_view' => $view,
-                'video_youtube_id' => $video,
             ]);
+
+            // Video hanya diisi bila masih kosong: tautan yang diganti admin lewat
+            // Kelola Materi (Sesi 34) tidak boleh ditimpa saat seeder dijalankan ulang.
+            $materi->video_youtube_id ??= $video;
+
+            $materi->save();
         }
     }
 }
