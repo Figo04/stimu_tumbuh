@@ -77,6 +77,12 @@ class User extends Authenticatable
         return $this->hasMany(PenilaianPerkembangan::class);
     }
 
+    /** Penilaian terakhir saja — dipakai rekap admin agar tidak memuat seluruh riwayat tiap baris. */
+    public function penilaianTerakhir(): HasOne
+    {
+        return $this->hasOne(PenilaianPerkembangan::class)->latestOfMany();
+    }
+
     /** Basis gating tab Praktik. */
     public function materiSelesai(Materi $materi): bool
     {

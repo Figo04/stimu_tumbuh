@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\AktivitasController;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\HasilTestController;
+use App\Http\Controllers\Admin\PerkembanganController;
 use App\Http\Controllers\Admin\RespondenController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +23,10 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('responden/{responden}', [RespondenController::class, 'show'])->name('responden.show');
     Route::get('hasil-test', [HasilTestController::class, 'index'])->name('hasil-test.index');
     Route::get('hasil-test/{responden}', [HasilTestController::class, 'show'])->name('hasil-test.show');
+    Route::get('aktivitas', [AktivitasController::class, 'index'])->name('aktivitas.index');
+    Route::get('aktivitas/{responden}', [AktivitasController::class, 'show'])->name('aktivitas.show');
+    Route::get('perkembangan', [PerkembanganController::class, 'index'])->name('perkembangan.index');
+    Route::get('perkembangan/{responden}', [PerkembanganController::class, 'show'])->name('perkembangan.show');
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
