@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\HasilTestController;
+use App\Http\Controllers\Admin\RespondenController;
 use Illuminate\Support\Facades\Route;
 
 // Didaftarkan di bootstrap/app.php dengan prefix /admin, nama admin.*, middleware web.
@@ -13,5 +15,12 @@ Route::middleware('guest:admin')->group(function () {
 
 Route::middleware('auth:admin')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // View-only (PRD §3.2): hanya index & show, tanpa create/edit/destroy.
+    Route::get('responden', [RespondenController::class, 'index'])->name('responden.index');
+    Route::get('responden/{responden}', [RespondenController::class, 'show'])->name('responden.show');
+    Route::get('hasil-test', [HasilTestController::class, 'index'])->name('hasil-test.index');
+    Route::get('hasil-test/{responden}', [HasilTestController::class, 'show'])->name('hasil-test.show');
+
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });

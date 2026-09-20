@@ -28,13 +28,14 @@ class LayoutTest extends TestCase
     public function test_menu_tanpa_rute_tidak_dirender_sebagai_tautan(): void
     {
         $admin = Admin::create(['nama' => 'Admin', 'email' => 'admin@example.com', 'password' => 'rahasia123']);
-        $this->assertFalse(\Route::has('admin.responden.index'), 'Sesi 31 sudah jalan — perbarui test ini.');
+        // Menu pembanding digeser tiap kali rutenya terdaftar (Responden → Sesi 31).
+        $this->assertFalse(\Route::has('admin.soal.index'), 'Sesi 33 sudah jalan — ganti ke menu lain yang masih kosong.');
 
         $this->actingAs($admin, 'admin')
             ->get('/admin/dashboard')
             ->assertOk()
-            // Dashboard punya rute → tautan aktif; Responden belum → span "segera".
-            ->assertSee('href="'.route('admin.dashboard').'"', false)
-            ->assertDontSee('>Responden</a>', false);
+            // Rute terdaftar → tautan; belum terdaftar → span bertanda "segera".
+            ->assertSee('href="'.route('admin.responden.index').'"', false)
+            ->assertSee('segera');
     }
 }
