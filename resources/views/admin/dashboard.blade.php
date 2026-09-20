@@ -1,5 +1,19 @@
 <x-admin-layout judul="Dashboard">
-    {{-- Tombol Export (Sesi 35) menyusul. --}}
+    <div class="mb-4 flex flex-wrap items-center gap-2">
+        <a href="{{ route('admin.export.excel') }}"
+           class="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
+            Export Excel (5 sheet)
+        </a>
+        <a href="{{ route('admin.export.csv') }}"
+           class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+            Export CSV (ringkas)
+        </a>
+        <span class="text-xs text-gray-500">
+            Excel berisi identitas, kondisi lahir, aktivitas stimulasi, perkembangan, dan penggunaan aplikasi.
+            CSV berisi identitas + hasil test saja.
+        </span>
+    </div>
+
     <div class="grid grid-cols-2 gap-4 lg:grid-cols-3">
         @foreach ($kartu as $label => $nilai)
             <div class="rounded-lg border border-gray-200 bg-white p-4">

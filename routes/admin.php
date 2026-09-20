@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AktivitasController;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\HasilTestController;
 use App\Http\Controllers\Admin\MateriController;
 use App\Http\Controllers\Admin\PerkembanganController;
@@ -34,6 +35,10 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('materi', [MateriController::class, 'index'])->name('materi.index');
     Route::get('materi/{materi:slug}', [MateriController::class, 'show'])->name('materi.show');
     Route::patch('materi/{materi:slug}', [MateriController::class, 'update'])->name('materi.update');
+
+    // Export (PRD §3.4): Excel 5 sheet & CSV ringkas, keduanya unduhan langsung tanpa halaman sendiri.
+    Route::get('export/excel', [ExportController::class, 'excel'])->name('export.excel');
+    Route::get('export/csv', [ExportController::class, 'csv'])->name('export.csv');
 
     // Satu-satunya CRUD penuh admin (PRD §3.2); `show` tak dipakai — daftarnya sudah memuat isi soal.
     Route::resource('soal', SoalController::class)->except('show');
