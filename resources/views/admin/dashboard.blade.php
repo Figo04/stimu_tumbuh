@@ -1,9 +1,10 @@
-{{-- ponytail: placeholder sampai layout admin (Sesi 27) & dashboard (Sesi 28). --}}
-<x-guest-layout>
-    <p class="text-gray-800">Halo, {{ auth('admin')->user()->nama }}.</p>
-
-    <form method="POST" action="{{ route('admin.logout') }}" class="mt-4">
-        @csrf
-        <x-primary-button>{{ __('Log Out') }}</x-primary-button>
-    </form>
-</x-guest-layout>
+<x-admin-layout judul="Dashboard">
+    {{-- Isi dashboard (stat cards, chart, Aktivitas Terbaru) dikerjakan Sesi 28–30. --}}
+    <div class="rounded-lg border border-gray-200 bg-white p-6">
+        <p class="text-gray-800">Halo, {{ auth('admin')->user()->nama }}.</p>
+        <p class="mt-2 text-sm text-gray-500">
+            Statistik dan grafik ditambahkan pada tahap berikutnya. Menu bertanda
+            &ldquo;segera&rdquo; di samping belum aktif.
+        </p>
+    </div>
+</x-admin-layout>

@@ -11,7 +11,7 @@ Route::middleware('guest:admin')->group(function () {
 });
 
 Route::middleware('auth:admin')->group(function () {
-    // ponytail: placeholder, diganti DashboardController + layout admin di Sesi 27–28.
+    // ponytail: masih view statis; diganti DashboardController saat datanya masuk (Sesi 28).
     Route::view('dashboard', 'admin.dashboard')->name('dashboard');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
