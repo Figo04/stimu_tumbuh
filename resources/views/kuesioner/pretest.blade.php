@@ -1,13 +1,16 @@
+{{-- Dipakai pre-test dan post-test; bedanya hanya judul, pengantar, dan tujuan form ($tipe). --}}
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Pre-test</h2>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ \App\Http\Controllers\KuesionerController::LABEL[$tipe] }}</h2>
     </x-slot>
 
     <div class="py-8">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <p class="mb-6 text-gray-700">
-                Isi semua pertanyaan di bawah sebelum membuka materi. Jawaban hanya bisa dikirim
-                <strong>satu kali</strong> dan tidak dapat diubah setelah dikirim.
+                {{ $tipe === 'pre'
+                    ? 'Isi semua pertanyaan di bawah sebelum membuka materi.'
+                    : 'Anda sudah menyelesaikan seluruh materi. Isi kembali pertanyaan yang sama untuk melihat perubahan setelah mempelajari materi.' }}
+                Jawaban hanya bisa dikirim <strong>satu kali</strong> dan tidak dapat diubah setelah dikirim.
             </p>
 
             @if ($errors->any())
@@ -16,7 +19,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('pretest.store') }}"
+            <form method="POST" action="{{ route($tipe === 'pre' ? 'pretest.store' : 'posttest.store') }}"
                   onsubmit="return confirm('Kirim jawaban sekarang? Jawaban tidak dapat diubah setelah dikirim.')">
                 @csrf
 

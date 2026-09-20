@@ -5,6 +5,9 @@
 
     <div class="py-8">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            @if (session('status'))
+                <div class="mb-6 rounded-md bg-amber-50 p-4 text-sm text-amber-800">{{ session('status') }}</div>
+            @endif
             <p class="mb-6 text-gray-700">
                 Materi untuk anak usia <strong>{{ $kelompokUsia }} bulan</strong>. Daftar ini menyesuaikan
                 otomatis saat usia anak bertambah.

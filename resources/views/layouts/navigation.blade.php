@@ -24,6 +24,7 @@
                     <x-nav-link :href="route('perkembangan.index')" :active="request()->routeIs('perkembangan.*')">
                         Perkembangan
                     </x-nav-link>
+                    <x-nav-kuesioner />
                 </div>
             </div>
 
@@ -88,6 +89,7 @@
             <x-responsive-nav-link :href="route('perkembangan.index')" :active="request()->routeIs('perkembangan.*')">
                 Perkembangan
             </x-responsive-nav-link>
+            <x-nav-kuesioner :responsive="true" />
         </div>
 
         <!-- Responsive Settings Options -->

@@ -29,11 +29,15 @@ Route::middleware(['auth', 'pretest.selesai'])->group(function () {
 
     Route::get('/perkembangan', [PerkembanganController::class, 'index'])->name('perkembangan.index');
     Route::post('/perkembangan', [PerkembanganController::class, 'store'])->name('perkembangan.store');
+
+    // Gating "semua materi selesai" ada di KuesionerController, bukan hanya di menu.
+    Route::get('/posttest', [KuesionerController::class, 'show'])->defaults('tipe', 'post')->name('posttest');
+    Route::post('/posttest', [KuesionerController::class, 'store'])->defaults('tipe', 'post')->name('posttest.store');
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/pretest', [KuesionerController::class, 'pretest'])->name('pretest');
-    Route::post('/pretest', [KuesionerController::class, 'storePretest'])->name('pretest.store');
+    Route::get('/pretest', [KuesionerController::class, 'show'])->defaults('tipe', 'pre')->name('pretest');
+    Route::post('/pretest', [KuesionerController::class, 'store'])->defaults('tipe', 'pre')->name('pretest.store');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

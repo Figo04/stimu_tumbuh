@@ -45,9 +45,21 @@ class User extends Authenticatable
         return $this->hasMany(HasilKuesioner::class);
     }
 
+    /** @param  'pre'|'post'  $tipe */
+    public function sudahKuesioner(string $tipe): bool
+    {
+        return $this->hasilKuesioner()->where('tipe_sesi', $tipe)->exists();
+    }
+
     public function sudahPretest(): bool
     {
-        return $this->hasilKuesioner()->where('tipe_sesi', 'pre')->exists();
+        return $this->sudahKuesioner('pre');
+    }
+
+    /** Post-test terbuka setelah pre-test dikirim dan seluruh materi kelompok usia selesai. */
+    public function bolehPosttest(): bool
+    {
+        return $this->sudahPretest() && $this->semuaMateriSelesai();
     }
 
     public function progressMateri(): HasMany
@@ -74,6 +86,10 @@ class User extends Authenticatable
     /** Basis auto-switch ke post-test: seluruh materi kelompok usia anak saat ini sudah selesai. */
     public function semuaMateriSelesai(): bool
     {
+        if (! $this->anak) {
+            return false;
+        }
+
         $materiIds = Materi::where('kelompok_usia', $this->anak->kelompok_usia)->pluck('id');
 
         return $materiIds->isNotEmpty()
