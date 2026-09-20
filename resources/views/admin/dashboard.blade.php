@@ -1,5 +1,5 @@
 <x-admin-layout judul="Dashboard">
-    {{-- Chart (Sesi 29), kartu rata-rata frekuensi & durasi (Sesi 30), tombol Export (Sesi 35) menyusul. --}}
+    {{-- Kartu rata-rata frekuensi & durasi (Sesi 30) dan tombol Export (Sesi 35) menyusul. --}}
     <div class="grid grid-cols-2 gap-4 lg:grid-cols-3">
         @foreach ($kartu as $label => $nilai)
             <div class="rounded-lg border border-gray-200 bg-white p-4">
@@ -8,6 +8,35 @@
             </div>
         @endforeach
     </div>
+
+    @php
+        $chart = [
+            ['Status Test', 'doughnut', $statusTest, 'responden'],
+            ['Progres Materi', 'doughnut', $progresMateri, 'responden'],
+            ['Sebaran Kelompok Usia Anak', 'bar', $sebaranUsia, 'anak'],
+            ['Rata-rata Skor per Aspek Perkembangan', 'bar', $rataSkorAspek, '% "Ya"'],
+        ];
+    @endphp
+
+    <div class="mt-6 grid gap-4 xl:grid-cols-2">
+        @foreach ($chart as [$judul, $tipe, $data, $satuan])
+            <section class="rounded-lg border border-gray-200 bg-white p-4">
+                <h2 class="font-semibold text-gray-800">{{ $judul }}</h2>
+
+                @if (array_sum($data) <= 0)
+                    <p class="py-10 text-center text-sm text-gray-500">Belum ada data.</p>
+                @else
+                    <div class="mt-3 h-64">
+                        <canvas data-chart data-tipe="{{ $tipe }}" data-satuan="{{ $satuan }}"
+                                data-label="{{ json_encode(array_keys($data)) }}"
+                                data-nilai="{{ json_encode(array_values($data)) }}"></canvas>
+                    </div>
+                @endif
+            </section>
+        @endforeach
+    </div>
+
+    @vite('resources/js/chart.js')
 
     <section class="mt-6 rounded-lg border border-gray-200 bg-white">
         <h2 class="border-b border-gray-200 px-4 py-3 font-semibold text-gray-800">Aktivitas Terbaru</h2>
