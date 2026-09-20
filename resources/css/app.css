@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Sembunyikan elemen ber-x-show sampai Alpine siap (tanpa ini field kondisional berkedip). */
+[x-cloak] {
+    display: none !important;
+}

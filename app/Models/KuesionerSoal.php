@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['tipe', 'pertanyaan', 'jawaban_benar', 'reverse_scored', 'urutan'])]
 class KuesionerSoal extends Model
@@ -23,5 +24,15 @@ class KuesionerSoal extends Model
     protected function casts(): array
     {
         return ['reverse_scored' => 'boolean'];
+    }
+
+    /**
+     * Jawaban responden atas soal ini. FK `soal_id` cascadeOnDelete → menghapus
+     * soal ikut menghapus jawaban; Kelola Soal memakai relasi ini untuk menolak
+     * hapus soal yang sudah pernah dijawab.
+     */
+    public function detail(): HasMany
+    {
+        return $this->hasMany(HasilKuesionerDetail::class, 'soal_id');
     }
 }

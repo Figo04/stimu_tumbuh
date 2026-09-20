@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\HasilTestController;
 use App\Http\Controllers\Admin\PerkembanganController;
 use App\Http\Controllers\Admin\RespondenController;
+use App\Http\Controllers\Admin\SoalController;
 use Illuminate\Support\Facades\Route;
 
 // Didaftarkan di bootstrap/app.php dengan prefix /admin, nama admin.*, middleware web.
@@ -27,6 +28,9 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('aktivitas/{responden}', [AktivitasController::class, 'show'])->name('aktivitas.show');
     Route::get('perkembangan', [PerkembanganController::class, 'index'])->name('perkembangan.index');
     Route::get('perkembangan/{responden}', [PerkembanganController::class, 'show'])->name('perkembangan.show');
+
+    // Satu-satunya CRUD penuh admin (PRD §3.2); `show` tak dipakai — daftarnya sudah memuat isi soal.
+    Route::resource('soal', SoalController::class)->except('show');
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });

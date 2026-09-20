@@ -28,8 +28,8 @@ class LayoutTest extends TestCase
     public function test_menu_tanpa_rute_tidak_dirender_sebagai_tautan(): void
     {
         $admin = Admin::create(['nama' => 'Admin', 'email' => 'admin@example.com', 'password' => 'rahasia123']);
-        // Menu pembanding digeser tiap kali rutenya terdaftar (Responden → Sesi 31).
-        $this->assertFalse(\Route::has('admin.soal.index'), 'Sesi 33 sudah jalan — ganti ke menu lain yang masih kosong.');
+        // Menu pembanding digeser tiap kali rutenya terdaftar (Responden → Sesi 31, Kelola Soal → Sesi 33).
+        $this->assertFalse(\Route::has('admin.materi.index'), 'Sesi 34 sudah jalan — ganti ke menu lain yang masih kosong.');
 
         $this->actingAs($admin, 'admin')
             ->get('/admin/dashboard')

@@ -65,5 +65,9 @@ return [
         'jenis_stimulasi' => 'jenis stimulasi',
         'durasi_menit' => 'durasi',
         'pelaku' => 'pelaku',
+        'tipe' => 'tipe soal',
+        'pertanyaan' => 'pertanyaan',
+        'jawaban_benar' => 'jawaban benar',
+        'urutan' => 'urutan',
     ],
 ];
