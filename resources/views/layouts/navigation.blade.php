@@ -25,6 +25,7 @@
                         Perkembangan
                     </x-nav-link>
                     <x-nav-kuesioner />
+                    <x-nav-konsultasi />
                 </div>
             </div>
 
@@ -90,6 +91,7 @@
                 Perkembangan
             </x-responsive-nav-link>
             <x-nav-kuesioner :responsive="true" />
+            <x-nav-konsultasi :responsive="true" />
         </div>
 
         <!-- Responsive Settings Options -->

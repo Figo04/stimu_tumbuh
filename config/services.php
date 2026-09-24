@@ -35,4 +35,7 @@ return [
         ],
     ],
 
+    // Nomor WhatsApp tim peneliti untuk tombol Konsultasi (format 62…, tanpa +).
+    'wa_konsultasi' => env('WA_KONSULTASI'),
+
 ];
