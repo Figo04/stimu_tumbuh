@@ -16,7 +16,7 @@ class MateriKomponenTest extends TestCase
             <x-langkah-stimulasi :langkah="['Baringkan anak', 'Tunjukkan mainan']" />
             BLADE);
 
-        foreach (['Tips', 'Ajak anak bicara.', 'Perhatian', 'Awasi anak.', 'bg-amber-50',
+        foreach (['Tips', 'Ajak anak bicara.', 'Perhatian', 'Awasi anak.', 'bg-hangat-bg',
             'Mengangkat kepala', 'Berguling', 'Langkah-langkah', 'Baringkan anak', 'Tunjukkan mainan'] as $teks) {
             $this->assertStringContainsString($teks, $html);
         }

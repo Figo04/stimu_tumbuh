@@ -4,7 +4,7 @@
     Kemampuan motorik kasar mendukung anak dalam bergerak, menjaga keseimbangan, berpindah tempat, dan melakukan aktivitas sehari-hari.
 </x-highlight>
 
-<h3 class="mt-6 mb-2 text-lg font-semibold text-gray-900">Berlari tanpa terjatuh</h3>
+<h3 class="mt-6 mb-2 text-lg font-semibold text-ink">Berlari tanpa terjatuh</h3>
 <p>Pada usia 24 bulan atau 2 tahun, kemampuan motorik kasar anak semakin berkembang. Anak mulai mampu mengontrol gerakan tubuh, menjaga keseimbangan, dan mengoordinasikan gerakan kaki serta tangan saat bergerak.</p>
 <p class="mt-2">Salah satu kemampuan motorik kasar yang dapat distimulasi pada usia ini adalah kemampuan anak untuk berlari secara mandiri tanpa terjatuh. Stimulasi dapat dilakukan melalui permainan yang sederhana dan menyenangkan.</p>
 
@@ -16,8 +16,8 @@
     'Dampingi anak dari dekat untuk menjaga keselamatannya, tetapi berikan kesempatan kepada anak untuk melakukan gerakan secara mandiri.',
 ]" />
 
-<p class="mt-6 mb-2 font-semibold">Contoh aktivitas</p>
-<div class="space-y-1 rounded-lg bg-gray-50 p-4">
+<p class="mt-6 mb-2 font-extrabold">Contoh aktivitas</p>
+<div class="space-y-1 rounded-lg bg-krem p-4">
     <p>Letakkan mainan kesukaan anak pada jarak yang aman. Kemudian katakan, “Ayo, ambil bolanya!”</p>
     <p>Berikan kesempatan kepada anak untuk bergerak menuju mainan. Jika anak mulai berlari, biarkan anak mencoba mengatur langkah dan menjaga keseimbangannya.</p>
     <p>Ketika anak berhasil berlari tanpa terjatuh, berikan pujian, seperti, “Hebat! Kamu sudah bisa berlari!”</p>

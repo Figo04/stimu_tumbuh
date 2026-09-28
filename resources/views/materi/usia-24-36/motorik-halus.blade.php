@@ -4,7 +4,7 @@
     Kemampuan ini diperlukan untuk mengambil benda, memegang alat makan, menyusun mainan, serta melakukan aktivitas yang membutuhkan ketelitian.
 </x-highlight>
 
-<h3 class="mt-6 mb-2 text-lg font-semibold text-gray-900">Mencoret-coret kertas tanpa bantuan atau petunjuk</h3>
+<h3 class="mt-6 mb-2 text-lg font-semibold text-ink">Mencoret-coret kertas tanpa bantuan atau petunjuk</h3>
 <p>Pada usia 24 bulan atau 2 tahun, anak mulai lebih terampil menggunakan tangan dan jarinya.</p>
 <p class="mt-2">Salah satu kemampuan gerak halus yang penting untuk distimulasi adalah kemampuan anak untuk mencoret-coret kertas tanpa bantuan atau petunjuk. Aktivitas sederhana ini tidak hanya menyenangkan, tetapi juga membantu anak melatih koordinasi mata dan tangan, kekuatan otot jari, serta persiapan untuk kemampuan menulis kemudian hari.</p>
 

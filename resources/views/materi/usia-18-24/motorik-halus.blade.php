@@ -4,7 +4,7 @@
     Kemampuan ini diperlukan untuk mengambil benda, memegang alat makan, menyusun mainan, serta melakukan aktivitas yang membutuhkan ketelitian.
 </x-highlight>
 
-<h3 class="mt-6 mb-2 text-lg font-semibold text-gray-900">Menggelindingkan atau melempar bola kepada orang tua</h3>
+<h3 class="mt-6 mb-2 text-lg font-semibold text-ink">Menggelindingkan atau melempar bola kepada orang tua</h3>
 <p>Pada usia 18 bulan, anak mulai mengembangkan koordinasi mata dan tangan yang semakin baik. Salah satu kemampuan gerak halus yang penting untuk distimulasi adalah kemampuan anak untuk menggelindingkan atau melempar bola kepada orang tuanya. Aktivitas sederhana ini tidak hanya menyenangkan, tetapi juga bermanfaat untuk melatih koordinasi, kekuatan otot tangan, serta kemampuan fokus anak.</p>
 
 <x-checklist judul="Persiapan" :items="[
@@ -21,7 +21,7 @@
     'Ulangi permainan beberapa kali secara menyenangkan dan tidak memaksa.',
 ]" />
 
-<h3 class="mt-6 mb-2 text-lg font-semibold text-gray-900">Aktivitas stimulasi lain usia 18–23 bulan</h3>
+<h3 class="mt-6 mb-2 text-lg font-semibold text-ink">Aktivitas stimulasi lain usia 18–23 bulan</h3>
 <div class="space-y-3">
     @foreach ([
         ['Menyusun balok', 'Susun balok bersama anak', 'Koordinasi tangan'],
@@ -30,7 +30,7 @@
         ['Membalik halaman buku', 'Gunakan buku anak', 'Koordinasi jari'],
         ['Bermain dengan sendok', 'Dampingi anak saat makan', 'Keterampilan bantu diri'],
     ] as [$aktivitas, $cara, $manfaat])
-        <div class="rounded-lg border border-gray-200 p-4">
+        <div class="rounded-lg border border-krem-garis p-4">
             <p class="font-semibold">{{ $aktivitas }}</p>
             <p><span class="font-medium">Cara melakukan:</span> {{ $cara }}</p>
             <p><span class="font-medium">Manfaat:</span> {{ $manfaat }}</p>

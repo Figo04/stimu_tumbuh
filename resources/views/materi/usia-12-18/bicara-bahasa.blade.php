@@ -7,7 +7,7 @@
     </ul>
 </x-highlight>
 
-<h3 class="mt-6 mb-2 text-lg font-semibold text-gray-900">Meniru 2–3 kata sederhana</h3>
+<h3 class="mt-6 mb-2 text-lg font-semibold text-ink">Meniru 2–3 kata sederhana</h3>
 <p>Pada usia 12 bulan, anak mulai belajar berkomunikasi melalui suara dan kata-kata sederhana. Salah satu kemampuan yang dapat distimulasi adalah kemampuan anak untuk meniru 2 sampai 3 kata yang sering didengar dalam kehidupan sehari-hari, seperti mama, papa, atau nenek.</p>
 
 <x-langkah-stimulasi judul="Pelaksanaan stimulasi" :langkah="[
@@ -20,12 +20,12 @@
     Tidak perlu memaksa anak untuk langsung mengucapkan kata dengan sempurna. Setiap usaha anak untuk meniru suara merupakan bagian dari proses belajar.
 </x-highlight>
 
-<p class="mt-6 mb-2 font-semibold">Contoh interaksi</p>
-<div class="space-y-1 rounded-lg bg-gray-50 p-4">
+<p class="mt-6 mb-2 font-extrabold">Contoh interaksi</p>
+<div class="space-y-1 rounded-lg bg-krem p-4">
     <p><span class="font-medium">Orang tua:</span> “Mama… coba bilang Mama.”</p>
     <p><span class="font-medium">Anak:</span> “Ma… ma.”</p>
     <p><span class="font-medium">Orang tua:</span> “Pintar! Mama.”</p>
-    <p class="text-gray-600">Kemudian orang tua dapat melanjutkan dengan “Papa…” atau “Nenek…” dan memberikan kesempatan kepada anak untuk menirukannya.</p>
+    <p class="text-ink-muted">Kemudian orang tua dapat melanjutkan dengan “Papa…” atau “Nenek…” dan memberikan kesempatan kepada anak untuk menirukannya.</p>
 </div>
 
 <x-checklist judul="Stimulasi bahasa lain usia 12–17 bulan" :items="[

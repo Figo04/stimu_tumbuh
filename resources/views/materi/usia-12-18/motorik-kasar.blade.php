@@ -4,7 +4,7 @@
     Kemampuan motorik kasar mendukung anak dalam bergerak, menjaga keseimbangan, berpindah tempat, dan melakukan aktivitas sehari-hari.
 </x-highlight>
 
-<h3 class="mt-6 mb-2 text-lg font-semibold text-gray-900">Berdiri dengan berpegangan pada kursi atau meja selama 30 detik atau lebih</h3>
+<h3 class="mt-6 mb-2 text-lg font-semibold text-ink">Berdiri dengan berpegangan pada kursi atau meja selama 30 detik atau lebih</h3>
 <p>Pada usia 12 bulan, salah satu kemampuan motorik kasar yang dapat distimulasi adalah kemampuan anak untuk berdiri dengan berpegangan pada kursi atau meja.</p>
 
 <x-checklist judul="Persiapan" :items="[
@@ -18,7 +18,7 @@
     'Setelah anak berdiri, berikan motivasi dengan mengajak berbicara atau memberikan pujian. Biarkan anak tetap berpegangan pada kursi atau meja dan pertahankan posisi berdiri sesuai kemampuan anak.',
 ]" />
 
-<h3 class="mt-6 mb-2 text-lg font-semibold text-gray-900">Aktivitas stimulasi lain usia 12–17 bulan</h3>
+<h3 class="mt-6 mb-2 text-lg font-semibold text-ink">Aktivitas stimulasi lain usia 12–17 bulan</h3>
 <div class="space-y-3">
     @foreach ([
         ['Berjalan menuju ibu', 'Melatih keseimbangan dan koordinasi', 'Ibu memanggil anak dari jarak dekat'],
@@ -27,7 +27,7 @@
         ['Menari mengikuti lagu', 'Melatih koordinasi gerak', 'Ajak anak bergerak mengikuti irama'],
         ['Bermain bola', 'Melatih koordinasi gerak', 'Ajak anak menggulirkan atau menendang bola secara sederhana'],
     ] as [$aktivitas, $tujuan, $cara])
-        <div class="rounded-lg border border-gray-200 p-4">
+        <div class="rounded-lg border border-krem-garis p-4">
             <p class="font-semibold">{{ $aktivitas }}</p>
             <p><span class="font-medium">Tujuan:</span> {{ $tujuan }}</p>
             <p><span class="font-medium">Cara melakukan:</span> {{ $cara }}</p>

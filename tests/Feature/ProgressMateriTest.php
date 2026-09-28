@@ -50,7 +50,24 @@ class ProgressMateriTest extends TestCase
         $this->assertTrue($user->materiSelesai($materi));
         $this->assertEquals($pertama, ProgressMateri::sole()->materi_selesai_at);
 
-        $this->actingAs($user)->get(route('materi.index'))->assertSee('1 dari 1', false)->assertSee('✓ Selesai');
+        $this->actingAs($user)->get(route('materi.index'))->assertSee('1 dari 1', false)->assertSee('Selesai')->assertDontSee('Belum dibuka');
+    }
+
+    public function test_status_kartu_belum_dibuka_sedang_dibaca_selesai(): void
+    {
+        $user = $this->responden();
+        [$belum, $dibaca, $selesai] = Materi::factory()->count(3)->sequence(
+            ['judul' => 'Materi Belum', 'urutan' => 1],
+            ['judul' => 'Materi Dibaca', 'urutan' => 2],
+            ['judul' => 'Materi Selesai', 'urutan' => 3],
+        )->create(['kelompok_usia' => '6-9', 'aspek' => 'motorik_kasar']);
+
+        $this->actingAs($user)->get(route('materi.show', $dibaca));
+        $this->actingAs($user)->post(route('materi.selesai', $selesai));
+
+        $this->actingAs($user)->get(route('materi.index'))
+            ->assertSeeInOrder(['Materi Belum', 'Belum dibuka', 'Materi Dibaca', 'Sedang dibaca', 'Materi Selesai', 'Selesai'])
+            ->assertSee('1 dari 3', false);
     }
 
     public function test_tidak_bisa_menandai_materi_kelompok_usia_lain(): void

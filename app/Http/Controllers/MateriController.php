@@ -12,21 +12,24 @@ class MateriController extends Controller
 {
     public function index(Request $request): View
     {
-        $kelompokUsia = $request->user()->anak()->firstOrFail()->kelompok_usia;
+        $anak = $request->user()->anak()->firstOrFail();
+        $kelompokUsia = $anak->kelompok_usia;
 
         $materi = Materi::where('kelompok_usia', $kelompokUsia)
             ->orderBy('urutan')
             ->get();
 
-        $selesai = $request->user()->progressMateri()
-            ->where('materi_selesai', true)
+        // Ada baris = pernah dibuka ("Sedang dibaca"); materi_selesai = "Selesai"; tanpa baris = "Belum dibuka".
+        $progress = $request->user()->progressMateri()
             ->whereIn('materi_id', $materi->pluck('id'))
-            ->pluck('materi_id');
+            ->get()
+            ->keyBy('materi_id');
 
+        $selesai = $progress->where('materi_selesai', true)->count();
         $total = $materi->count();
         $materi = $materi->groupBy('aspek');
 
-        return view('materi.index', compact('kelompokUsia', 'materi', 'selesai', 'total'));
+        return view('materi.index', compact('anak', 'kelompokUsia', 'materi', 'progress', 'selesai', 'total'));
     }
 
     public function show(Request $request, Materi $materi): View

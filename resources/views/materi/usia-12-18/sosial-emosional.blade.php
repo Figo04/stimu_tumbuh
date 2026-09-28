@@ -3,7 +3,7 @@
     Perkembangan sosial emosional adalah proses anak belajar mengenali dan mengekspresikan emosi, membangun hubungan dengan orang lain, serta beradaptasi dengan lingkungan.
 </x-highlight>
 
-<h3 class="mt-6 mb-2 text-lg font-semibold text-gray-900">Mencari atau mengharapkan ibu muncul kembali saat bersembunyi</h3>
+<h3 class="mt-6 mb-2 text-lg font-semibold text-ink">Mencari atau mengharapkan ibu muncul kembali saat bersembunyi</h3>
 <p>Pada usia 12 bulan, anak mulai menunjukkan kemampuan sosial dan emosional yang semakin berkembang. Salah satu kemampuan yang dapat diamati adalah ketika anak mencari atau menunjukkan harapan bahwa ibu akan muncul kembali saat ibu bersembunyi.</p>
 <p class="mt-2">Stimulasi dapat dilakukan dengan cara yang sederhana dan menyenangkan melalui permainan cilukba.</p>
 
@@ -14,15 +14,15 @@
     'Ulangi permainan beberapa kali. Berikan kesempatan kepada anak untuk menunjukkan respons. Perhatikan apakah anak mencari wajah ibu, melihat ke arah tempat ibu bersembunyi, tersenyum, bersuara, atau menunjukkan tanda-tanda menunggu ibu muncul kembali.',
 ]" />
 
-<p class="mt-6 mb-2 font-semibold">Contoh interaksi</p>
-<div class="space-y-1 rounded-lg bg-gray-50 p-4">
+<p class="mt-6 mb-2 font-extrabold">Contoh interaksi</p>
+<div class="space-y-1 rounded-lg bg-krem p-4">
     <p><span class="font-medium">Ibu:</span> “Mana Mama? Mama di mana?”</p>
-    <p class="text-gray-600">Ibu bersembunyi sebentar. Anak melihat ke arah tempat ibu bersembunyi.</p>
+    <p class="text-ink-muted">Ibu bersembunyi sebentar. Anak melihat ke arah tempat ibu bersembunyi.</p>
     <p><span class="font-medium">Ibu muncul kembali:</span> “Cilukba! Mama ada!”</p>
     <p><span class="font-medium">Ibu memberikan senyuman dan pujian:</span> “Pintar! Kamu mencari Mama.”</p>
 </div>
 
-<h3 class="mt-6 mb-2 text-lg font-semibold text-gray-900">Aktivitas stimulasi lain usia 12–17 bulan</h3>
+<h3 class="mt-6 mb-2 text-lg font-semibold text-ink">Aktivitas stimulasi lain usia 12–17 bulan</h3>
 <div class="space-y-3">
     @foreach ([
         ['Bermain bersama orang tua', 'Membangun kelekatan dan interaksi'],
@@ -32,7 +32,7 @@
         ['Memberikan pelukan dan respons positif', 'Membantu anak merasa aman'],
         ['Menamai emosi anak', 'Membantu anak mengenali perasaan'],
     ] as [$aktivitas, $tujuan])
-        <div class="rounded-lg border border-gray-200 p-4">
+        <div class="rounded-lg border border-krem-garis p-4">
             <p class="font-semibold">{{ $aktivitas }}</p>
             <p><span class="font-medium">Tujuan:</span> {{ $tujuan }}</p>
         </div>

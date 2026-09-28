@@ -3,7 +3,7 @@
     Perkembangan sosial emosional adalah proses anak belajar mengenali dan mengekspresikan emosi, membangun hubungan dengan orang lain, serta beradaptasi dengan lingkungan.
 </x-highlight>
 
-<h3 class="mt-6 mb-2 text-lg font-semibold text-gray-900">Makan menggunakan sendok sendiri tanpa banyak makanan yang tumpah</h3>
+<h3 class="mt-6 mb-2 text-lg font-semibold text-ink">Makan menggunakan sendok sendiri tanpa banyak makanan yang tumpah</h3>
 <p>Pada usia 24 bulan atau 2 tahun, anak mulai belajar melakukan berbagai aktivitas secara mandiri, termasuk makan sendiri.</p>
 <p class="mt-2">Kemampuan makan menggunakan sendok merupakan salah satu bentuk perkembangan kemandirian yang penting. Melalui aktivitas ini, anak belajar mengoordinasikan gerakan tangan dan mata, mengontrol gerakan tangan, serta belajar memenuhi kebutuhan dirinya sendiri.</p>
 <p class="mt-2">Stimulasi dapat dilakukan pada waktu makan dalam suasana yang nyaman dan menyenangkan.</p>
@@ -19,13 +19,13 @@
     Pada tahap awal, makanan mungkin masih banyak yang tumpah. Hal tersebut merupakan bagian dari proses belajar. Berikan kesempatan kepada anak untuk terus mencoba.
 </x-highlight>
 
-<p class="mt-6 mb-2 font-semibold">Contoh interaksi</p>
-<div class="space-y-1 rounded-lg bg-gray-50 p-4">
+<p class="mt-6 mb-2 font-extrabold">Contoh interaksi</p>
+<div class="space-y-1 rounded-lg bg-krem p-4">
     <p><span class="font-medium">Orang tua:</span> “Ayo, Adik makan sendiri. Ambil makanannya dengan sendok.”</p>
-    <p class="text-gray-600">Anak mengambil makanan menggunakan sendok dan membawanya ke mulut.</p>
+    <p class="text-ink-muted">Anak mengambil makanan menggunakan sendok dan membawanya ke mulut.</p>
     <p><span class="font-medium">Orang tua:</span> “Hebat! Adik sudah bisa makan sendiri.”</p>
-    <p class="text-gray-600">Jika makanan tumpah, orang tua tetap tenang dan mengatakan, “Tidak apa-apa. Coba lagi, ya.”</p>
-    <p class="text-gray-600">Berikan bantuan hanya jika anak benar-benar mengalami kesulitan, kemudian berikan kembali kesempatan kepada anak untuk melakukannya sendiri.</p>
+    <p class="text-ink-muted">Jika makanan tumpah, orang tua tetap tenang dan mengatakan, “Tidak apa-apa. Coba lagi, ya.”</p>
+    <p class="text-ink-muted">Berikan bantuan hanya jika anak benar-benar mengalami kesulitan, kemudian berikan kembali kesempatan kepada anak untuk melakukannya sendiri.</p>
 </div>
 
 @include('materi.usia-24-36._jadwal-harian')

@@ -7,7 +7,7 @@
     </ul>
 </x-highlight>
 
-<h3 class="mt-6 mb-2 text-lg font-semibold text-gray-900">Menunjukkan paling sedikit 2 bagian tubuh dengan benar</h3>
+<h3 class="mt-6 mb-2 text-lg font-semibold text-ink">Menunjukkan paling sedikit 2 bagian tubuh dengan benar</h3>
 <p>Pada usia 24 bulan atau 2 tahun, kemampuan bicara dan bahasa anak semakin berkembang. Anak mulai mampu memahami instruksi sederhana dan mengenali nama benda maupun bagian tubuh yang sering disebutkan dalam kehidupan sehari-hari.</p>
 <p class="mt-2">Salah satu kemampuan yang dapat distimulasi adalah kemampuan anak untuk menunjukkan sedikitnya dua bagian tubuhnya dengan benar, misalnya mata dan hidung. Stimulasi dapat dilakukan melalui permainan sederhana di depan cermin atau secara langsung bersama orang tua.</p>
 
@@ -18,13 +18,13 @@
     'Selanjutnya, tanyakan, “Mana hidung Adik?” Biarkan anak mencoba menunjuk hidungnya. Berikan pujian ketika anak berhasil menunjukkan bagian tubuh yang benar.',
 ]" />
 
-<p class="mt-6 mb-2 font-semibold">Contoh interaksi</p>
-<div class="space-y-1 rounded-lg bg-gray-50 p-4">
+<p class="mt-6 mb-2 font-extrabold">Contoh interaksi</p>
+<div class="space-y-1 rounded-lg bg-krem p-4">
     <p><span class="font-medium">Orang tua:</span> “Adik, mana mata?”</p>
-    <p class="text-gray-600">Anak menunjuk matanya.</p>
+    <p class="text-ink-muted">Anak menunjuk matanya.</p>
     <p><span class="font-medium">Orang tua:</span> “Iya, ini mata. Pintar!”</p>
     <p><span class="font-medium">Orang tua:</span> “Mana hidung?”</p>
-    <p class="text-gray-600">Anak menunjuk hidungnya.</p>
+    <p class="text-ink-muted">Anak menunjuk hidungnya.</p>
     <p><span class="font-medium">Orang tua:</span> “Betul, ini hidung. Hebat!”</p>
 </div>
 

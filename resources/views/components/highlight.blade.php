@@ -3,14 +3,14 @@
 @php
     // Kelas ditulis utuh agar terbaca oleh scanner Tailwind.
     $kelas = [
-        'info' => 'border-sky-500 bg-sky-50 text-sky-900',
-        'penting' => 'border-amber-500 bg-amber-50 text-amber-900',
-    ][$varian] ?? 'border-sky-500 bg-sky-50 text-sky-900';
+        'info' => 'border-aspek-bicara-teks bg-aspek-bicara text-ink',
+        'penting' => 'border-hangat bg-hangat-bg text-ink',
+    ][$varian] ?? 'border-aspek-bicara-teks bg-aspek-bicara text-ink';
 @endphp
 
-<div {{ $attributes->merge(['class' => "my-4 rounded-r-lg border-l-4 p-4 text-base leading-relaxed $kelas"]) }}>
+<div {{ $attributes->merge(['class' => "my-4 rounded-r-2xl border-l-4 p-5 text-lg leading-relaxed $kelas"]) }}>
     @if ($judul)
-        <p class="mb-1 font-semibold">{{ $judul }}</p>
+        <p class="mb-1 font-extrabold">{{ $judul }}</p>
     @endif
     <div>{{ $slot }}</div>
 </div>

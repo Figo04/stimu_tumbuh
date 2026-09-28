@@ -4,7 +4,7 @@
     Kemampuan ini diperlukan untuk mengambil benda, memegang alat makan, menyusun mainan, serta melakukan aktivitas yang membutuhkan ketelitian.
 </x-highlight>
 
-<h3 class="mt-6 mb-2 text-lg font-semibold text-gray-900">Mempertemukan 2 kubus kecil yang dipegang</h3>
+<h3 class="mt-6 mb-2 text-lg font-semibold text-ink">Mempertemukan 2 kubus kecil yang dipegang</h3>
 <p>Pada usia 12 bulan, salah satu kemampuan motorik halus yang dapat distimulasi adalah kemampuan anak mempertemukan dua benda yang dipegang menggunakan kedua tangannya.</p>
 
 <x-checklist judul="Persiapan" :items="[
@@ -17,7 +17,7 @@
     'Berikan kesempatan kepada anak untuk mencoba secara mandiri. Orang tua atau pendamping dapat memberikan contoh dan bantuan ringan bila diperlukan, tanpa memaksa gerakan anak.',
 ]" />
 
-<h3 class="mt-6 mb-2 text-lg font-semibold text-gray-900">Aktivitas stimulasi lain usia 12–17 bulan</h3>
+<h3 class="mt-6 mb-2 text-lg font-semibold text-ink">Aktivitas stimulasi lain usia 12–17 bulan</h3>
 <div class="space-y-3">
     @foreach ([
         ['Memasukkan benda ke wadah', 'Koordinasi mata dan tangan', 'Wadah dan benda besar yang aman'],
@@ -26,7 +26,7 @@
         ['Membalik halaman buku', 'Melatih koordinasi jari', 'Buku karton'],
         ['Makan menggunakan sendok', 'Melatih kemandirian', 'Sendok anak dan makanan sesuai usia'],
     ] as [$aktivitas, $tujuan, $media])
-        <div class="rounded-lg border border-gray-200 p-4">
+        <div class="rounded-lg border border-krem-garis p-4">
             <p class="font-semibold">{{ $aktivitas }}</p>
             <p><span class="font-medium">Tujuan:</span> {{ $tujuan }}</p>
             <p><span class="font-medium">Media:</span> {{ $media }}</p>

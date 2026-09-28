@@ -7,7 +7,7 @@
     </ul>
 </x-highlight>
 
-<h3 class="mt-6 mb-2 text-lg font-semibold text-gray-900">Menyebutkan sedikitnya 3 kata yang bermakna</h3>
+<h3 class="mt-6 mb-2 text-lg font-semibold text-ink">Menyebutkan sedikitnya 3 kata yang bermakna</h3>
 <p>Pada usia 18 bulan, kemampuan bicara dan bahasa anak mulai berkembang dengan semakin baik. Anak mulai memahami kata-kata yang sering didengar dan mencoba menggunakannya untuk berkomunikasi.</p>
 <p class="mt-2">Salah satu kemampuan yang perlu distimulasi adalah kemampuan anak untuk menyebutkan sedikitnya tiga kata yang memiliki makna, misalnya “mama”, “papa”, “bola”, “makan”, atau “minum”.</p>
 <p class="mt-2">Stimulasi dapat dilakukan melalui percakapan dan aktivitas sehari-hari.</p>
@@ -19,17 +19,17 @@
     'Lakukan hal yang sama dengan kata lain yang sering digunakan dalam kehidupan sehari-hari, seperti “mama”, “papa”, “makan”, atau “minum”.',
 ]" />
 
-<p class="mt-6 mb-2 font-semibold">Contoh interaksi</p>
-<div class="space-y-1 rounded-lg bg-gray-50 p-4">
+<p class="mt-6 mb-2 font-extrabold">Contoh interaksi</p>
+<div class="space-y-1 rounded-lg bg-krem p-4">
     <p><span class="font-medium">Orang tua</span> (menunjukkan bola): “Ini apa? Bola.”</p>
-    <p class="text-gray-600">Berikan kesempatan kepada anak untuk menirukan.</p>
+    <p class="text-ink-muted">Berikan kesempatan kepada anak untuk menirukan.</p>
     <p><span class="font-medium">Anak:</span> “Bola.”</p>
     <p><span class="font-medium">Orang tua:</span> “Iya, bola. Pintar!”</p>
     <p><span class="font-medium">Orang tua</span> (menunjukkan makanan): “Makan. Ayo makan.”</p>
-    <p class="text-gray-600">Saat anak mencoba mengatakan “makan”, berikan pujian. Dengan cara yang sama, orang tua dapat mengenalkan kata “mama” dan “papa” melalui interaksi sehari-hari.</p>
+    <p class="text-ink-muted">Saat anak mencoba mengatakan “makan”, berikan pujian. Dengan cara yang sama, orang tua dapat mengenalkan kata “mama” dan “papa” melalui interaksi sehari-hari.</p>
 </div>
 
-<h3 class="mt-6 mb-2 text-lg font-semibold text-gray-900">Aktivitas stimulasi lain usia 18–23 bulan</h3>
+<h3 class="mt-6 mb-2 text-lg font-semibold text-ink">Aktivitas stimulasi lain usia 18–23 bulan</h3>
 <div class="space-y-3">
     @foreach ([
         ['Membaca buku bergambar', 'Sebutkan nama benda pada gambar', 'Menambah kosakata'],
@@ -38,7 +38,7 @@
         ['Menamai benda', 'Sebutkan benda yang digunakan sehari-hari', 'Mengembangkan kosakata'],
         ['Mengajak anak memilih', 'Berikan dua pilihan sederhana', 'Mendukung komunikasi dan kemandirian'],
     ] as [$aktivitas, $cara, $manfaat])
-        <div class="rounded-lg border border-gray-200 p-4">
+        <div class="rounded-lg border border-krem-garis p-4">
             <p class="font-semibold">{{ $aktivitas }}</p>
             <p><span class="font-medium">Cara melakukan:</span> {{ $cara }}</p>
             <p><span class="font-medium">Manfaat:</span> {{ $manfaat }}</p>
