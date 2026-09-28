@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\HasilKuesioner;
 use App\Models\KuesionerSoal;
+use App\Models\Materi;
 use App\Models\User;
 use App\Services\SkorService;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -22,6 +23,33 @@ class KuesionerController extends Controller
     {
         return $this->tolak($request->user(), $tipe)
             ?? view('kuesioner.pretest', ['tipe' => $tipe, 'soal' => $this->soal()->groupBy('tipe')]);
+    }
+
+    /**
+     * Tujuan tab "Tes" saat tidak ada tes yang bisa diisi: post-test terkunci atau keduanya selesai.
+     * Hanya tampilan — gating tetap di show()/store(). Skor tidak ditampilkan ke orang tua.
+     */
+    public function status(Request $request): View|RedirectResponse
+    {
+        $user = $request->user();
+
+        if (! $user->sudahPretest()) {
+            return redirect()->route('pretest');
+        }
+        if (! $user->sudahKuesioner('post') && $user->bolehPosttest()) {
+            return redirect()->route('posttest');
+        }
+
+        $hasil = $user->hasilKuesioner()->pluck('submitted_at', 'tipe_sesi');
+        $kelompokUsia = $user->anak?->kelompok_usia;
+        $materiIds = Materi::where('kelompok_usia', $kelompokUsia)->pluck('id');
+
+        return view('kuesioner.status', [
+            'hasil' => $hasil,
+            'kelompokUsia' => $kelompokUsia,
+            'totalMateri' => $materiIds->count(),
+            'materiSelesai' => $user->progressMateri()->where('materi_selesai', true)->whereIn('materi_id', $materiIds)->count(),
+        ]);
     }
 
     public function store(Request $request, string $tipe): RedirectResponse

@@ -37,6 +37,8 @@ Route::middleware(['auth', 'pretest.selesai'])->group(function () {
     // Gating "semua materi selesai" ada di KuesionerController, bukan hanya di menu.
     Route::get('/posttest', [KuesionerController::class, 'show'])->defaults('tipe', 'post')->name('posttest');
     Route::post('/posttest', [KuesionerController::class, 'store'])->defaults('tipe', 'post')->name('posttest.store');
+
+    Route::get('/tes', [KuesionerController::class, 'status'])->name('tes');
 });
 
 Route::middleware('auth')->group(function () {

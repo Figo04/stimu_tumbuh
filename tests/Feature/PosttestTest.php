@@ -61,8 +61,43 @@ class PosttestTest extends TestCase
             ->assertRedirect(route('materi.index'));
 
         $this->assertDatabaseMissing('hasil_kuesioner', ['tipe_sesi' => 'post']);
-        // Menu masih terkunci, bukan tautan.
-        $this->actingAs($user)->get(route('materi.index'))->assertSee('Post-test terkunci');
+        // Tab terkunci membuka halaman status, bukan form post-test.
+        $this->actingAs($user)->get(route('materi.index'))->assertSee('Post-test terkunci')
+            ->assertSee(route('tes'), false)->assertDontSee(route('posttest'), false);
+    }
+
+    public function test_halaman_status_tes_terkunci_menampilkan_progres_materi_tanpa_skor(): void
+    {
+        $user = $this->responden();
+        $user->hasilKuesioner()->update(['skor_pengetahuan' => 77.77]);
+
+        $this->actingAs($user)->get(route('tes'))->assertOk()
+            ->assertSee('Post-test belum terbuka')
+            ->assertSeeInOrder(['Materi selesai', '0 dari 1'])
+            ->assertSee('Terkunci')
+            ->assertDontSee('77.77');
+    }
+
+    public function test_halaman_status_tes_mengarahkan_bila_ada_tes_yang_bisa_diisi(): void
+    {
+        $belumPre = User::factory()->has(Anak::factory(), 'anak')->create();
+        $this->actingAs($belumPre)->get(route('tes'))->assertRedirect(route('pretest'));
+
+        $siapPost = $this->responden();
+        $this->selesaikanSemuaMateri($siapPost);
+        $this->actingAs($siapPost)->get(route('tes'))->assertRedirect(route('posttest'));
+    }
+
+    public function test_halaman_status_tes_setelah_semua_tes_dikirim(): void
+    {
+        $user = $this->responden();
+        $this->selesaikanSemuaMateri($user);
+        HasilKuesioner::create(['user_id' => $user->id, 'tipe_sesi' => 'post', 'submitted_at' => now()]);
+
+        $this->actingAs($user)->get(route('tes'))->assertOk()
+            ->assertSee('Terima kasih, semua tes sudah dikirim')
+            ->assertSee('Dikirim '.now()->translatedFormat('j M Y'))
+            ->assertDontSee('Terkunci');
     }
 
     public function test_belum_pretest_tidak_bisa_membuka_posttest(): void
