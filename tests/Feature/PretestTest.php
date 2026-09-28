@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Anak;
 use App\Models\HasilKuesioner;
 use App\Models\KuesionerSoal;
 use App\Models\User;
@@ -35,6 +36,17 @@ class PretestTest extends TestCase
         $this->actingAs($user)->get('/pretest')->assertOk()->assertSee('Kirim Jawaban');
     }
 
+    public function test_dashboard_meneruskan_ke_materi_membawa_pesan_sukses(): void
+    {
+        $user = User::factory()->has(Anak::factory(), 'anak')->create();
+
+        $this->actingAs($user)->followingRedirects()
+            ->post('/pretest', ['jawaban' => $this->jawabanLengkap()])
+            ->assertOk()
+            ->assertSee('Materi Stimulasi')
+            ->assertSee('Pre-test berhasil dikirim');
+    }
+
     public function test_pretest_tersimpan_dan_dashboard_terbuka(): void
     {
         $user = User::factory()->create();
@@ -54,7 +66,8 @@ class PretestTest extends TestCase
         $this->assertEquals($persen, $hasil->skor_pengetahuan);
         $this->assertSame(SkorService::kategoriPengetahuan($persen), $hasil->kategori_pengetahuan);
         $this->assertEquals($sikap, $hasil->skor_sikap);
-        $this->actingAs($user)->get('/dashboard')->assertOk();
+        // Tidak lagi dilempar ke pre-test; dashboard meneruskan ke Materi.
+        $this->actingAs($user)->get('/dashboard')->assertRedirect(route('materi.index'));
     }
 
     public function test_jawaban_tidak_lengkap_atau_tidak_valid_ditolak(): void

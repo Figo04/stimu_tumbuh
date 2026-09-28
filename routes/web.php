@@ -11,8 +11,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Tidak ada halaman dashboard orang tua di desain — Materi adalah beranda. reflash() agar pesan
+// "berhasil dikirim" dari pre-test/post-test tetap sampai ke halaman Materi.
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    session()->reflash();
+
+    return redirect()->route('materi.index');
 })->middleware(['auth', 'verified', 'pretest.selesai'])->name('dashboard');
 
 Route::middleware(['auth', 'pretest.selesai'])->group(function () {

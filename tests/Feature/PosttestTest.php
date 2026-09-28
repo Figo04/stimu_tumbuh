@@ -80,7 +80,7 @@ class PosttestTest extends TestCase
         $user = $this->responden();
         $this->selesaikanSemuaMateri($user);
 
-        $this->actingAs($user)->get('/dashboard')
+        $this->actingAs($user)->get(route('materi.index'))
             ->assertSee(route('posttest'), false)
             ->assertDontSee('Post-test terkunci');
     }
