@@ -18,6 +18,14 @@
                     @include('profile.partials.update-password-form')
                 </div>
             </div>
+
+            {{-- Keluar pindah ke sini dari dropdown navigasi lama (mockup: bawah halaman Profil). --}}
+            <form method="POST" action="{{ route('logout') }}" class="px-4 sm:px-0">
+                @csrf
+                <button type="submit" class="w-full rounded-2xl border border-krem-garis bg-white py-4 font-bold text-ink-muted hover:text-ink">
+                    Keluar
+                </button>
+            </form>
         </div>
     </div>
 </x-app-layout>

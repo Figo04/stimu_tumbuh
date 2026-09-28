@@ -1,14 +1,11 @@
 {{-- Tombol konsultasi → WhatsApp tim peneliti (PRD §3.1). Nomor kosong = tidak tampil. --}}
-@props(['responsive' => false])
-
 @if ($nomor = config('services.wa_konsultasi'))
-    @php
-        $pesan = 'Halo tim peneliti StimuTumbuh, saya responden '.Auth::user()->kode_responden.' ingin berkonsultasi.';
-        $kelas = $responsive
-            ? 'block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-emerald-700 hover:bg-gray-50'
-            : 'inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-emerald-700 hover:text-emerald-800';
-    @endphp
-    <a href="https://wa.me/{{ $nomor }}?text={{ rawurlencode($pesan) }}" target="_blank" rel="noopener" class="{{ $kelas }}">
-        Konsultasi (WhatsApp)
+    @php($pesan = 'Halo tim peneliti StimuTumbuh, saya responden '.Auth::user()->kode_responden.' ingin berkonsultasi.')
+    <a href="https://wa.me/{{ $nomor }}?text={{ rawurlencode($pesan) }}" target="_blank" rel="noopener"
+       aria-label="Konsultasi dengan tim peneliti lewat WhatsApp" title="Konsultasi (WhatsApp)"
+       class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand hover:bg-brand-aktif">
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+        </svg>
     </a>
 @endif

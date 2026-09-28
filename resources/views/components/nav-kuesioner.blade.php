@@ -1,24 +1,23 @@
-{{-- Menu Pre-test/Post-test yang berganti sendiri (PRD §4 alur orang tua). --}}
-@props(['responsive' => false])
-
+{{-- Tab "Tes": Pre-test lalu berganti sendiri ke Post-test (PRD §4 alur orang tua). Gating tetap di KuesionerController. --}}
 @php
     $u = Auth::user();
-    $link = $responsive ? 'responsive-nav-link' : 'nav-link';
-    $kunci = $responsive
-        ? 'block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-400'
-        : 'inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-400';
+    $aktif = request()->routeIs('pretest', 'posttest');
+
+    [$href, $status] = match (true) {
+        ! $u->sudahPretest() => [route('pretest'), 'Pre-test belum diisi'],
+        $u->sudahKuesioner('post') => [null, 'Post-test selesai'],
+        $u->semuaMateriSelesai() => [route('posttest'), 'Post-test terbuka'],
+        default => [null, 'Post-test terkunci'],
+    };
 @endphp
 
-@if (! $u->sudahPretest())
-    <x-dynamic-component :component="$link" :href="route('pretest')" :active="request()->routeIs('pretest')">
-        Pre-test
-    </x-dynamic-component>
-@elseif ($u->sudahKuesioner('post'))
-    <span class="{{ $kunci }}">Post-test ✓</span>
-@elseif ($u->semuaMateriSelesai())
-    <x-dynamic-component :component="$link" :href="route('posttest')" :active="request()->routeIs('posttest')">
-        Post-test
-    </x-dynamic-component>
-@else
-    <span class="{{ $kunci }}" title="Selesaikan semua materi kelompok usia anak dulu">Post-test 🔒</span>
-@endif
+<x-tab-ortu :href="$href" :active="$aktif" label="Tes" :title="$status">
+    <rect width="8" height="4" x="8" y="2" rx="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="m9 14 2 2 4-4" />
+    <x-slot:extra>
+        <span class="sr-only">{{ $status }}</span>
+        @if ($href && ! $aktif)
+            {{-- Titik penanda: ada tes yang menunggu diisi. --}}
+            <span class="absolute right-1/2 top-2 -mr-4 h-2 w-2 rounded-full bg-hangat" aria-hidden="true"></span>
+        @endif
+    </x-slot:extra>
+</x-tab-ortu>

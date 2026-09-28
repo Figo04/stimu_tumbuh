@@ -62,7 +62,7 @@ class PosttestTest extends TestCase
 
         $this->assertDatabaseMissing('hasil_kuesioner', ['tipe_sesi' => 'post']);
         // Menu masih terkunci, bukan tautan.
-        $this->actingAs($user)->get(route('materi.index'))->assertSee('Post-test 🔒');
+        $this->actingAs($user)->get(route('materi.index'))->assertSee('Post-test terkunci');
     }
 
     public function test_belum_pretest_tidak_bisa_membuka_posttest(): void
@@ -82,7 +82,7 @@ class PosttestTest extends TestCase
 
         $this->actingAs($user)->get('/dashboard')
             ->assertSee(route('posttest'), false)
-            ->assertDontSee('Post-test 🔒');
+            ->assertDontSee('Post-test terkunci');
     }
 
     public function test_posttest_tersimpan_dengan_skor_dan_tipe_sesi_post(): void
