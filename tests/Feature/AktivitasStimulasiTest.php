@@ -125,6 +125,26 @@ class AktivitasStimulasiTest extends TestCase
         }
     }
 
+    public function test_kartu_ringkasan_minggu_ini_total_dan_rata_rata_durasi(): void
+    {
+        $this->travelTo('2026-09-19 10:00'); // Sabtu; minggu berjalan 14–20 Sep
+        $user = $this->responden();
+        $user->aktivitasStimulasi()->create($this->entri(['tanggal' => '2026-09-18', 'durasi_menit' => 10]));
+        $user->aktivitasStimulasi()->create($this->entri(['tanggal' => '2026-09-19', 'durasi_menit' => 20]));
+        $user->aktivitasStimulasi()->create($this->entri(['tanggal' => '2026-09-05', 'durasi_menit' => null]));
+
+        // Durasi kosong tidak ikut rata-rata: (10 + 20) / 2 = 15.
+        $this->actingAs($user)->get(route('aktivitas.index'))->assertOk()
+            ->assertSeeInOrder(['Minggu ini', '2 kali', 'Total', '3 kali', 'Rata-rata', '15 menit']);
+    }
+
+    public function test_kalender_kosong_menampilkan_ajakan_mencatat(): void
+    {
+        $this->actingAs($this->responden())->get(route('aktivitas.index'))->assertOk()
+            ->assertSee('Belum ada catatan stimulasi')
+            ->assertSeeInOrder(['Rata-rata', '–']);
+    }
+
     public function test_kalender_terkunci_sebelum_pretest(): void
     {
         $user = User::factory()->create();

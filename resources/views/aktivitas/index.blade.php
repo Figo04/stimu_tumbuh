@@ -1,98 +1,141 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">Kalender Stimulasi</h2>
-        <p class="text-sm text-gray-500">Catat setiap kali Anda melakukan stimulasi. Boleh diisi berkali-kali.</p>
-    </x-slot>
+    {{-- tambah: lembar form dari bawah; terbuka lagi otomatis bila validasi gagal. --}}
+    {{-- pb-20: ruang agar tombol + tidak menutupi kartu terakhir. --}}
+    <div class="mx-auto max-w-2xl px-4 pb-20 pt-6" x-data="{ tambah: @js($errors->any()) }" @keydown.escape.window="tambah = false">
+        <h1 class="text-3xl font-extrabold">Kalender Stimulasi</h1>
+        <p class="mt-1 text-lg text-ink-muted">Catatan kecil yang tumbuh bersama {{ rtrim(Auth::user()->anak?->nama_inisial ?? 'si kecil', '.') }}.</p>
 
-    <div class="py-8">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-            @if (session('status'))
-                <p class="rounded-md bg-emerald-50 px-4 py-3 text-emerald-800">✓ {{ session('status') }}</p>
-            @endif
+        @if (session('status'))
+            <x-auth-session-status class="mt-4" :status="'✓ '.session('status')" />
+        @endif
 
-            <section class="bg-white shadow-sm sm:rounded-lg p-4 sm:p-6 text-base text-gray-800">
-                <div class="flex items-center justify-between gap-2">
-                    <a href="{{ route('aktivitas.index', ['bulan' => $bulan->copy()->subMonth()->format('Y-m')]) }}"
-                       class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" aria-label="Bulan sebelumnya">‹</a>
-                    <h3 class="font-semibold text-gray-800">{{ $bulan->translatedFormat('F Y') }}</h3>
-                    @if ($bulan->lessThan($bulanIni))
-                        <a href="{{ route('aktivitas.index', ['bulan' => $bulan->copy()->addMonth()->format('Y-m')]) }}"
-                           class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" aria-label="Bulan berikutnya">›</a>
-                    @else
-                        <span class="px-4 py-2 text-sm text-gray-300" aria-hidden="true">›</span>
-                    @endif
-                </div>
+        <section class="mt-6 rounded-3xl bg-white p-4 shadow-sm sm:p-6">
+            <div class="flex items-center justify-between gap-2">
+                <a href="{{ route('aktivitas.index', ['bulan' => $bulan->copy()->subMonth()->format('Y-m')]) }}"
+                   class="flex h-11 w-11 items-center justify-center rounded-full hover:bg-krem" aria-label="Bulan sebelumnya">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+                </a>
+                <h2 class="text-lg font-extrabold">{{ $bulan->translatedFormat('F Y') }}</h2>
+                @if ($bulan->lessThan($bulanIni))
+                    <a href="{{ route('aktivitas.index', ['bulan' => $bulan->copy()->addMonth()->format('Y-m')]) }}"
+                       class="flex h-11 w-11 items-center justify-center rounded-full hover:bg-krem" aria-label="Bulan berikutnya">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+                    </a>
+                @else
+                    <span class="flex h-11 w-11 items-center justify-center text-krem-garis" aria-hidden="true">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                    </span>
+                @endif
+            </div>
 
-                <div class="mt-4 grid grid-cols-7 gap-1 text-center">
-                    @foreach (['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'] as $hari)
-                        <div class="py-1 text-xs font-medium text-gray-500">{{ $hari }}</div>
-                    @endforeach
-                    @for ($i = 1; $i < $bulan->dayOfWeekIso; $i++)
-                        <div></div>
-                    @endfor
-                    @for ($tgl = 1; $tgl <= $bulan->daysInMonth; $tgl++)
-                        @php $hariIni = $bulan->isSameMonth(now()) && $tgl === now()->day; @endphp
-                        @if ($jumlah = $penanda[$tgl] ?? 0)
-                            <a href="#tgl-{{ $bulan->copy()->day($tgl)->toDateString() }}"
-                               class="flex flex-col items-center rounded-md bg-emerald-50 py-2 font-medium text-emerald-800 hover:bg-emerald-100 {{ $hariIni ? 'ring-2 ring-indigo-500' : '' }}"
-                               title="{{ $jumlah }} catatan">
+            <div class="mt-4 grid grid-cols-7 gap-y-1 text-center">
+                @foreach (['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'] as $hari)
+                    <div class="py-2 text-sm font-bold text-ink-muted">{{ $hari }}</div>
+                @endforeach
+                {{-- Minggu di kolom pertama (mockup): dayOfWeek 0 = Minggu. --}}
+                @for ($i = 0; $i < $bulan->dayOfWeek; $i++)
+                    <div></div>
+                @endfor
+                @for ($tgl = 1; $tgl <= $bulan->daysInMonth; $tgl++)
+                    @php
+                        $hariIni = $bulan->isSameMonth(now()) && $tgl === now()->day;
+                        $jumlah = $penanda[$tgl] ?? 0;
+                        $lingkar = $hariIni ? 'bg-brand text-white' : ($jumlah ? 'text-ink hover:bg-brand-soft' : 'text-ink');
+                    @endphp
+                    <div class="flex justify-center">
+                        @if ($jumlah)
+                            <a href="#tgl-{{ $bulan->copy()->day($tgl)->toDateString() }}" title="{{ $jumlah }} catatan"
+                               class="relative flex h-11 w-11 items-center justify-center rounded-full font-bold {{ $lingkar }}">
                                 {{ $tgl }}
-                                <span class="mt-1 h-1.5 w-1.5 rounded-full bg-emerald-600"></span>
+                                <span class="absolute bottom-1 h-1.5 w-1.5 rounded-full {{ $hariIni ? 'bg-white' : 'bg-brand' }}"></span>
                             </a>
                         @else
-                            <div class="flex flex-col items-center rounded-md py-2 text-gray-700 {{ $hariIni ? 'ring-2 ring-indigo-500' : '' }}">
-                                {{ $tgl }}
-                                <span class="mt-1 h-1.5 w-1.5"></span>
-                            </div>
+                            <span class="flex h-11 w-11 items-center justify-center rounded-full font-bold {{ $lingkar }}">{{ $tgl }}</span>
                         @endif
-                    @endfor
-                </div>
-                <p class="mt-3 text-sm text-gray-500">
-                    <span class="inline-block h-1.5 w-1.5 rounded-full bg-emerald-600 align-middle"></span>
-                    Tanggal yang sudah ada catatan — ketuk untuk melihat riwayatnya.
-                </p>
-            </section>
+                    </div>
+                @endfor
+            </div>
+            <p class="mt-3 flex items-center gap-2 text-sm text-ink-muted">
+                <span class="inline-block h-1.5 w-1.5 rounded-full bg-brand"></span>
+                Ada catatan — ketuk tanggalnya untuk melihat.
+            </p>
+        </section>
 
-            <section class="bg-white shadow-sm sm:rounded-lg p-6 text-base text-gray-800">
-                <h3 class="font-semibold text-gray-800">Tambah catatan stimulasi</h3>
-                <form method="POST" action="{{ route('aktivitas.store') }}" class="mt-4 space-y-4">
+        <div class="mt-4 grid grid-cols-3 gap-3">
+            @foreach ([
+                'Minggu ini' => $ringkasan['mingguIni'].' kali',
+                'Total' => $ringkasan['total'].' kali',
+                'Rata-rata' => $ringkasan['rataDurasi'] ? round($ringkasan['rataDurasi']).' menit' : '–',
+            ] as $label => $nilai)
+                <div class="rounded-2xl bg-white px-2 py-4 text-center shadow-sm">
+                    <p class="text-sm text-ink-muted">{{ $label }}</p>
+                    <p class="mt-1 text-lg font-extrabold">{{ $nilai }}</p>
+                </div>
+            @endforeach
+        </div>
+
+        @forelse ($perTanggal as $tanggal => $entriHari)
+            @php($tgl = $entriHari->first()->tanggal)
+            <section id="tgl-{{ $tanggal }}" class="mt-8 scroll-mt-24">
+                <h2 class="text-xl font-extrabold">{{ $tgl->translatedFormat($tgl->isCurrentYear() ? 'j F' : 'j F Y') }}</h2>
+
+                <div class="mt-3 space-y-3">
+                    @foreach ($entriHari as $entri)
+                        <article class="rounded-3xl bg-white p-5 shadow-sm">
+                            <div class="flex items-start justify-between gap-3">
+                                <x-chip-aspek :aspek="$entri->aspek" />
+                                <div class="-mr-2 -mt-1 flex shrink-0">
+                                    <a href="{{ route('aktivitas.edit', $entri) }}" class="flex h-11 w-11 items-center justify-center rounded-full text-ink hover:bg-krem" aria-label="Ubah catatan" title="Ubah">
+                                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z" /></svg>
+                                    </a>
+                                    <form method="POST" action="{{ route('aktivitas.destroy', $entri) }}" onsubmit="return confirm('Hapus catatan ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="flex h-11 w-11 items-center justify-center rounded-full text-bahaya hover:bg-aspek-sosial" aria-label="Hapus catatan" title="Hapus">
+                                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><path d="M10 11v6" /><path d="M14 11v6" /></svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <p class="mt-3 text-lg font-extrabold">
+                                {{ $entri->jenis_stimulasi ?? ($entri->materi ? 'Praktik: '.$entri->materi->judul : 'Stimulasi') }}{{ $entri->durasi_menit ? ' · '.$entri->durasi_menit.' menit' : '' }}
+                            </p>
+                            @if ($entri->respons_anak)
+                                <p class="mt-1 whitespace-pre-line text-lg text-ink-muted">{{ $entri->respons_anak }}</p>
+                            @endif
+                            <p class="mt-2 text-sm text-ink-muted">Oleh {{ \App\Models\AktivitasStimulasi::PELAKU[$entri->pelaku] }}</p>
+                        </article>
+                    @endforeach
+                </div>
+            </section>
+        @empty
+            <div class="mt-8 rounded-3xl bg-white p-6 text-center shadow-sm">
+                <p class="text-lg font-extrabold">Belum ada catatan stimulasi</p>
+                <p class="mt-1 text-ink-muted">Ketuk tombol + untuk mencatat stimulasi pertama. Boleh diisi berkali-kali.</p>
+            </div>
+        @endforelse
+
+        {{-- Tombol tambah melayang, di atas tab bar. --}}
+        <button type="button" @click="tambah = true" aria-label="Tambah catatan stimulasi"
+                class="fixed bottom-24 right-4 z-30 flex h-16 w-16 items-center justify-center rounded-full bg-brand text-white shadow-lg shadow-brand/30 hover:bg-brand/90 sm:right-[max(1rem,calc(50%-20rem))]">
+            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+        </button>
+
+        <div x-show="tambah" x-cloak class="fixed inset-0 z-40 flex items-end justify-center bg-ink/40 sm:items-center" @click.self="tambah = false">
+            <section role="dialog" aria-modal="true" aria-labelledby="judul-tambah"
+                     class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-3xl bg-white p-6 sm:rounded-3xl">
+                <div class="flex items-center justify-between gap-4">
+                    <h2 id="judul-tambah" class="text-xl font-extrabold">Tambah catatan stimulasi</h2>
+                    <button type="button" @click="tambah = false" class="flex h-11 w-11 items-center justify-center rounded-full hover:bg-krem" aria-label="Tutup">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
+                    </button>
+                </div>
+                <form method="POST" action="{{ route('aktivitas.store') }}" class="mt-4 space-y-5">
                     @csrf
                     @include('aktivitas._form', ['entri' => null])
-                    <button type="submit" class="w-full rounded-md bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">
-                        Simpan catatan
-                    </button>
+                    <x-primary-button class="w-full">Simpan catatan</x-primary-button>
                 </form>
-            </section>
-
-            <section class="bg-white shadow-sm sm:rounded-lg p-6 text-base text-gray-800">
-                <h3 class="font-semibold text-gray-800">Riwayat stimulasi ({{ $riwayat->count() }})</h3>
-                @forelse ($riwayat as $entri)
-                    @php $tanggal = $entri->tanggal->toDateString(); @endphp
-                    {{-- Anchor hanya di entri pertama tiap tanggal (target link dari grid kalender). --}}
-                    <div @if ($tanggal !== ($tanggalSebelum ?? null)) id="tgl-{{ $tanggal }}" @endif class="mt-3 border-t border-gray-100 pt-3 scroll-mt-4">
-                    @php $tanggalSebelum = $tanggal; @endphp
-                        <p class="text-sm font-medium text-gray-600">{{ $entri->tanggal->translatedFormat('l, d F Y') }}</p>
-                        <p class="mt-1 font-medium">
-                            {{ \App\Models\Materi::ASPEK[$entri->aspek] }}{{ $entri->jenis_stimulasi ? ' — '.$entri->jenis_stimulasi : '' }}
-                        </p>
-                        <p class="text-sm text-gray-600">
-                            Oleh {{ \App\Models\AktivitasStimulasi::PELAKU[$entri->pelaku] }}{{ $entri->durasi_menit ? ' · '.$entri->durasi_menit.' menit' : '' }}{{ $entri->materi ? ' · dari Praktik: '.$entri->materi->judul : '' }}
-                        </p>
-                        @if ($entri->respons_anak)
-                            <p class="mt-1 whitespace-pre-line">{{ $entri->respons_anak }}</p>
-                        @endif
-                        <div class="mt-2 flex gap-2">
-                            <a href="{{ route('aktivitas.edit', $entri) }}" class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Ubah</a>
-                            <form method="POST" action="{{ route('aktivitas.destroy', $entri) }}" onsubmit="return confirm('Hapus catatan ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="rounded-md border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50">Hapus</button>
-                            </form>
-                        </div>
-                    </div>
-                @empty
-                    <p class="mt-2 text-gray-500">Belum ada catatan stimulasi.</p>
-                @endforelse
             </section>
         </div>
     </div>

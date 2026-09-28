@@ -1,21 +1,18 @@
 <x-app-layout>
-    <x-slot name="header">
-        <a href="{{ route('aktivitas.index') }}" class="text-sm text-gray-500 hover:text-gray-700">&lsaquo; Kalender Stimulasi</a>
-        <h2 class="mt-1 font-semibold text-xl text-gray-800 leading-tight">Ubah catatan stimulasi</h2>
-    </x-slot>
+    <div class="mx-auto max-w-2xl px-4 py-6">
+        <a href="{{ route('aktivitas.index') }}" class="inline-flex items-center gap-1 font-bold text-brand hover:underline">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+            Kalender Stimulasi
+        </a>
+        <h1 class="mt-3 text-3xl font-extrabold">Ubah catatan stimulasi</h1>
 
-    <div class="py-8">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <section class="bg-white shadow-sm sm:rounded-lg p-6 text-base text-gray-800">
-                <form method="POST" action="{{ route('aktivitas.update', $entri) }}" class="space-y-4">
-                    @csrf
-                    @method('PUT')
-                    @include('aktivitas._form')
-                    <button type="submit" class="w-full rounded-md bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700">
-                        Simpan perubahan
-                    </button>
-                </form>
-            </section>
-        </div>
+        <section class="mt-6 rounded-3xl bg-white p-6 shadow-sm">
+            <form method="POST" action="{{ route('aktivitas.update', $entri) }}" class="space-y-5">
+                @csrf
+                @method('PUT')
+                @include('aktivitas._form')
+                <x-primary-button class="w-full">Simpan perubahan</x-primary-button>
+            </form>
+        </section>
     </div>
 </x-app-layout>

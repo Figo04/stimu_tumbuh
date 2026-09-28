@@ -35,7 +35,19 @@ class AktivitasStimulasiController extends Controller
         $penanda = $riwayat->filter(fn ($e) => $e->tanggal->isSameMonth($bulan))
             ->countBy(fn ($e) => $e->tanggal->day);
 
-        return view('aktivitas.index', compact('riwayat', 'bulan', 'bulanIni', 'penanda'));
+        // Kartu ringkasan (mockup Kalender): dihitung dari riwayat yang sudah dimuat.
+        $ringkasan = [
+            // Minggu mulai hari Minggu, sama dengan kolom pertama grid kalender.
+            'mingguIni' => $riwayat->filter(fn ($e) => $e->tanggal->between(
+                now()->startOfWeek(Carbon::SUNDAY), now()->endOfWeek(Carbon::SATURDAY)
+            ))->count(),
+            'total' => $riwayat->count(),
+            'rataDurasi' => $riwayat->whereNotNull('durasi_menit')->avg('durasi_menit'),
+        ];
+
+        $perTanggal = $riwayat->groupBy(fn ($e) => $e->tanggal->toDateString());
+
+        return view('aktivitas.index', compact('perTanggal', 'bulan', 'bulanIni', 'penanda', 'ringkasan'));
     }
 
     public function store(Request $request): RedirectResponse
