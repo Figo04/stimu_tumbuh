@@ -75,7 +75,7 @@
         </div>
 
         @forelse ($perTanggal as $tanggal => $entriHari)
-            @php($tgl = $entriHari->first()->tanggal)
+            @php $tgl = $entriHari->first()->tanggal; @endphp
             <section id="tgl-{{ $tanggal }}" class="mt-8 scroll-mt-24">
                 <h2 class="text-xl font-extrabold">{{ $tgl->translatedFormat($tgl->isCurrentYear() ? 'j F' : 'j F Y') }}</h2>
 

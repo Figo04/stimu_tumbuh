@@ -65,7 +65,20 @@ class PerkembanganTest extends TestCase
         $this->assertSame(2, $user->penilaianPerkembangan()->count());
         $this->assertSame('37.50', $p->fresh()->skor_total);
 
-        $this->actingAs($user)->get(route('perkembangan.index'))->assertSee('Total: <strong>100%</strong>', false);
+        $this->actingAs($user)->get(route('perkembangan.index'))
+            ->assertSeeInOrder(['Penilaian terbaru', '100%', 'secara keseluruhan'])
+            ->assertSee('Naik 62.5% dibanding penilaian sebelumnya'); // 37.5 → 100
+    }
+
+    public function test_belum_ada_penilaian_menampilkan_ajakan_penilaian_pertama(): void
+    {
+        $user = $this->responden();
+        $this->item();
+
+        $this->actingAs($user)->get(route('perkembangan.index'))->assertOk()
+            ->assertSee('Belum ada penilaian')
+            ->assertSee('Mulai Penilaian Pertama')
+            ->assertDontSee('Penilaian terbaru');
     }
 
     public function test_riwayat_menampilkan_perubahan_skor_hanya_dalam_kelompok_usia_sama(): void
@@ -84,6 +97,7 @@ class PerkembanganTest extends TestCase
 
         $this->actingAs($user)->get(route('perkembangan.index'))->assertOk()
             ->assertSeeInOrder(['Riwayat penilaian', today()->translatedFormat('j F Y'), today()->subMonth()->translatedFormat('j F Y')])
+            ->assertSee('Naik 43.75% dibanding penilaian sebelumnya')
             ->assertSee('▲ +43.75')   // total 37.5 → 81.25
             ->assertSee('▼ −25')      // motorik halus 50 → 25
             ->assertSee('tetap')      // motorik kasar 100 → 100
