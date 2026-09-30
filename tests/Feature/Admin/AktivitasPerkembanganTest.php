@@ -45,11 +45,11 @@ class AktivitasPerkembanganTest extends TestCase
     public function test_riwayat_aktivitas_menampilkan_entri_dan_usia_anak_saat_entri(): void
     {
         $user = User::factory()->create();
-        Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonths(8)]);
+        Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow(8)]);
         $materi = Materi::factory()->create(['judul' => 'Materi Uji']);
 
         AktivitasStimulasi::create([
-            'user_id' => $user->id, 'tanggal' => now()->subMonths(2), 'aspek' => 'motorik_halus',
+            'user_id' => $user->id, 'tanggal' => now()->subMonthsNoOverflow(2), 'aspek' => 'motorik_halus',
             'jenis_stimulasi' => 'Meraih mainan', 'durasi_menit' => 15, 'pelaku' => 'ayah',
             'respons_anak' => 'Anak tertawa',
         ]);
@@ -69,7 +69,7 @@ class AktivitasPerkembanganTest extends TestCase
     public function test_rekap_perkembangan_menampilkan_jumlah_dan_skor_terakhir(): void
     {
         $user = User::factory()->create(['nama' => 'Ibu Nilai']);
-        $anak = Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonths(4)]);
+        $anak = Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow(4)]);
 
         foreach ([['2026-01-10', 50], ['2026-02-10', 75]] as [$tanggal, $total]) {
             PenilaianPerkembangan::create([
@@ -93,7 +93,7 @@ class AktivitasPerkembanganTest extends TestCase
     public function test_riwayat_perkembangan_menampilkan_skor_tiap_aspek_tanpa_jawaban_per_item(): void
     {
         $user = User::factory()->create();
-        $anak = Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonths(4)]);
+        $anak = Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow(4)]);
 
         PenilaianPerkembangan::create([
             'user_id' => $user->id, 'anak_id' => $anak->id, 'tanggal_penilaian' => '2026-03-05',

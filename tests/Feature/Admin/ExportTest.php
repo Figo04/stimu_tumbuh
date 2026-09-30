@@ -29,7 +29,7 @@ class ExportTest extends TestCase
     {
         $user = User::factory()->create(['kode_responden' => 'RSP-001', 'nama' => 'Ibu Uji']);
         $anak = Anak::factory()->create([
-            'user_id' => $user->id, 'nama_inisial' => 'AZ', 'tanggal_lahir' => now()->subMonths(8),
+            'user_id' => $user->id, 'nama_inisial' => 'AZ', 'tanggal_lahir' => now()->subMonthsNoOverflow(8),
             'jenis_persalinan' => 'sc', 'kondisi_lahir' => 'bblr', 'bb_lahir_gram' => 2200,
         ]);
 
@@ -42,7 +42,7 @@ class ExportTest extends TestCase
         ]);
 
         AktivitasStimulasi::create([
-            'user_id' => $user->id, 'tanggal' => now()->subMonths(2), 'aspek' => 'motorik_kasar',
+            'user_id' => $user->id, 'tanggal' => now()->subMonthsNoOverflow(2), 'aspek' => 'motorik_kasar',
             'jenis_stimulasi' => 'Tengkurap', 'durasi_menit' => 20, 'pelaku' => 'ibu', 'respons_anak' => 'Senang',
         ]);
         // Entri tab Praktik: tanpa jenis_stimulasi & durasi.

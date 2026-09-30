@@ -57,7 +57,7 @@ class DashboardTest extends TestCase
 
         $responden = function (int $usiaBulan): User {
             $user = User::factory()->create();
-            Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonths($usiaBulan)]);
+            Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow($usiaBulan)]);
 
             return $user->load('anak');
         };

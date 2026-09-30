@@ -33,7 +33,7 @@ class PosttestTest extends TestCase
     private function responden(): User
     {
         $user = User::factory()->create();
-        Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonths(7)->toDateString()]);
+        Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow(7)->toDateString()]);
         HasilKuesioner::create(['user_id' => $user->id, 'tipe_sesi' => 'pre', 'submitted_at' => now()]);
         Materi::factory()->create(['kelompok_usia' => '6-9']);
 

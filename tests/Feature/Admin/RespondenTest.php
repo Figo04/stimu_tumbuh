@@ -25,7 +25,7 @@ class RespondenTest extends TestCase
         $user = User::factory()->create(['nama' => 'Ibu A', 'kecamatan' => 'Ngaglik']);
         Anak::factory()->create([
             'user_id' => $user->id, 'nama_inisial' => 'AZ', 'jenis_kelamin' => 'P',
-            'tanggal_lahir' => now()->subMonths(7),
+            'tanggal_lahir' => now()->subMonthsNoOverflow(7),
         ]);
 
         $this->actingAs($this->admin(), 'admin')->get(route('admin.responden.index'))
@@ -38,7 +38,7 @@ class RespondenTest extends TestCase
     {
         $user = User::factory()->create(['pekerjaan' => 'Guru']);
         Anak::factory()->create([
-            'user_id' => $user->id, 'tanggal_lahir' => now()->subMonths(2),
+            'user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow(2),
             'bb_lahir_gram' => 2300, 'jenis_persalinan' => 'sc', 'kondisi_lahir' => 'bblr',
         ]);
 

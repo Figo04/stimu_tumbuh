@@ -22,7 +22,7 @@ class ProfileTest extends TestCase
             'kecamatan' => 'Sukajadi',
             'anak' => [
                 'nama_inisial' => 'AB',
-                'tanggal_lahir' => now()->subMonths(4)->toDateString(),
+                'tanggal_lahir' => now()->subMonthsNoOverflow(4)->toDateString(),
                 'jenis_kelamin' => 'P',
                 'bb_lahir_gram' => 3100,
                 'kondisi_lahir' => 'sehat',
@@ -113,7 +113,7 @@ class ProfileTest extends TestCase
     public function test_tanggal_lahir_rules(): void
     {
         // Anak yang kini > 36 bulan tetap bisa menyimpan profil dengan tanggal lahir tersimpan.
-        $lahir = now()->subMonths(40)->toDateString();
+        $lahir = now()->subMonthsNoOverflow(40)->toDateString();
         $user = Anak::factory()->create(['tanggal_lahir' => $lahir])->user;
 
         $this->actingAs($user)
@@ -121,7 +121,7 @@ class ProfileTest extends TestCase
             ->assertSessionHasNoErrors();
 
         // Tapi tidak boleh dimundurkan lebih jauh, dan tidak boleh di masa depan.
-        foreach ([now()->subMonths(41), now()->addDay()] as $tanggal) {
+        foreach ([now()->subMonthsNoOverflow(41), now()->addDay()] as $tanggal) {
             $this->actingAs($user)
                 ->patch('/profile', $this->payload(['anak' => ['tanggal_lahir' => $tanggal->toDateString()]]))
                 ->assertSessionHasErrors('anak.tanggal_lahir');

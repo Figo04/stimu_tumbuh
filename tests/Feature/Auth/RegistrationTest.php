@@ -27,7 +27,7 @@ class RegistrationTest extends TestCase
             'hubungan_dengan_anak' => 'ibu',
             'anak' => [
                 'nama_inisial' => 'AB',
-                'tanggal_lahir' => now()->subMonths(8)->toDateString(),
+                'tanggal_lahir' => now()->subMonthsNoOverflow(8)->toDateString(),
                 'jenis_kelamin' => 'P',
             ],
             ...$override,
@@ -63,7 +63,7 @@ class RegistrationTest extends TestCase
 
     public function test_registration_creates_anak(): void
     {
-        $lahir = now()->subMonths(8)->toDateString();
+        $lahir = now()->subMonthsNoOverflow(8)->toDateString();
         $this->post('/register', $this->payload(['anak' => [
             'nama_inisial' => 'AB',
             'tanggal_lahir' => $lahir,

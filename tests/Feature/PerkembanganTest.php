@@ -17,7 +17,7 @@ class PerkembanganTest extends TestCase
     private function responden(): User
     {
         $user = User::factory()->create();
-        Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonths(7)->toDateString()]);
+        Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow(7)->toDateString()]);
         HasilKuesioner::create(['user_id' => $user->id, 'tipe_sesi' => 'pre', 'submitted_at' => now()]);
 
         return $user;
@@ -90,7 +90,7 @@ class PerkembanganTest extends TestCase
             'skor_motorik_kasar' => $skor[0], 'skor_motorik_halus' => $skor[1], 'skor_bicara_bahasa' => $skor[2],
             'skor_sosial_emosional' => $skor[3], 'skor_total' => $skor[4],
         ]);
-        $penilaian($user, today()->subMonths(2), '3-6', [50, 50, 50, 50, 50]);
+        $penilaian($user, today()->subMonthsNoOverflow(2), '3-6', [50, 50, 50, 50, 50]);
         $penilaian($user, today()->subMonth(), '6-9', [100, 50, 0, 0, 37.5]);
         $penilaian($user, today(), '6-9', [100, 25, 100, 100, 81.25]);
         $penilaian($this->responden(), '2020-01-01', '6-9', [0, 0, 0, 0, 0]);
