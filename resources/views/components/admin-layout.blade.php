@@ -77,7 +77,7 @@
             <div x-show="sidebar" @click="sidebar = false" class="fixed inset-0 z-20 bg-ink/40 lg:hidden" style="display: none"></div>
 
             <div class="lg:pl-72">
-                <header class="sticky top-0 z-10 flex items-center gap-4 border-b border-krem-garis bg-white px-4 py-4 sm:px-8">
+                <header class="sticky top-0 z-10 flex flex-wrap items-center gap-4 border-b border-krem-garis bg-white px-4 py-4 sm:px-8">
                     <button type="button" @click="sidebar = ! sidebar" aria-label="Buka menu" class="rounded-xl p-2 text-ink-muted hover:bg-krem lg:hidden">
                         <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
                     </button>
@@ -86,6 +86,10 @@
                         <p class="text-sm text-ink-muted">Area Peneliti</p>
                         <h1 class="truncate text-2xl font-extrabold">{{ $judul }}</h1>
                     </div>
+
+                    @isset($aksi)
+                        <div class="ms-auto flex flex-wrap justify-end gap-2">{{ $aksi }}</div>
+                    @endisset
                 </header>
 
                 <main class="p-4 sm:p-8">

@@ -1,12 +1,13 @@
 // Dipakai hanya di area admin (dashboard). Tiap <canvas data-chart> membawa datanya sendiri:
-// data-tipe="doughnut|bar", data-label='["..."]', data-nilai='[1,2]'.
+// data-tipe="doughnut|bar", data-label='["..."]', data-nilai='[1,2]', data-warna='["#hex"]' (berulang bila lebih pendek).
 import Chart from 'chart.js/auto';
 
-const warna = ['#059669', '#0284c7', '#d97706', '#7c3aed', '#db2777', '#0891b2', '#65a30d'];
+// Token DESIGN.md: ink-muted & krem-garis.
+Chart.defaults.font.family = 'Nunito, sans-serif';
+Chart.defaults.color = '#64766E';
 
 document.querySelectorAll('canvas[data-chart]').forEach((canvas) => {
     const tipe = canvas.dataset.tipe;
-    const nilai = JSON.parse(canvas.dataset.nilai);
 
     new Chart(canvas, {
         type: tipe,
@@ -14,14 +15,22 @@ document.querySelectorAll('canvas[data-chart]').forEach((canvas) => {
             labels: JSON.parse(canvas.dataset.label),
             datasets: [{
                 label: canvas.dataset.satuan ?? 'Jumlah',
-                data: nilai,
-                backgroundColor: tipe === 'bar' ? warna[0] : warna,
+                data: JSON.parse(canvas.dataset.nilai),
+                backgroundColor: JSON.parse(canvas.dataset.warna),
+                borderColor: '#fff',
+                borderWidth: tipe === 'doughnut' ? 4 : 0,
+                borderRadius: tipe === 'bar' ? 8 : 0,
             }],
         },
         options: {
             maintainAspectRatio: false,
-            plugins: { legend: { display: tipe === 'doughnut', position: 'bottom' } },
-            scales: tipe === 'bar' ? { y: { beginAtZero: true } } : {},
+            cutout: tipe === 'doughnut' ? '65%' : undefined,
+            // Doughnut memakai legenda HTML di Blade (dengan angka).
+            plugins: { legend: { display: false } },
+            scales: tipe === 'bar' ? {
+                x: { grid: { display: false } },
+                y: { beginAtZero: true, grid: { color: '#EDE5D8' }, border: { display: false } },
+            } : {},
         },
     });
 });
