@@ -32,12 +32,25 @@ class LayoutTest extends TestCase
         // langsung — mekanisme Route::has() tetap dijaga untuk menu yang ditambah nanti.
         $this->assertStringContainsString(
             'href="'.route('admin.responden.index').'"',
-            Blade::render('<x-admin-nav-link route="admin.responden.index">Responden</x-admin-nav-link>')
+            Blade::render('<x-admin-nav-link route="admin.responden.index" label="Responden" />')
         );
 
-        $this->assertStringContainsString(
-            'segera',
-            Blade::render('<x-admin-nav-link route="admin.belum-ada.index">Menu Nanti</x-admin-nav-link>')
-        );
+        $belumAda = Blade::render('<x-admin-nav-link route="admin.belum-ada.index" label="Menu Nanti" />');
+        $this->assertStringContainsString('segera', $belumAda);
+        $this->assertStringNotContainsString('href=', $belumAda);
+    }
+
+    public function test_sidebar_menandai_menu_aktif_dan_menampilkan_admin(): void
+    {
+        $admin = Admin::create(['nama' => 'Dr. Rina', 'email' => 'rina@example.com', 'password' => 'rahasia123']);
+
+        $html = $this->actingAs($admin, 'admin')->get('/admin/soal/create')
+            ->assertOk()
+            ->assertSee(['Area Peneliti', 'Dr. Rina', 'rina@example.com'])
+            ->getContent();
+
+        // Halaman turunan (soal.create) tetap menandai menu induknya.
+        $this->assertSame(1, substr_count($html, 'aria-current="page"'));
+        $this->assertMatchesRegularExpression('#href="'.preg_quote(route('admin.soal.index'), '#').'"[^>]*aria-current="page"#', $html);
     }
 }
