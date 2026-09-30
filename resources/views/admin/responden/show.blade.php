@@ -34,7 +34,7 @@
 @endphp
 
 <x-admin-layout judul="Responden {{ $responden->kode_responden }}">
-    <a href="{{ route('admin.responden.index') }}" class="text-sm font-medium text-emerald-700 hover:underline">
+    <a href="{{ route('admin.responden.index') }}" class="font-bold text-brand hover:underline">
         &larr; Kembali ke daftar responden
     </a>
 
@@ -44,17 +44,17 @@
             ['Identitas Anak', $identitasAnak],
             ['Kondisi Anak Saat Lahir', $kondisiLahir],
         ] as [$judul, $baris])
-            <section class="rounded-lg border border-gray-200 bg-white">
-                <h2 class="border-b border-gray-200 px-4 py-3 font-semibold text-gray-800">{{ $judul }}</h2>
+            <section class="overflow-hidden rounded-3xl bg-white shadow-sm">
+                <h2 class="px-6 py-5 text-lg font-extrabold">{{ $judul }}</h2>
 
                 @if (empty($baris))
-                    <p class="px-4 py-6 text-sm text-gray-500">Data anak belum diisi.</p>
+                    <p class="px-6 pb-6 text-ink-muted">Data anak belum diisi.</p>
                 @else
-                    <dl class="divide-y divide-gray-100 text-sm">
+                    <dl class="divide-y divide-krem-garis text-sm">
                         @foreach ($baris as $label => $nilai)
-                            <div class="flex gap-4 px-4 py-2">
-                                <dt class="w-44 shrink-0 text-gray-500">{{ $label }}</dt>
-                                <dd class="text-gray-800">{{ $nilai !== null && $nilai !== '' ? $nilai : '—' }}</dd>
+                            <div class="flex gap-4 px-6 py-4">
+                                <dt class="w-44 shrink-0 text-ink-muted">{{ $label }}</dt>
+                                <dd class="text-ink">{{ $nilai !== null && $nilai !== '' ? $nilai : '—' }}</dd>
                             </div>
                         @endforeach
                     </dl>
@@ -63,8 +63,8 @@
         @endforeach
     </div>
 
-    <p class="mt-4 text-sm text-gray-500">
+    <p class="mt-4 text-sm text-ink-muted">
         Hasil pre/post-test responden ini ada di
-        <a href="{{ route('admin.hasil-test.show', $responden) }}" class="font-medium text-emerald-700 hover:underline">Menu Hasil Test</a>.
+        <a href="{{ route('admin.hasil-test.show', $responden) }}" class="font-bold text-ink hover:text-brand">Menu Hasil Test</a>.
     </p>
 </x-admin-layout>
