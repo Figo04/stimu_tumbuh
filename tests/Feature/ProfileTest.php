@@ -39,6 +39,26 @@ class ProfileTest extends TestCase
             ->assertSee($user->kode_responden);
     }
 
+    public function test_profile_page_shows_formatted_data_and_help_box(): void
+    {
+        config(['services.wa_konsultasi' => '6281234567890']);
+        $user = Anak::factory()->create([
+            'nama_inisial' => 'Ananda A.',
+            'jenis_kelamin' => 'P',
+            'bb_lahir_gram' => 3100,
+            'pb_lahir_cm' => 49.5,
+            'jenis_persalinan' => 'sc',
+        ])->user;
+
+        $this->actingAs($user)->get('/profile')
+            ->assertOk()
+            ->assertSeeInOrder(['Profil Keluarga', 'AA', 'Ananda A.', 'Perempuan', 'Data Anak', 'Data Orang Tua', 'Kode Responden', 'Perlu bantuan?'])
+            ->assertSee(['3.100 gram', '49,5 cm', 'Caesar (SC)', 'Tanya ke Tim Peneliti']);
+
+        config(['services.wa_konsultasi' => null]);
+        $this->actingAs($user)->get('/profile')->assertDontSee('Perlu bantuan?');
+    }
+
     public function test_profile_information_can_be_updated(): void
     {
         $user = Anak::factory()->create()->user;
