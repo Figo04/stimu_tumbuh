@@ -1,9 +1,9 @@
 <x-admin-layout judul="Ubah Soal">
-    <a href="{{ route('admin.soal.index') }}" class="text-sm text-gray-500 hover:text-gray-700">&lsaquo; Kelola Soal</a>
+    <a href="{{ route('admin.soal.index') }}" class="font-bold text-brand hover:underline">&larr; Kelola Soal</a>
 
-    <section class="mt-2 max-w-2xl rounded-lg border border-gray-200 bg-white p-6">
+    <section class="mt-4 max-w-2xl rounded-3xl bg-white p-6 shadow-sm">
         @if ($soal->detail_count)
-            <p class="mb-5 rounded-md bg-amber-50 p-4 text-sm text-amber-800">
+            <p class="mb-5 rounded-2xl bg-hangat-bg px-4 py-3 text-sm">
                 Soal ini sudah dijawab <strong>{{ $soal->detail_count }} responden</strong>. Jawaban dan skor yang
                 terlanjur tersimpan <strong>tidak dihitung ulang</strong> setelah soal diubah — aman untuk
                 memperbaiki ejaan, tapi mengubah makna pertanyaan atau jawaban benarnya membuat hasil lama
@@ -16,11 +16,9 @@
             @method('PUT')
             @include('admin.soal._form')
 
-            <div class="flex items-center gap-3 border-t border-gray-200 pt-5">
-                <button type="submit" class="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
-                    Simpan perubahan
-                </button>
-                <a href="{{ route('admin.soal.index') }}" class="text-sm text-gray-500 hover:text-gray-700">Batal</a>
+            <div class="flex items-center gap-4 border-t border-krem-garis pt-5">
+                <x-primary-button>Simpan perubahan</x-primary-button>
+                <a href="{{ route('admin.soal.index') }}" class="font-bold text-ink-muted hover:text-ink">Batal</a>
             </div>
         </form>
     </section>
