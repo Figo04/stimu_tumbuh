@@ -22,7 +22,6 @@ class MateriFactory extends Factory
             'aspek' => fake()->randomElement(array_keys(Materi::ASPEK)),
             'kelompok_usia' => fake()->randomElement(UsiaAnakService::KELOMPOK_USIA),
             'urutan' => 1,
-            'konten_view' => 'materi.placeholder',
             'video_youtube_id' => 'M7lc1UVf-VE',
         ];
     }

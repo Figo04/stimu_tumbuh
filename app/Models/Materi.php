@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['judul', 'slug', 'aspek', 'kelompok_usia', 'urutan', 'konten_view', 'video_youtube_id'])]
+#[Fillable(['judul', 'slug', 'aspek', 'kelompok_usia', 'urutan', 'video_youtube_id'])]
 class Materi extends Model
 {
     use HasFactory;

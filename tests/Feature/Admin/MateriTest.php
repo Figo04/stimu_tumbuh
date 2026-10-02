@@ -78,16 +78,16 @@ class MateriTest extends TestCase
             $this->assertFalse(\Route::has("admin.materi.$aksi"), "Rute admin.materi.$aksi tidak boleh ada — materi dihardcode developer.");
         }
 
-        $materi = Materi::factory()->create(['judul' => 'Judul Asli', 'konten_view' => 'materi.placeholder']);
+        $materi = Materi::factory()->create(['judul' => 'Judul Asli', 'kelompok_usia' => '12-18']);
 
         $this->actingAs($this->admin(), 'admin')
             ->patch(route('admin.materi.update', $materi), [
-                'judul' => 'Judul Diretas', 'konten_view' => 'materi.lain', 'video_youtube_id' => 'M7lc1UVf-VE',
+                'judul' => 'Judul Diretas', 'kelompok_usia' => '18-24', 'video_youtube_id' => 'M7lc1UVf-VE',
             ])->assertSessionHasNoErrors();
 
         $materi->refresh();
         $this->assertSame('Judul Asli', $materi->judul);
-        $this->assertSame('materi.placeholder', $materi->konten_view);
+        $this->assertSame('12-18', $materi->kelompok_usia);
     }
 
     public function test_seeder_tidak_menimpa_video_yang_diisi_admin(): void
