@@ -7,12 +7,16 @@ use Illuminate\Support\Carbon;
 
 class UsiaAnakService
 {
-    /** Batas bawah (bulan, inklusif) => nilai enum `kelompok_usia`. */
+    /** Usia (bulan) yang boleh mendaftar — sasaran penelitian 12–24 bulan (keputusan klien, 2 Okt 2026). */
+    public const USIA_DAFTAR_MIN = 12;
+
+    public const USIA_DAFTAR_MAKS = 24;
+
+    /**
+     * Batas bawah (bulan, inklusif) => nilai enum `kelompok_usia`.
+     * Enum DB masih memuat 0-3…9-12 (migration lama), tapi kelompok itu tidak dipakai lagi.
+     */
     public const KELOMPOK_USIA = [
-        0 => '0-3',
-        3 => '3-6',
-        6 => '6-9',
-        9 => '9-12',
         12 => '12-18',
         18 => '18-24',
         24 => '24-36',
@@ -27,11 +31,11 @@ class UsiaAnakService
         return max(0, (int) floor($lahir->diffInMonths($acuan)));
     }
 
-    /** Bawah inklusif, atas eksklusif; usia >= 36 bulan tetap dijepit ke '24-36'. */
+    /** Bawah inklusif, atas eksklusif; usia >= 36 bulan dijepit ke '24-36', < 12 bulan (tak bisa daftar) ke '12-18'. */
     public static function kelompokUsia(CarbonInterface|string $tanggalLahir, CarbonInterface|string|null $tanggalAcuan = null): string
     {
         $usia = self::usiaBulan($tanggalLahir, $tanggalAcuan);
-        $kelompok = '0-3';
+        $kelompok = '12-18';
 
         foreach (self::KELOMPOK_USIA as $batasBawah => $nilai) {
             if ($usia >= $batasBawah) {

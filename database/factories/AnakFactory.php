@@ -16,7 +16,8 @@ class AnakFactory extends Factory
         return [
             'user_id' => User::factory(),
             'nama_inisial' => strtoupper(fake()->lexify('??')),
-            'tanggal_lahir' => now()->subDays(fake()->numberBetween(0, 36 * 30))->toDateString(),
+            // 370–730 hari = selalu 12–24 bulan penuh (rentang registrasi).
+            'tanggal_lahir' => now()->subDays(fake()->numberBetween(370, 730))->toDateString(),
             'jenis_kelamin' => fake()->randomElement(['L', 'P']),
         ];
     }

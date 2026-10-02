@@ -29,12 +29,12 @@ class ExportTest extends TestCase
     {
         $user = User::factory()->create(['kode_responden' => 'RSP-001', 'nama' => 'Ibu Uji']);
         $anak = Anak::factory()->create([
-            'user_id' => $user->id, 'nama_inisial' => 'AZ', 'tanggal_lahir' => now()->subMonthsNoOverflow(8),
+            'user_id' => $user->id, 'nama_inisial' => 'AZ', 'tanggal_lahir' => now()->subMonthsNoOverflow(14),
             'jenis_persalinan' => 'sc', 'kondisi_lahir' => 'bblr', 'bb_lahir_gram' => 2200,
         ]);
 
-        $materi = Materi::factory()->create(['judul' => 'Materi Uji', 'kelompok_usia' => '6-9']);
-        Materi::factory()->create(['kelompok_usia' => '6-9']);
+        $materi = Materi::factory()->create(['judul' => 'Materi Uji', 'kelompok_usia' => '12-18']);
+        Materi::factory()->create(['kelompok_usia' => '12-18']);
         ProgressMateri::create([
             'user_id' => $user->id, 'materi_id' => $materi->id,
             'materi_selesai' => true, 'materi_selesai_at' => now(),
@@ -82,16 +82,16 @@ class ExportTest extends TestCase
 
         // Tabel 1: satu baris per responden, usia dihitung lewat UsiaAnakService.
         $this->assertSame(['RSP-001', 'Ibu Uji'], array_slice($sheet[0]->array()[0], 0, 2));
-        $this->assertSame([8, '6-9'], array_slice($sheet[0]->array()[0], 13, 2));
+        $this->assertSame([14, '12-18'], array_slice($sheet[0]->array()[0], 13, 2));
 
         // Tabel 2: label enum, bukan kode mentah.
         $this->assertSame(['RSP-001', 'AZ', null, 'Caesar (SC)', 2200], array_slice($sheet[1]->array()[0], 0, 5));
         $this->assertSame('BBLR (berat lahir rendah)', $sheet[1]->array()[0][7]);
 
-        // Tabel 3: satu baris per entri; usia = usia pada TANGGAL ENTRI (8 − 2 = 6 bln), bukan hari ini.
+        // Tabel 3: satu baris per entri; usia = usia pada TANGGAL ENTRI (14 − 2 = 12 bln), bukan hari ini.
         $aktivitas = $sheet[2]->array();
         $this->assertCount(2, $aktivitas);
-        $this->assertSame(6, $aktivitas[0][2]);
+        $this->assertSame(12, $aktivitas[0][2]);
         $this->assertSame(['Motorik Kasar', 'Tengkurap', 20, 'Ibu', 'Senang'], array_slice($aktivitas[0], 3, 5));
         // Entri tab Praktik: jenis diisi judul materi, durasi kosong.
         $this->assertSame(['Bicara & Bahasa', 'Praktik: Materi Uji', null, 'Ayah', null], array_slice($aktivitas[1], 3, 5));

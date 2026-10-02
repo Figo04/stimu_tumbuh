@@ -25,13 +25,13 @@ class RespondenTest extends TestCase
         $user = User::factory()->create(['nama' => 'Ibu A', 'kecamatan' => 'Ngaglik']);
         Anak::factory()->create([
             'user_id' => $user->id, 'nama_inisial' => 'AZ', 'jenis_kelamin' => 'P',
-            'tanggal_lahir' => now()->subMonthsNoOverflow(7),
+            'tanggal_lahir' => now()->subMonthsNoOverflow(13),
         ]);
 
         $this->actingAs($this->admin(), 'admin')->get(route('admin.responden.index'))
             ->assertOk()
             // Usia & kelompok usia lewat UsiaAnakService, bukan kolom DB.
-            ->assertSeeInOrder([$user->kode_responden, 'Ibu A', 'Ngaglik', 'AZ', 'P', '7 bln', '6-9 bln']);
+            ->assertSeeInOrder([$user->kode_responden, 'Ibu A', 'Ngaglik', 'AZ', 'P', '13 bln', '12-18 bln']);
     }
 
     public function test_detail_responden_menampilkan_kondisi_lahir(): void

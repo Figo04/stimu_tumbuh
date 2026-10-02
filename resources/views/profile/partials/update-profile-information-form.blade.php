@@ -2,8 +2,9 @@
     $field = 'mt-2 block w-full rounded-2xl border-krem-garis px-4 py-3.5 text-base text-ink focus:border-brand focus:ring-brand';
     $anak = $user->anak;
     $tglLahir = $anak?->tanggal_lahir?->toDateString();
-    // Sama dengan aturan backend: 36 bulan, atau tanggal lahir tersimpan bila anak sudah lebih tua.
-    $minLahir = min(array_filter([now()->subMonths(36)->toDateString(), $tglLahir]));
+    // Petunjuk browser saja (aturan tepatnya di backend): usia 12–24 bulan, atau tanggal lahir tersimpan.
+    $minLahir = min(array_filter([now()->subMonthsNoOverflow(25)->addDay()->toDateString(), $tglLahir]));
+    $maksLahir = max(array_filter([now()->subMonthsNoOverflow(12)->toDateString(), $tglLahir]));
     $angka = fn ($v, $satuan) => filled($v) ? str_replace('.', ',', $v + 0).' '.$satuan : '—';
     $dataAnak = [
         'Usia kehamilan' => $angka($anak?->usia_gestasi_minggu, 'minggu'),
@@ -60,7 +61,7 @@
             <div>
                 <x-input-label for="anak_tanggal_lahir" value="Tanggal lahir anak" />
                 <x-text-input id="anak_tanggal_lahir" name="anak[tanggal_lahir]" type="date" class="mt-2 block w-full" :value="old('anak.tanggal_lahir', $tglLahir)" required
-                    min="{{ $minLahir }}" max="{{ now()->toDateString() }}" />
+                    min="{{ $minLahir }}" max="{{ $maksLahir }}" />
                 <p class="mt-2 rounded-2xl bg-hangat-bg px-4 py-3 text-sm">Mengubah tanggal lahir dapat mengubah kelompok usia anak, sehingga materi dan checklist perkembangan yang tampil ikut berganti.</p>
                 <x-input-error class="mt-2" :messages="$errors->get('anak.tanggal_lahir')" />
             </div>

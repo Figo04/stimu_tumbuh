@@ -29,13 +29,13 @@ class PosttestTest extends TestCase
             ->all();
     }
 
-    /** Responden yang sudah pre-test, anak 7 bulan (kelompok 6-9), dengan satu materi belum selesai. */
+    /** Responden yang sudah pre-test, anak 13 bulan (kelompok 12-18), dengan satu materi belum selesai. */
     private function responden(): User
     {
         $user = User::factory()->create();
-        Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow(7)->toDateString()]);
+        Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow(13)->toDateString()]);
         HasilKuesioner::create(['user_id' => $user->id, 'tipe_sesi' => 'pre', 'submitted_at' => now()]);
-        Materi::factory()->create(['kelompok_usia' => '6-9']);
+        Materi::factory()->create(['kelompok_usia' => '12-18']);
 
         return $user;
     }

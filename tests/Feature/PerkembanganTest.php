@@ -17,14 +17,14 @@ class PerkembanganTest extends TestCase
     private function responden(): User
     {
         $user = User::factory()->create();
-        Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow(7)->toDateString()]);
+        Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow(13)->toDateString()]);
         HasilKuesioner::create(['user_id' => $user->id, 'tipe_sesi' => 'pre', 'submitted_at' => now()]);
 
         return $user;
     }
 
-    /** 2 item per aspek untuk kelompok 6-9. */
-    private function item(string $kelompok = '6-9')
+    /** 2 item per aspek untuk kelompok 12-18. */
+    private function item(string $kelompok = '12-18')
     {
         return collect(['motorik_kasar', 'motorik_halus', 'bicara_bahasa', 'sosial_emosional'])
             ->flatMap(fn ($aspek) => collect([1, 2])->map(fn ($n) => ItemPerkembangan::create([
@@ -36,11 +36,11 @@ class PerkembanganTest extends TestCase
     {
         $user = $this->responden();
         $item = $this->item();
-        $this->item('0-3');
+        $this->item('18-24');
 
         $this->actingAs($user)->get(route('perkembangan.index'))->assertOk()
-            ->assertSee('Item motorik_kasar 6-9 1')
-            ->assertDontSee('Item motorik_kasar 0-3 1');
+            ->assertSee('Item motorik_kasar 12-18 1')
+            ->assertDontSee('Item motorik_kasar 18-24 1');
 
         // Motorik kasar 2/2, motorik halus 1/2, sisanya 0 → total 3/8.
         $jawaban = $item->mapWithKeys(fn ($i) => [$i->id => '0'])->all();
@@ -54,8 +54,8 @@ class PerkembanganTest extends TestCase
         $this->assertSame('50.00', $p->skor_motorik_halus);
         $this->assertSame('0.00', $p->skor_bicara_bahasa);
         $this->assertSame('37.50', $p->skor_total);
-        $this->assertSame('6-9', $p->kelompok_usia);
-        $this->assertSame(7, $p->usia_bulan);
+        $this->assertSame('12-18', $p->kelompok_usia);
+        $this->assertSame(13, $p->usia_bulan);
         $this->assertTrue($p->tanggal_penilaian->isToday());
         $this->assertSame(8, $p->detail()->count());
         $this->assertTrue($p->detail()->where('item_id', $item[0]->id)->value('jawaban'));
@@ -111,7 +111,7 @@ class PerkembanganTest extends TestCase
     {
         $user = $this->responden();
         $item = $this->item();
-        $asing = $this->item('0-3')->first();
+        $asing = $this->item('18-24')->first();
 
         $jawaban = $item->mapWithKeys(fn ($i) => [$i->id => '1'])->all();
 

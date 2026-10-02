@@ -27,7 +27,7 @@ class RegistrationTest extends TestCase
             'hubungan_dengan_anak' => 'ibu',
             'anak' => [
                 'nama_inisial' => 'AB',
-                'tanggal_lahir' => now()->subMonthsNoOverflow(8)->toDateString(),
+                'tanggal_lahir' => now()->subMonthsNoOverflow(14)->toDateString(),
                 'jenis_kelamin' => 'P',
             ],
             ...$override,
@@ -63,7 +63,7 @@ class RegistrationTest extends TestCase
 
     public function test_registration_creates_anak(): void
     {
-        $lahir = now()->subMonthsNoOverflow(8)->toDateString();
+        $lahir = now()->subMonthsNoOverflow(14)->toDateString();
         $this->post('/register', $this->payload(['anak' => [
             'nama_inisial' => 'AB',
             'tanggal_lahir' => $lahir,
@@ -81,16 +81,20 @@ class RegistrationTest extends TestCase
         ]);
     }
 
-    public function test_tanggal_lahir_outside_0_36_months_is_rejected(): void
+    public function test_hanya_anak_12_sampai_24_bulan_yang_bisa_daftar(): void
     {
-        foreach ([now()->addDay(), now()->subMonths(36)->subDay()] as $tanggal) {
-            $this->post('/register', $this->payload(['anak' => [
-                'nama_inisial' => 'AB', 'tanggal_lahir' => $tanggal->toDateString(), 'jenis_kelamin' => 'P',
-            ]]))->assertSessionHasErrors('anak.tanggal_lahir');
-        }
+        $anak = fn ($tanggal) => ['anak' => ['nama_inisial' => 'AB', 'tanggal_lahir' => $tanggal->toDateString(), 'jenis_kelamin' => 'P']];
 
+        // 11 bulan (sehari sebelum 12), 25 bulan, dan masa depan ditolak.
+        foreach ([now()->subMonthsNoOverflow(12)->addDay(), now()->subMonthsNoOverflow(25), now()->addDay()] as $tanggal) {
+            $this->post('/register', $this->payload($anak($tanggal)))->assertSessionHasErrors('anak.tanggal_lahir');
+        }
         $this->assertGuest();
         $this->assertDatabaseCount('users', 0);
+
+        // Tepat 24 bulan masih boleh.
+        $this->post('/register', $this->payload($anak(now()->subMonthsNoOverflow(24))))->assertSessionHasNoErrors();
+        $this->assertAuthenticated();
     }
 
     public function test_invalid_hubungan_and_no_hp_are_rejected(): void

@@ -32,10 +32,10 @@ class MateriTest extends TestCase
 
     public function test_hanya_materi_kelompok_usia_anak_yang_tampil_per_aspek(): void
     {
-        $user = $this->responden(7);
-        Materi::factory()->create(['judul' => 'Belajar Duduk', 'aspek' => 'motorik_kasar', 'kelompok_usia' => '6-9']);
-        Materi::factory()->create(['judul' => 'Meraih Mainan', 'aspek' => 'motorik_halus', 'kelompok_usia' => '6-9']);
-        Materi::factory()->create(['judul' => 'Belajar Berjalan', 'aspek' => 'motorik_kasar', 'kelompok_usia' => '12-18']);
+        $user = $this->responden(13);
+        Materi::factory()->create(['judul' => 'Belajar Duduk', 'aspek' => 'motorik_kasar', 'kelompok_usia' => '12-18']);
+        Materi::factory()->create(['judul' => 'Meraih Mainan', 'aspek' => 'motorik_halus', 'kelompok_usia' => '12-18']);
+        Materi::factory()->create(['judul' => 'Belajar Berjalan', 'aspek' => 'motorik_kasar', 'kelompok_usia' => '18-24']);
 
         $this->actingAs($user)->get('/materi')->assertOk()
             ->assertSeeInOrder(['Motorik Kasar', 'Belajar Duduk', 'Motorik Halus', 'Meraih Mainan'])
@@ -45,9 +45,9 @@ class MateriTest extends TestCase
 
     public function test_materi_kelompok_usia_lain_404(): void
     {
-        $user = $this->responden(7);
-        $sendiri = Materi::factory()->create(['kelompok_usia' => '6-9']);
-        $lain = Materi::factory()->create(['kelompok_usia' => '12-18']);
+        $user = $this->responden(13);
+        $sendiri = Materi::factory()->create(['kelompok_usia' => '12-18']);
+        $lain = Materi::factory()->create(['kelompok_usia' => '18-24']);
 
         $this->actingAs($user)->get(route('materi.show', $sendiri))->assertOk()
             ->assertSee($sendiri->judul)->assertSee('Tonton video');
@@ -56,9 +56,9 @@ class MateriTest extends TestCase
 
     public function test_materi_ikut_berganti_saat_anak_bertambah_usia(): void
     {
-        $user = $this->responden(8);
-        $awal = Materi::factory()->create(['kelompok_usia' => '6-9']);
-        $berikut = Materi::factory()->create(['kelompok_usia' => '9-12']);
+        $user = $this->responden(17);
+        $awal = Materi::factory()->create(['kelompok_usia' => '12-18']);
+        $berikut = Materi::factory()->create(['kelompok_usia' => '18-24']);
 
         $this->actingAs($user)->get('/materi')->assertSee($awal->judul)->assertDontSee($berikut->judul);
 

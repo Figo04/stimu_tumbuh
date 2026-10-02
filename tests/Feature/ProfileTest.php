@@ -22,7 +22,7 @@ class ProfileTest extends TestCase
             'kecamatan' => 'Sukajadi',
             'anak' => [
                 'nama_inisial' => 'AB',
-                'tanggal_lahir' => now()->subMonthsNoOverflow(4)->toDateString(),
+                'tanggal_lahir' => now()->subMonthsNoOverflow(14)->toDateString(),
                 'jenis_kelamin' => 'P',
                 'bb_lahir_gram' => 3100,
                 'kondisi_lahir' => 'sehat',
@@ -83,7 +83,7 @@ class ProfileTest extends TestCase
         $this->assertSame('AB', $user->anak->nama_inisial);
         $this->assertSame('P', $user->anak->jenis_kelamin);
         $this->assertSame(3100, $user->anak->bb_lahir_gram);
-        $this->assertSame('3-6', $user->anak->kelompok_usia);
+        $this->assertSame('12-18', $user->anak->kelompok_usia);
     }
 
     public function test_email_verification_status_is_unchanged_when_the_email_address_is_unchanged(): void
@@ -112,7 +112,7 @@ class ProfileTest extends TestCase
 
     public function test_tanggal_lahir_rules(): void
     {
-        // Anak yang kini > 36 bulan tetap bisa menyimpan profil dengan tanggal lahir tersimpan.
+        // Anak yang kini > 24 bulan tetap bisa menyimpan profil dengan tanggal lahir tersimpan.
         $lahir = now()->subMonthsNoOverflow(40)->toDateString();
         $user = Anak::factory()->create(['tanggal_lahir' => $lahir])->user;
 

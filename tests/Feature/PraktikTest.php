@@ -14,11 +14,11 @@ class PraktikTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** Responden (ayah) yang sudah pre-test, anaknya berusia 7 bulan (kelompok 6-9). */
+    /** Responden (ayah) yang sudah pre-test, anaknya berusia 13 bulan (kelompok 12-18). */
     private function responden(): User
     {
         $user = User::factory()->create(['hubungan_dengan_anak' => 'ayah']);
-        Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow(7)->toDateString()]);
+        Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow(13)->toDateString()]);
         HasilKuesioner::create(['user_id' => $user->id, 'tipe_sesi' => 'pre', 'submitted_at' => now()]);
 
         return $user;
@@ -27,7 +27,7 @@ class PraktikTest extends TestCase
     public function test_praktik_terkunci_sebelum_materi_selesai(): void
     {
         $user = $this->responden();
-        $materi = Materi::factory()->create(['kelompok_usia' => '6-9']);
+        $materi = Materi::factory()->create(['kelompok_usia' => '12-18']);
 
         $this->actingAs($user)->get(route('materi.show', $materi))->assertDontSee('Sudah saya praktikkan');
         $this->actingAs($user)->post(route('materi.praktik', $materi), ['tanggal' => now()->toDateString()])->assertForbidden();
@@ -38,7 +38,7 @@ class PraktikTest extends TestCase
     public function test_praktik_boleh_diisi_berulang_termasuk_tanggal_sama(): void
     {
         $user = $this->responden();
-        $materi = Materi::factory()->create(['kelompok_usia' => '6-9', 'aspek' => 'bicara_bahasa']);
+        $materi = Materi::factory()->create(['kelompok_usia' => '12-18', 'aspek' => 'bicara_bahasa']);
         $this->actingAs($user)->post(route('materi.video', $materi));
         $this->actingAs($user)->post(route('materi.selesai', $materi));
 
@@ -59,8 +59,8 @@ class PraktikTest extends TestCase
     public function test_praktik_menolak_tanggal_masa_depan_dan_materi_usia_lain(): void
     {
         $user = $this->responden();
-        $materi = Materi::factory()->create(['kelompok_usia' => '6-9']);
-        $lain = Materi::factory()->create(['kelompok_usia' => '12-18']);
+        $materi = Materi::factory()->create(['kelompok_usia' => '12-18']);
+        $lain = Materi::factory()->create(['kelompok_usia' => '18-24']);
         $this->actingAs($user)->post(route('materi.video', $materi));
         $this->actingAs($user)->post(route('materi.selesai', $materi));
 

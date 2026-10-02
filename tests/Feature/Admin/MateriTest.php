@@ -22,7 +22,7 @@ class MateriTest extends TestCase
     public function test_daftar_materi_dikelompokkan_per_usia_dengan_status_video_dan_progres(): void
     {
         $materi = Materi::factory()->create([
-            'judul' => 'Tengkurap Bergantian', 'kelompok_usia' => '3-6', 'aspek' => 'motorik_kasar',
+            'judul' => 'Tengkurap Bergantian', 'kelompok_usia' => '12-18', 'aspek' => 'motorik_kasar',
             'video_youtube_id' => null,
         ]);
         $user = User::factory()->create();
@@ -30,7 +30,7 @@ class MateriTest extends TestCase
 
         $this->actingAs($this->admin(), 'admin')->get(route('admin.materi.index'))
             ->assertOk()
-            ->assertSeeInOrder(['Usia 3–6 bulan', 'Motorik Kasar', 'Tengkurap Bergantian', 'belum diisi', '1 responden']);
+            ->assertSeeInOrder(['Usia 12–18 bulan', 'Motorik Kasar', 'Tengkurap Bergantian', 'belum diisi', '1 responden']);
     }
 
     public function test_detail_materi_menampilkan_form_video(): void

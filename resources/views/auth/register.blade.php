@@ -78,7 +78,8 @@
         <div>
             <x-input-label for="anak_tanggal_lahir" value="Tanggal lahir anak" />
             <x-text-input id="anak_tanggal_lahir" class="mt-2 block w-full" type="date" name="anak[tanggal_lahir]" :value="old('anak.tanggal_lahir')" required
-                min="{{ now()->subMonths(36)->toDateString() }}" max="{{ now()->toDateString() }}" />
+                min="{{ now()->subMonthsNoOverflow(25)->addDay()->toDateString() }}" max="{{ now()->subMonthsNoOverflow(12)->toDateString() }}" />
+            <p class="mt-2 text-sm text-ink-muted">Untuk anak usia 12–24 bulan.</p>
             <x-input-error :messages="$errors->get('anak.tanggal_lahir')" class="mt-2" />
         </div>
 

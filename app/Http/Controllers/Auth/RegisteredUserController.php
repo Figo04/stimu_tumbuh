@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Anak;
 use App\Models\User;
+use App\Services\UsiaAnakService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -28,12 +29,17 @@ class RegisteredUserController extends Controller
      */
     public static function aturanIdentitas(?User $user = null): array
     {
-        // Sasaran penelitian: anak 0–36 bulan saat registrasi. Di profil, tanggal lahir
-        // yang sudah tersimpan tetap lolos meski anak kini > 36 bulan (usia dijepit, Sesi 2).
-        $batasLahir = now()->subMonths(36)->startOfDay();
-        if ($user?->anak?->tanggal_lahir?->lt($batasLahir)) {
-            $batasLahir = $user->anak->tanggal_lahir;
-        }
+        // Sasaran penelitian: anak 12–24 bulan (dihitung lewat UsiaAnakService, tepat juga di akhir bulan).
+        // Di profil, tanggal lahir yang sudah tersimpan tetap lolos meski anak kini sudah lebih tua.
+        $usiaDaftar = function (string $atribut, mixed $nilai, \Closure $gagal) use ($user) {
+            if ($nilai === $user?->anak?->tanggal_lahir?->toDateString()) {
+                return;
+            }
+            $usia = UsiaAnakService::usiaBulan($nilai);
+            if ($usia < UsiaAnakService::USIA_DAFTAR_MIN || $usia > UsiaAnakService::USIA_DAFTAR_MAKS) {
+                $gagal('Penelitian ini untuk anak usia '.UsiaAnakService::USIA_DAFTAR_MIN.'–'.UsiaAnakService::USIA_DAFTAR_MAKS.' bulan.');
+            }
+        };
 
         return [
             'nama' => ['required', 'string', 'max:255'],
@@ -46,7 +52,7 @@ class RegisteredUserController extends Controller
             'alamat' => ['nullable', 'string', 'max:1000'],
 
             'anak.nama_inisial' => ['required', 'string', 'max:50'],
-            'anak.tanggal_lahir' => ['required', 'date', 'before_or_equal:today', 'after_or_equal:'.$batasLahir->toDateString()],
+            'anak.tanggal_lahir' => ['bail', 'required', 'date', 'before_or_equal:today', $usiaDaftar],
             'anak.jenis_kelamin' => ['required', 'in:L,P'],
             'anak.bb_lahir_gram' => ['nullable', 'integer', 'min:300', 'max:6000'],
             'anak.pb_lahir_cm' => ['nullable', 'numeric', 'min:20', 'max:70'],

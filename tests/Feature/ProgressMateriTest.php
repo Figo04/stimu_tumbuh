@@ -14,11 +14,11 @@ class ProgressMateriTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** Responden yang sudah pre-test, anaknya berusia 7 bulan (kelompok 6-9). */
+    /** Responden yang sudah pre-test, anaknya berusia 13 bulan (kelompok 12-18). */
     private function responden(): User
     {
         $user = User::factory()->create();
-        Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow(7)->toDateString()]);
+        Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow(13)->toDateString()]);
         HasilKuesioner::create(['user_id' => $user->id, 'tipe_sesi' => 'pre', 'submitted_at' => now()]);
 
         return $user;
@@ -27,7 +27,7 @@ class ProgressMateriTest extends TestCase
     public function test_membuka_materi_mencatat_progress_tanpa_selesai(): void
     {
         $user = $this->responden();
-        $materi = Materi::factory()->create(['kelompok_usia' => '6-9']);
+        $materi = Materi::factory()->create(['kelompok_usia' => '12-18']);
 
         $this->actingAs($user)->get(route('materi.show', $materi))->assertOk()->assertSee('Tandai selesai ditonton');
         $this->actingAs($user)->get(route('materi.show', $materi))->assertOk();
@@ -39,7 +39,7 @@ class ProgressMateriTest extends TestCase
     public function test_tandai_selesai_satu_arah_dan_tidak_menggandakan_baris(): void
     {
         $user = $this->responden();
-        $materi = Materi::factory()->create(['kelompok_usia' => '6-9']);
+        $materi = Materi::factory()->create(['kelompok_usia' => '12-18']);
 
         $this->actingAs($user)->post(route('materi.video', $materi));
         $this->actingAs($user)->post(route('materi.selesai', $materi))->assertRedirect(route('materi.show', $materi));
@@ -61,7 +61,7 @@ class ProgressMateriTest extends TestCase
             ['judul' => 'Materi Belum', 'urutan' => 1],
             ['judul' => 'Materi Dibaca', 'urutan' => 2],
             ['judul' => 'Materi Selesai', 'urutan' => 3],
-        )->create(['kelompok_usia' => '6-9', 'aspek' => 'motorik_kasar']);
+        )->create(['kelompok_usia' => '12-18', 'aspek' => 'motorik_kasar']);
 
         $this->actingAs($user)->get(route('materi.show', $dibaca));
         $this->actingAs($user)->post(route('materi.video', $selesai));
@@ -75,8 +75,8 @@ class ProgressMateriTest extends TestCase
     public function test_selesai_ditolak_bila_video_belum_dibuka_atau_belum_ada(): void
     {
         $user = $this->responden();
-        $belumDitonton = Materi::factory()->create(['kelompok_usia' => '6-9']);
-        $tanpaVideo = Materi::factory()->create(['kelompok_usia' => '6-9', 'video_youtube_id' => null]);
+        $belumDitonton = Materi::factory()->create(['kelompok_usia' => '12-18']);
+        $tanpaVideo = Materi::factory()->create(['kelompok_usia' => '12-18', 'video_youtube_id' => null]);
 
         $this->actingAs($user)->post(route('materi.selesai', $belumDitonton))->assertForbidden();
         $this->actingAs($user)->post(route('materi.selesai', $tanpaVideo))->assertForbidden();
@@ -88,7 +88,7 @@ class ProgressMateriTest extends TestCase
     public function test_tidak_bisa_menandai_materi_kelompok_usia_lain(): void
     {
         $user = $this->responden();
-        $lain = Materi::factory()->create(['kelompok_usia' => '12-18']);
+        $lain = Materi::factory()->create(['kelompok_usia' => '18-24']);
 
         $this->actingAs($user)->post(route('materi.selesai', $lain))->assertNotFound();
         $this->assertSame(0, ProgressMateri::count());
@@ -106,7 +106,7 @@ class ProgressMateriTest extends TestCase
     public function test_membuka_video_mencatat_ditonton_sekali(): void
     {
         $user = $this->responden();
-        $materi = Materi::factory()->create(['kelompok_usia' => '6-9', 'video_youtube_id' => 'abc123XYZ_-']);
+        $materi = Materi::factory()->create(['kelompok_usia' => '12-18', 'video_youtube_id' => 'abc123XYZ_-']);
 
         $this->actingAs($user)->get(route('materi.show', $materi))->assertSee('Tonton video')->assertSee('youtube-nocookie.com/embed/abc123XYZ_-', false);
 
@@ -125,8 +125,8 @@ class ProgressMateriTest extends TestCase
     public function test_video_tidak_dicatat_untuk_materi_usia_lain_atau_tanpa_video(): void
     {
         $user = $this->responden();
-        $lain = Materi::factory()->create(['kelompok_usia' => '12-18', 'video_youtube_id' => 'abc123XYZ_-']);
-        $tanpaVideo = Materi::factory()->create(['kelompok_usia' => '6-9', 'video_youtube_id' => null]);
+        $lain = Materi::factory()->create(['kelompok_usia' => '18-24', 'video_youtube_id' => 'abc123XYZ_-']);
+        $tanpaVideo = Materi::factory()->create(['kelompok_usia' => '12-18', 'video_youtube_id' => null]);
 
         $this->actingAs($user)->post(route('materi.video', $lain))->assertNotFound();
         $this->actingAs($user)->post(route('materi.video', $tanpaVideo))->assertNotFound();
@@ -140,8 +140,8 @@ class ProgressMateriTest extends TestCase
         $user = $this->responden();
         $this->assertFalse($user->semuaMateriSelesai(), 'tanpa materi tidak dianggap selesai');
 
-        [$a, $b] = Materi::factory()->count(2)->create(['kelompok_usia' => '6-9']);
-        $lain = Materi::factory()->create(['kelompok_usia' => '12-18']);
+        [$a, $b] = Materi::factory()->count(2)->create(['kelompok_usia' => '12-18']);
+        $lain = Materi::factory()->create(['kelompok_usia' => '18-24']);
         ProgressMateri::create(['user_id' => $user->id, 'materi_id' => $lain->id, 'materi_selesai' => true]);
 
         $this->actingAs($user)->post(route('materi.video', $a));
