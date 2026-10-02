@@ -39,6 +39,7 @@ class PraktikTest extends TestCase
     {
         $user = $this->responden();
         $materi = Materi::factory()->create(['kelompok_usia' => '6-9', 'aspek' => 'bicara_bahasa']);
+        $this->actingAs($user)->post(route('materi.video', $materi));
         $this->actingAs($user)->post(route('materi.selesai', $materi));
 
         $hariIni = now()->toDateString();
@@ -60,6 +61,7 @@ class PraktikTest extends TestCase
         $user = $this->responden();
         $materi = Materi::factory()->create(['kelompok_usia' => '6-9']);
         $lain = Materi::factory()->create(['kelompok_usia' => '12-18']);
+        $this->actingAs($user)->post(route('materi.video', $materi));
         $this->actingAs($user)->post(route('materi.selesai', $materi));
 
         $this->actingAs($user)->post(route('materi.praktik', $materi), ['tanggal' => now()->addDay()->toDateString()])

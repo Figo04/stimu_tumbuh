@@ -36,7 +36,7 @@
                             $p = $progress->get($m->id);
                             [$status, $badge] = match (true) {
                                 (bool) $p?->materi_selesai => ['Selesai', 'bg-sukses-badge text-sukses'],
-                                $p !== null => ['Sedang dibaca', 'bg-hangat-bg text-ink'],
+                                $p !== null => ['Sedang ditonton','bg-hangat-bg text-ink'],
                                 default => ['Belum dibuka', 'bg-krem-tua text-ink-muted'],
                             };
                         @endphp

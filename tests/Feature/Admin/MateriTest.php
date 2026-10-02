@@ -33,14 +33,14 @@ class MateriTest extends TestCase
             ->assertSeeInOrder(['Usia 3–6 bulan', 'Motorik Kasar', 'Tengkurap Bergantian', 'belum diisi', '1 responden']);
     }
 
-    public function test_detail_materi_menampilkan_isi_dan_form_video(): void
+    public function test_detail_materi_menampilkan_form_video(): void
     {
         $materi = Materi::factory()->create(['video_youtube_id' => 'M7lc1UVf-VE']);
 
         $this->actingAs($this->admin(), 'admin')->get(route('admin.materi.show', $materi))
             ->assertOk()
             ->assertSee($materi->judul)
-            ->assertSee('Isi materi (tampilan bagi orang tua)')
+            ->assertSee('Tautan video YouTube')
             ->assertSee('youtube-nocookie.com/embed/M7lc1UVf-VE', false);
     }
 

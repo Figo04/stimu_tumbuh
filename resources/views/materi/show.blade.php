@@ -21,9 +21,10 @@
             </button>
         </div>
 
+        {{-- Materi = video saja (keputusan klien, 2 Okt 2026); selesai baru bisa ditandai setelah video dibuka. --}}
         <article x-show="tab === 'materi'" class="mt-4 rounded-3xl bg-white p-6 text-lg leading-relaxed shadow-sm">
             @if ($materi->video_youtube_id)
-                <div x-data="{ buka: false, ditonton: @js($progress->video_ditonton) }" @keydown.escape.window="buka = false" class="mb-6">
+                <div x-data="{ buka: false, ditonton: @js($progress->video_ditonton) }" @keydown.escape.window="buka = false">
                     <button type="button" class="flex w-full items-center justify-center gap-3 rounded-2xl bg-brand px-4 py-4 text-base font-bold text-white shadow-lg shadow-brand/20 hover:bg-brand/90"
                             @click="buka = true; if (! ditonton) { ditonton = true; fetch(@js(route('materi.video', $materi)), { method: 'POST', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content } }) }">
                         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" /></svg>
@@ -43,29 +44,30 @@
                             </div>
                         </div>
                     </template>
+
+                    <div class="mt-8 border-t border-krem-garis pt-6">
+                        @if ($progress->materi_selesai)
+                            <p class="rounded-2xl bg-sukses-bg px-4 py-3 font-bold text-sukses">
+                                ✓ Materi selesai ditonton pada {{ $progress->materi_selesai_at->translatedFormat('d F Y') }}.
+                            </p>
+                        @else
+                            <p x-show="! ditonton" class="text-ink-muted">Tonton videonya dulu, lalu tandai selesai di sini.</p>
+                            <form x-show="ditonton" method="POST" action="{{ route('materi.selesai', $materi) }}">
+                                @csrf
+                                <x-primary-button class="w-full">Tandai selesai ditonton</x-primary-button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
+            @else
+                <p class="text-ink-muted">Video untuk materi ini belum tersedia. Silakan kembali lagi nanti.</p>
             @endif
-
-            @include($materi->konten_view)
-
-            <div class="mt-8 border-t border-krem-garis pt-6">
-                @if ($progress->materi_selesai)
-                    <p class="rounded-2xl bg-sukses-bg px-4 py-3 font-bold text-sukses">
-                        ✓ Materi selesai dibaca pada {{ $progress->materi_selesai_at->translatedFormat('d F Y') }}.
-                    </p>
-                @else
-                    <form method="POST" action="{{ route('materi.selesai', $materi) }}">
-                        @csrf
-                        <x-primary-button class="w-full">Tandai selesai dibaca</x-primary-button>
-                    </form>
-                @endif
-            </div>
         </article>
 
         {{-- Berkelanjutan: boleh diisi berulang, tiap kiriman = entri baru di kalender stimulasi. --}}
         <div x-show="tab === 'praktik'" style="display: none" class="mt-4 rounded-3xl bg-white p-6 text-lg shadow-sm">
             @if (! $progress->materi_selesai)
-                <p class="text-ink-muted">Tab Praktik terbuka setelah materi ini selesai dibaca.</p>
+                <p class="text-ink-muted">Tab Praktik terbuka setelah video materi ini selesai ditonton.</p>
             @else
                 @if (session('status') === 'praktik-tersimpan')
                     <p class="mb-4 rounded-2xl bg-sukses-bg px-4 py-3 font-bold text-sukses">✓ Praktik tersimpan. Anda bisa mencatatnya lagi kapan saja.</p>

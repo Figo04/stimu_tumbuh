@@ -29,7 +29,7 @@ class ProgressMateriTest extends TestCase
         $user = $this->responden();
         $materi = Materi::factory()->create(['kelompok_usia' => '6-9']);
 
-        $this->actingAs($user)->get(route('materi.show', $materi))->assertOk()->assertSee('Tandai selesai dibaca');
+        $this->actingAs($user)->get(route('materi.show', $materi))->assertOk()->assertSee('Tandai selesai ditonton');
         $this->actingAs($user)->get(route('materi.show', $materi))->assertOk();
 
         $this->assertSame(1, ProgressMateri::count());
@@ -41,6 +41,7 @@ class ProgressMateriTest extends TestCase
         $user = $this->responden();
         $materi = Materi::factory()->create(['kelompok_usia' => '6-9']);
 
+        $this->actingAs($user)->post(route('materi.video', $materi));
         $this->actingAs($user)->post(route('materi.selesai', $materi))->assertRedirect(route('materi.show', $materi));
         $pertama = ProgressMateri::sole()->materi_selesai_at;
 
@@ -63,11 +64,25 @@ class ProgressMateriTest extends TestCase
         )->create(['kelompok_usia' => '6-9', 'aspek' => 'motorik_kasar']);
 
         $this->actingAs($user)->get(route('materi.show', $dibaca));
+        $this->actingAs($user)->post(route('materi.video', $selesai));
         $this->actingAs($user)->post(route('materi.selesai', $selesai));
 
         $this->actingAs($user)->get(route('materi.index'))
-            ->assertSeeInOrder(['Materi Belum', 'Belum dibuka', 'Materi Dibaca', 'Sedang dibaca', 'Materi Selesai', 'Selesai'])
+            ->assertSeeInOrder(['Materi Belum', 'Belum dibuka', 'Materi Dibaca', 'Sedang ditonton', 'Materi Selesai', 'Selesai'])
             ->assertSee('1 dari 3', false);
+    }
+
+    public function test_selesai_ditolak_bila_video_belum_dibuka_atau_belum_ada(): void
+    {
+        $user = $this->responden();
+        $belumDitonton = Materi::factory()->create(['kelompok_usia' => '6-9']);
+        $tanpaVideo = Materi::factory()->create(['kelompok_usia' => '6-9', 'video_youtube_id' => null]);
+
+        $this->actingAs($user)->post(route('materi.selesai', $belumDitonton))->assertForbidden();
+        $this->actingAs($user)->post(route('materi.selesai', $tanpaVideo))->assertForbidden();
+        $this->actingAs($user)->get(route('materi.show', $tanpaVideo))->assertSee('Video untuk materi ini belum tersedia')->assertDontSee('Tandai selesai');
+
+        $this->assertSame(0, ProgressMateri::where('materi_selesai', true)->count());
     }
 
     public function test_tidak_bisa_menandai_materi_kelompok_usia_lain(): void
@@ -129,9 +144,11 @@ class ProgressMateriTest extends TestCase
         $lain = Materi::factory()->create(['kelompok_usia' => '12-18']);
         ProgressMateri::create(['user_id' => $user->id, 'materi_id' => $lain->id, 'materi_selesai' => true]);
 
+        $this->actingAs($user)->post(route('materi.video', $a));
         $this->actingAs($user)->post(route('materi.selesai', $a));
         $this->assertFalse($user->semuaMateriSelesai());
 
+        $this->actingAs($user)->post(route('materi.video', $b));
         $this->actingAs($user)->post(route('materi.selesai', $b));
         $this->assertTrue($user->semuaMateriSelesai());
     }

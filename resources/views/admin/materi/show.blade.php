@@ -12,11 +12,12 @@
         urutan {{ $materi->urutan }}
     </p>
 
-    <section class="mb-6 overflow-hidden rounded-3xl bg-white p-6 shadow-sm">
+    <section class="overflow-hidden rounded-3xl bg-white p-6 shadow-sm">
         <h3 class="text-lg font-extrabold">Tautan video YouTube</h3>
         <p class="mt-1 text-sm text-ink-muted">
             Tempel tautan lengkap (<code>youtube.com/watch?v=…</code>, <code>youtu.be/…</code>) atau ID videonya saja.
-            Kosongkan lalu simpan untuk menghapus video — tombol "Tonton video" akan hilang dari halaman orang tua.
+            Materi berupa video saja: selama tautan kosong, orang tua melihat "video belum tersedia" dan materi ini tidak bisa diselesaikan
+            (tab Praktik & post-test ikut tertahan).
         </p>
 
         <form method="POST" action="{{ route('admin.materi.update', $materi) }}" class="mt-3 flex flex-wrap items-start gap-2">
@@ -38,15 +39,5 @@
                         title="Pratinjau video {{ $materi->judul }}" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
             </div>
         @endif
-    </section>
-
-    <section class="overflow-hidden rounded-3xl bg-white shadow-sm">
-        <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-krem-garis px-6 py-5">
-            <h3 class="text-lg font-extrabold">Isi materi (tampilan bagi orang tua)</h3>
-            <p class="text-xs text-ink-muted">Hanya bisa dilihat. Perubahan isi lewat developer — <code>{{ $materi->konten_view }}</code></p>
-        </div>
-        <article class="p-6 text-base leading-relaxed text-ink">
-            @include($materi->konten_view)
-        </article>
     </section>
 </x-admin-layout>

@@ -23,6 +23,7 @@ class MateriFactory extends Factory
             'kelompok_usia' => fake()->randomElement(UsiaAnakService::KELOMPOK_USIA),
             'urutan' => 1,
             'konten_view' => 'materi.placeholder',
+            'video_youtube_id' => 'M7lc1UVf-VE',
         ];
     }
 }

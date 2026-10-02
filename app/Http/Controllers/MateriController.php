@@ -19,7 +19,7 @@ class MateriController extends Controller
             ->orderBy('urutan')
             ->get();
 
-        // Ada baris = pernah dibuka ("Sedang dibaca"); materi_selesai = "Selesai"; tanpa baris = "Belum dibuka".
+        // Ada baris = pernah dibuka ("Sedang ditonton"); materi_selesai = "Selesai"; tanpa baris = "Belum dibuka".
         $progress = $request->user()->progressMateri()
             ->whereIn('materi_id', $materi->pluck('id'))
             ->get()
@@ -51,7 +51,7 @@ class MateriController extends Controller
     public function praktik(Request $request, Materi $materi): RedirectResponse
     {
         $this->pastikanKelompokUsiaAnak($request, $materi);
-        abort_unless($request->user()->materiSelesai($materi), 403, 'Tab Praktik terbuka setelah materi selesai dibaca.');
+        abort_unless($request->user()->materiSelesai($materi), 403, 'Tab Praktik terbuka setelah video materi selesai ditonton.');
 
         $data = $request->validate([
             'tanggal' => ['required', 'date', 'before_or_equal:today'],
@@ -73,6 +73,9 @@ class MateriController extends Controller
         $this->pastikanKelompokUsiaAnak($request, $materi);
 
         $progress = $request->user()->progressMateri()->firstOrCreate(['materi_id' => $materi->id]);
+
+        // Materi = video saja: tanpa video, atau video belum pernah dibuka, materi belum bisa selesai.
+        abort_unless($materi->video_youtube_id && $progress->video_ditonton, 403, 'Tonton videonya dulu sebelum menandai selesai.');
 
         // Satu arah: waktu selesai pertama dipertahankan, tidak ada rute untuk membatalkan.
         if (! $progress->materi_selesai) {

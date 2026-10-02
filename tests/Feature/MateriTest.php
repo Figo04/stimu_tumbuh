@@ -50,7 +50,7 @@ class MateriTest extends TestCase
         $lain = Materi::factory()->create(['kelompok_usia' => '12-18']);
 
         $this->actingAs($user)->get(route('materi.show', $sendiri))->assertOk()
-            ->assertSee($sendiri->judul)->assertSee('[PLACEHOLDER]', false);
+            ->assertSee($sendiri->judul)->assertSee('Tonton video');
         $this->actingAs($user)->get(route('materi.show', $lain))->assertNotFound();
     }
 
