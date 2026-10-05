@@ -21,6 +21,7 @@ export default {
                     muda: '#62A998',    // track progress di atas kartu hijau
                     soft: '#E4F2EA',    // latar tombol ikon (WhatsApp), kotak info
                     aktif: '#D7F0E8',   // latar item sidebar admin yang aktif
+                    tua: '#1F6B61',     // judul & footer landing page (mockup landing_page)
                 },
                 krem: {
                     DEFAULT: '#FCF9F2', // latar halaman
