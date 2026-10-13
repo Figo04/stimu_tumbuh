@@ -34,10 +34,15 @@ class MateriSeederTest extends TestCase
         $this->seed(MateriSeeder::class);
         $jumlah = Materi::count();
         $progress = ProgressMateri::create(['user_id' => User::factory()->create()->id, 'materi_id' => Materi::first()->id]);
+        $diganti = Materi::where('slug', '12-18-motorik-kasar')->first();
+        $this->assertSame('jNXupLa2SNA', $diganti->video_youtube_id);
+        $diganti->update(['video_youtube_id' => 'AAAAAAAAAAA']); // diganti admin
 
         $this->seed(MateriSeeder::class);
 
         $this->assertSame($jumlah, Materi::count());
         $this->assertModelExists($progress);
+        $this->assertSame('AAAAAAAAAAA', $diganti->fresh()->video_youtube_id);
+        $this->assertNull(Materi::where('slug', '18-24-motorik-kasar')->value('video_youtube_id'));
     }
 }
