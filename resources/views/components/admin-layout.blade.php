@@ -20,7 +20,7 @@
             <aside :class="sidebar ? 'translate-x-0' : '-translate-x-full'"
                    class="fixed inset-y-0 left-0 z-30 flex w-72 -translate-x-full flex-col overflow-y-auto border-r border-krem-garis bg-white px-6 py-6 transition-transform lg:translate-x-0">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
-                    <span class="flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft text-lg font-extrabold text-brand">ST</span>
+                    <span class="flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft text-lg font-extrabold text-brand">TC</span>
                     <span class="text-xl font-extrabold text-brand">{{ config('app.name') }}</span>
                 </a>
 

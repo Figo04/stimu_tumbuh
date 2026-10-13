@@ -40,7 +40,7 @@ class DataPenelitianExport implements Export, WithMultipleSheets
 
     public static function namaFile(string $ekstensi): string
     {
-        return 'stimutumbuh-data-penelitian-'.now()->format('Y-m-d-Hi').'.'.$ekstensi;
+        return 'tumbuh-ceria-data-penelitian-'.now()->format('Y-m-d-Hi').'.'.$ekstensi;
     }
 
     public function sheets(): array

@@ -28,7 +28,7 @@
                 :class="scrolled || open ? 'bg-white shadow-lg shadow-ink/5' : 'bg-transparent'"
                 class="fixed inset-x-0 top-0 z-50 transition-colors duration-300">
             <nav class="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
-                <a href="/" class="text-xl font-extrabold tracking-tight text-brand-tua">Stimu<span class="text-hangat">Tumbuh</span></a>
+                <a href="/" class="text-xl font-extrabold tracking-tight text-brand-tua">Tumbuh <span class="text-hangat">Ceria</span></a>
 
                 <ul class="hidden items-center gap-8 lg:flex">
                     @foreach ($menu as $href => $label)
@@ -117,11 +117,11 @@
         <section id="tentang" class="relative overflow-hidden py-20 sm:py-24">
             <div class="pointer-events-none absolute -left-24 top-10 h-64 w-64 rounded-full bg-aspek-bicara blur-sm" aria-hidden="true"></div>
             <div class="relative mx-auto max-w-7xl px-5 sm:px-8">
-                <h2 class="text-3xl font-extrabold leading-tight text-brand-tua sm:text-4xl">Apa itu StimuTumbuh?</h2>
+                <h2 class="text-3xl font-extrabold leading-tight text-brand-tua sm:text-4xl">Apa itu Tumbuh Ceria?</h2>
                 <div class="mt-10 grid gap-10 lg:grid-cols-2 lg:items-start">
                     <div class="space-y-5 text-lg leading-relaxed text-ink-muted">
                         <p>
-                            StimuTumbuh adalah program penelitian yang dijalankan oleh tim peneliti kesehatan.
+                            Tumbuh Ceria adalah program penelitian yang dijalankan oleh tim peneliti kesehatan.
                             Lewat program ini, Ibu mendapatkan video stimulasi yang sesuai dengan usia anak,
                             dalam bahasa yang sederhana dan mudah diikuti di rumah.
                         </p>
@@ -277,7 +277,7 @@
             <div class="mx-auto max-w-7xl px-5 py-14 sm:px-8">
                 <div class="grid gap-10 md:grid-cols-3">
                     <div>
-                        <p class="text-xl font-extrabold">StimuTumbuh</p>
+                        <p class="text-xl font-extrabold">Tumbuh Ceria</p>
                         <p class="mt-3 max-w-xs text-base leading-relaxed text-white/80">
                             Program penelitian stimulasi perkembangan anak usia 12–24 bulan untuk dilakukan di rumah.
                         </p>
@@ -294,7 +294,7 @@
                         <p class="text-base font-bold">Kontak</p>
                         {{-- Pengunjung belum punya kode responden, jadi pesan pembuka tanpa kode (beda dengan x-nav-konsultasi). --}}
                         @if ($wa)
-                            <a href="https://wa.me/{{ $wa }}?text={{ rawurlencode('Halo tim peneliti StimuTumbuh, saya ingin bertanya tentang program ini.') }}" target="_blank" rel="noopener"
+                            <a href="https://wa.me/{{ $wa }}?text={{ rawurlencode('Halo tim peneliti Tumbuh Ceria, saya ingin bertanya tentang program ini.') }}" target="_blank" rel="noopener"
                                class="mt-4 inline-flex min-h-12 items-center gap-2 rounded-xl bg-white px-5 text-base font-bold text-brand-tua hover:opacity-90">
                                 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></svg>
                                 Hubungi Tim Peneliti

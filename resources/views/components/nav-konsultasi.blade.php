@@ -1,7 +1,7 @@
 {{-- Tombol konsultasi → WhatsApp tim peneliti (PRD §3.1). Nomor kosong = tidak tampil.
      Tanpa slot = tombol ikon bulat (header); dengan slot = tautan berisi slot (kartu bantuan Profil). --}}
 @if ($nomor = config('services.wa_konsultasi'))
-    @php($pesan = 'Halo tim peneliti StimuTumbuh, saya responden '.Auth::user()->kode_responden.' ingin berkonsultasi.')
+    @php($pesan = 'Halo tim peneliti Tumbuh Ceria, saya responden '.Auth::user()->kode_responden.' ingin berkonsultasi.')
     @if ($slot->isEmpty())
         <a href="https://wa.me/{{ $nomor }}?text={{ rawurlencode($pesan) }}" target="_blank" rel="noopener"
            aria-label="Konsultasi dengan tim peneliti lewat WhatsApp" title="Konsultasi (WhatsApp)"

@@ -35,7 +35,7 @@ return [
         ],
         'anak.tanggal_lahir' => [
             'before_or_equal' => 'Tanggal lahir anak tidak boleh di masa depan.',
-            'after_or_equal' => 'StimuTumbuh diperuntukkan bagi anak usia 0–36 bulan.',
+            'after_or_equal' => 'Tumbuh Ceria diperuntukkan bagi anak usia 0–36 bulan.',
         ],
     ],
 
