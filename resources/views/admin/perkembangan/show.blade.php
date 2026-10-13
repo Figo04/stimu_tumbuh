@@ -1,6 +1,6 @@
 @php
-    // Kolom skor mengikuti Materi::ASPEK supaya label & urutannya satu sumber.
-    $aspek = \App\Models\Materi::ASPEK;
+    // Kolom skor mengikuti ItemPerkembangan::ASPEK supaya label & urutannya satu sumber.
+    $aspek = \App\Models\ItemPerkembangan::ASPEK;
 @endphp
 
 <x-admin-layout judul="Perkembangan {{ $responden->kode_responden }}">

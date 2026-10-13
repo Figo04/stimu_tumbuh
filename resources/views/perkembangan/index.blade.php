@@ -25,7 +25,7 @@
                     <span class="text-lg">secara keseluruhan</span>
                 </p>
                 <dl class="mt-5 space-y-4">
-                    @foreach (\App\Models\Materi::ASPEK as $aspek => $label)
+                    @foreach (\App\Models\ItemPerkembangan::ASPEK as $aspek => $label)
                         @php $skor = $terakhir->{"skor_$aspek"} + 0; @endphp
                         <div>
                             <div class="flex justify-between gap-4 font-bold">
@@ -89,7 +89,7 @@
                                     @endif
                                 </p>
                                 <dl class="mt-3 grid grid-cols-2 gap-2">
-                                    @foreach (\App\Models\Materi::ASPEK + ['total' => 'Total'] as $aspek => $label)
+                                    @foreach (\App\Models\ItemPerkembangan::ASPEK + ['total' => 'Total'] as $aspek => $label)
                                         <div class="rounded-2xl bg-krem p-3 {{ $aspek === 'total' ? 'col-span-2' : '' }}">
                                             <dt class="text-sm text-ink-muted">{{ $label }}</dt>
                                             <dd class="font-extrabold">
@@ -130,7 +130,7 @@
                     </p>
                 @endif
 
-                @foreach (\App\Models\Materi::ASPEK as $aspek => $label)
+                @foreach (\App\Models\ItemPerkembangan::ASPEK as $aspek => $label)
                     @continue(! $item->has($aspek))
                     <section class="rounded-3xl bg-white p-5 shadow-sm">
                         <x-chip-aspek :aspek="$aspek" />
@@ -154,6 +154,11 @@
                 @endforeach
 
                 <x-input-error :messages="$errors->get('jawaban')" />
+
+                <p class="rounded-2xl bg-hangat-bg px-5 py-4 italic">
+                    Jika banyak jawaban “Tidak”, tetap lanjutkan stimulasi secara rutin dan konsultasikan perkembangan anak
+                    kepada bidan, dokter, atau tenaga kesehatan di puskesmas.
+                </p>
 
                 <x-primary-button class="w-full">Simpan Penilaian</x-primary-button>
             </form>

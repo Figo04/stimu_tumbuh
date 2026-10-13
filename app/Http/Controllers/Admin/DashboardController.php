@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AktivitasStimulasi;
 use App\Models\Anak;
 use App\Models\HasilKuesioner;
+use App\Models\ItemPerkembangan;
 use App\Models\Materi;
 use App\Models\PenilaianPerkembangan;
 use App\Models\ProgressMateri;
@@ -132,14 +133,14 @@ class DashboardController extends Controller
     /** @return array<string, float> rata-rata skor tiap aspek dari penilaian TERAKHIR tiap responden. */
     private function rataSkorAspek(): array
     {
-        $kolom = ['motorik_kasar', 'motorik_halus', 'bicara_bahasa', 'sosial_emosional'];
+        $kolom = array_keys(ItemPerkembangan::ASPEK);
         $rata = PenilaianPerkembangan::whereIn('id', fn ($q) => $q->from('penilaian_perkembangan')
             ->selectRaw('MAX(id)')->groupBy('user_id'))
             ->selectRaw(implode(', ', array_map(fn ($k) => "AVG(skor_$k) as $k", $kolom)))
             ->first();
 
         return array_combine(
-            array_map(fn ($k) => Materi::ASPEK[$k], $kolom),
+            array_values(ItemPerkembangan::ASPEK),
             array_map(fn ($k) => round((float) $rata?->$k, 2), $kolom),
         );
     }

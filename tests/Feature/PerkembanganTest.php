@@ -26,7 +26,7 @@ class PerkembanganTest extends TestCase
     /** 2 item per aspek untuk kelompok 12-18. */
     private function item(string $kelompok = '12-18')
     {
-        return collect(['motorik_kasar', 'motorik_halus', 'bicara_bahasa', 'sosial_emosional'])
+        return collect(array_keys(ItemPerkembangan::ASPEK))
             ->flatMap(fn ($aspek) => collect([1, 2])->map(fn ($n) => ItemPerkembangan::create([
                 'aspek' => $aspek, 'kelompok_usia' => $kelompok, 'pertanyaan' => "Item $aspek $kelompok $n", 'urutan' => $n,
             ])));
@@ -39,10 +39,12 @@ class PerkembanganTest extends TestCase
         $this->item('18-24');
 
         $this->actingAs($user)->get(route('perkembangan.index'))->assertOk()
-            ->assertSee('Item motorik_kasar 12-18 1')
-            ->assertDontSee('Item motorik_kasar 18-24 1');
+            ->assertSee('Item motorik 12-18 1')
+            ->assertDontSee('Item motorik 18-24 1')
+            ->assertSee('Berpikir &amp; Belajar', false)
+            ->assertSee('konsultasikan perkembangan anak');
 
-        // Motorik kasar 2/2, motorik halus 1/2, sisanya 0 → total 3/8.
+        // Motorik 2/2, berpikir & belajar 1/2, sisanya 0 → total 3/8.
         $jawaban = $item->mapWithKeys(fn ($i) => [$i->id => '0'])->all();
         $jawaban[$item[0]->id] = $jawaban[$item[1]->id] = $jawaban[$item[2]->id] = '1';
 
@@ -50,9 +52,9 @@ class PerkembanganTest extends TestCase
             ->assertRedirect(route('perkembangan.index'));
 
         $p = $user->penilaianPerkembangan()->first();
-        $this->assertSame('100.00', $p->skor_motorik_kasar);
-        $this->assertSame('50.00', $p->skor_motorik_halus);
-        $this->assertSame('0.00', $p->skor_bicara_bahasa);
+        $this->assertSame('100.00', $p->skor_motorik);
+        $this->assertSame('50.00', $p->skor_berpikir_belajar);
+        $this->assertSame('0.00', $p->skor_komunikasi);
         $this->assertSame('37.50', $p->skor_total);
         $this->assertSame('12-18', $p->kelompok_usia);
         $this->assertSame(13, $p->usia_bulan);
@@ -87,7 +89,7 @@ class PerkembanganTest extends TestCase
         $this->item();
         $penilaian = fn (User $u, $tanggal, $kelompok, $skor) => $u->penilaianPerkembangan()->create([
             'anak_id' => $u->anak()->first()->id, 'tanggal_penilaian' => $tanggal, 'usia_bulan' => 5, 'kelompok_usia' => $kelompok,
-            'skor_motorik_kasar' => $skor[0], 'skor_motorik_halus' => $skor[1], 'skor_bicara_bahasa' => $skor[2],
+            'skor_motorik' => $skor[0], 'skor_berpikir_belajar' => $skor[1], 'skor_komunikasi' => $skor[2],
             'skor_sosial_emosional' => $skor[3], 'skor_total' => $skor[4],
         ]);
         $penilaian($user, today()->subMonthsNoOverflow(2), '3-6', [50, 50, 50, 50, 50]);
@@ -99,8 +101,8 @@ class PerkembanganTest extends TestCase
             ->assertSeeInOrder(['Riwayat penilaian', today()->translatedFormat('j F Y'), today()->subMonth()->translatedFormat('j F Y')])
             ->assertSee('Naik 43.75% dibanding penilaian sebelumnya')
             ->assertSee('▲ +43.75')   // total 37.5 → 81.25
-            ->assertSee('▼ −25')      // motorik halus 50 → 25
-            ->assertSee('tetap')      // motorik kasar 100 → 100
+            ->assertSee('▼ −25')      // berpikir & belajar 50 → 25
+            ->assertSee('tetap')      // motorik 100 → 100
             ->assertSee('kelompok usia baru, tidak dibandingkan')
             ->assertSee('penilaian pertama')
             ->assertDontSee('▼ −50')  // 50 (3-6) → 0 (6-9) tidak dibandingkan

@@ -81,8 +81,8 @@ class DashboardTest extends TestCase
             PenilaianPerkembangan::create([
                 'user_id' => $u->id, 'anak_id' => $u->anak->id, 'tanggal_penilaian' => now()->toDateString(),
                 'usia_bulan' => 13, 'kelompok_usia' => '12-18',
-                'skor_motorik_kasar' => $skor, 'skor_motorik_halus' => $skor,
-                'skor_bicara_bahasa' => $skor, 'skor_sosial_emosional' => $skor, 'skor_total' => $skor,
+                'skor_motorik' => $skor, 'skor_berpikir_belajar' => $skor,
+                'skor_komunikasi' => $skor, 'skor_sosial_emosional' => $skor, 'skor_total' => $skor,
             ]);
         }
 
@@ -98,7 +98,7 @@ class DashboardTest extends TestCase
             ->assertViewHas('progresMateri', ['Belum mulai' => 2, 'Sebagian' => 0, 'Selesai semua' => 1])
             ->assertViewHas('sebaranUsia', ['12-18 bln' => 2, '18-24 bln' => 1, '24-36 bln' => 0])
             // (80 + 60) / 2 = 70 — penilaian pertama A (20) tidak ikut.
-            ->assertViewHas('rataSkorAspek', array_fill_keys(array_values(Materi::ASPEK), 70.0));
+            ->assertViewHas('rataSkorAspek', array_fill_keys(array_values(\App\Models\ItemPerkembangan::ASPEK), 70.0));
     }
 
     public function test_rata_rata_frekuensi_dan_durasi_dihitung_dari_entri_aktivitas(): void

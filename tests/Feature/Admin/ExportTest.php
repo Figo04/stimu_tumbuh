@@ -54,8 +54,8 @@ class ExportTest extends TestCase
         PenilaianPerkembangan::create([
             'user_id' => $user->id, 'anak_id' => $anak->id, 'tanggal_penilaian' => '2026-03-05',
             'usia_bulan' => 6, 'kelompok_usia' => '6-9',
-            'skor_motorik_kasar' => 100, 'skor_motorik_halus' => 66.67,
-            'skor_bicara_bahasa' => 33.33, 'skor_sosial_emosional' => 0, 'skor_total' => 50,
+            'skor_motorik' => 100, 'skor_berpikir_belajar' => 66.67,
+            'skor_komunikasi' => 33.33, 'skor_sosial_emosional' => 0, 'skor_total' => 50,
         ]);
 
         HasilKuesioner::create([

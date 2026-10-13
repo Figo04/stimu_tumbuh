@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /** Penilaian perkembangan: berkelanjutan, satu baris per penilaian (bukan pola final kuesioner). */
 #[Fillable([
     'user_id', 'anak_id', 'tanggal_penilaian', 'usia_bulan', 'kelompok_usia',
-    'skor_motorik_kasar', 'skor_motorik_halus', 'skor_bicara_bahasa', 'skor_sosial_emosional', 'skor_total',
+    'skor_motorik', 'skor_berpikir_belajar', 'skor_komunikasi', 'skor_sosial_emosional', 'skor_total',
 ])]
 class PenilaianPerkembangan extends Model
 {
@@ -20,9 +20,9 @@ class PenilaianPerkembangan extends Model
     {
         return [
             'tanggal_penilaian' => 'date',
-            'skor_motorik_kasar' => 'decimal:2',
-            'skor_motorik_halus' => 'decimal:2',
-            'skor_bicara_bahasa' => 'decimal:2',
+            'skor_motorik' => 'decimal:2',
+            'skor_berpikir_belajar' => 'decimal:2',
+            'skor_komunikasi' => 'decimal:2',
             'skor_sosial_emosional' => 'decimal:2',
             'skor_total' => 'decimal:2',
         ];

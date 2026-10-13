@@ -75,8 +75,8 @@ class AktivitasPerkembanganTest extends TestCase
             PenilaianPerkembangan::create([
                 'user_id' => $user->id, 'anak_id' => $anak->id, 'tanggal_penilaian' => $tanggal,
                 'usia_bulan' => 4, 'kelompok_usia' => '3-6',
-                'skor_motorik_kasar' => $total, 'skor_motorik_halus' => $total,
-                'skor_bicara_bahasa' => $total, 'skor_sosial_emosional' => $total, 'skor_total' => $total,
+                'skor_motorik' => $total, 'skor_berpikir_belajar' => $total,
+                'skor_komunikasi' => $total, 'skor_sosial_emosional' => $total, 'skor_total' => $total,
             ]);
         }
 
@@ -98,8 +98,8 @@ class AktivitasPerkembanganTest extends TestCase
         PenilaianPerkembangan::create([
             'user_id' => $user->id, 'anak_id' => $anak->id, 'tanggal_penilaian' => '2026-03-05',
             'usia_bulan' => 4, 'kelompok_usia' => '3-6',
-            'skor_motorik_kasar' => 100, 'skor_motorik_halus' => 66.67,
-            'skor_bicara_bahasa' => 33.33, 'skor_sosial_emosional' => 0, 'skor_total' => 50,
+            'skor_motorik' => 100, 'skor_berpikir_belajar' => 66.67,
+            'skor_komunikasi' => 33.33, 'skor_sosial_emosional' => 0, 'skor_total' => 50,
         ]);
 
         $this->actingAs($this->admin(), 'admin')->get(route('admin.perkembangan.show', $user))

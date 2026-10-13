@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\AktivitasStimulasi;
 use App\Models\Anak;
+use App\Models\ItemPerkembangan;
 use App\Models\Materi;
 use App\Models\PenilaianPerkembangan;
 use App\Models\User;
@@ -56,8 +57,8 @@ class DataPenelitianExport implements Export, WithMultipleSheets
             ], $this->aktivitas()),
             new SheetTabel('Tabel 4 - Perkembangan', [
                 'Kode Responden', 'Tanggal Penilaian', 'Usia Anak (bulan)', 'Kelompok Usia',
-                'Skor Motorik Kasar (%)', 'Skor Motorik Halus (%)', 'Skor Bicara & Bahasa (%)',
-                'Skor Sosial & Emosional (%)', 'Skor Total (%)',
+                ...array_map(fn ($label) => "Skor {$label} (%)", array_values(ItemPerkembangan::ASPEK)),
+                'Skor Total (%)',
             ], $this->perkembangan()),
             new SheetTabel('Tabel 5 - Penggunaan Aplikasi', [
                 'Kode Responden', 'Materi Dibuka', 'Materi Selesai', 'Video Ditonton',
@@ -189,10 +190,7 @@ class DataPenelitianExport implements Export, WithMultipleSheets
                 // Snapshot saat penilaian (kolom DB), bukan hitung ulang hari ini.
                 $p->usia_bulan,
                 $p->kelompok_usia,
-                self::angka($p->skor_motorik_kasar),
-                self::angka($p->skor_motorik_halus),
-                self::angka($p->skor_bicara_bahasa),
-                self::angka($p->skor_sosial_emosional),
+                ...array_map(fn ($k) => self::angka($p->{"skor_$k"}), array_keys(ItemPerkembangan::ASPEK)),
                 self::angka($p->skor_total),
             ])
             ->all();

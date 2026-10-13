@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\ItemPerkembangan;
 use App\Models\KuesionerSoal;
-use App\Models\Materi;
 use Illuminate\Support\Collection;
 
 class SkorService
@@ -58,7 +57,7 @@ class SkorService
             : round($items->filter(fn ($i) => $jawaban[$i->id] ?? false)->count() / $items->count() * 100, 2);
 
         $skor = [];
-        foreach (array_keys(Materi::ASPEK) as $aspek) {
+        foreach (array_keys(ItemPerkembangan::ASPEK) as $aspek) {
             $skor["skor_{$aspek}"] = $persen($item->where('aspek', $aspek));
         }
 
