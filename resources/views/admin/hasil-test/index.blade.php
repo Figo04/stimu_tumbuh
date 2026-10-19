@@ -1,8 +1,3 @@
-@php
-    // Badge kategori pengetahuan (PRD §5 enum Baik/Cukup/Kurang).
-    $warna = ['Baik' => 'bg-sukses-badge text-sukses', 'Cukup' => 'bg-hangat-bg text-ink', 'Kurang' => 'bg-aspek-sosial text-bahaya'];
-@endphp
-
 <x-admin-layout judul="Hasil Test">
     <section class="overflow-hidden rounded-3xl bg-white shadow-sm">
         <h2 class="px-6 py-5 text-lg font-extrabold">
@@ -19,15 +14,14 @@
                         <tr>
                             <th class="px-6 py-3" rowspan="2">Kode</th>
                             <th class="px-6 py-3" rowspan="2">Nama</th>
-                            <th class="border-l border-krem-garis px-6 py-3" colspan="3">Pre-test</th>
-                            <th class="border-l border-krem-garis px-6 py-3" colspan="3">Post-test</th>
+                            <th class="border-l border-krem-garis px-6 py-3" colspan="2">Pre-test</th>
+                            <th class="border-l border-krem-garis px-6 py-3" colspan="2">Post-test</th>
                             <th class="px-6 py-3" rowspan="2"></th>
                         </tr>
                         <tr>
                             @foreach (['pre', 'post'] as $tipe)
-                                <th class="border-l border-krem-garis px-6 py-3">Pengetahuan</th>
-                                <th class="px-6 py-3">Kategori</th>
-                                <th class="px-6 py-3">Sikap</th>
+                                <th class="border-l border-krem-garis px-6 py-3">Usia Soal</th>
+                                <th class="px-6 py-3">Skor Total</th>
                             @endforeach
                         </tr>
                     </thead>
@@ -41,22 +35,11 @@
                                 @foreach (['pre', 'post'] as $tipe)
                                     @php $h = $hasil->get($tipe); @endphp
                                     @if (! $h)
-                                        <td class="border-l border-krem-garis px-6 py-4 text-ink-muted/60" colspan="3">Belum dikerjakan</td>
+                                        <td class="border-l border-krem-garis px-6 py-4 text-ink-muted/60" colspan="2">Belum dikerjakan</td>
                                     @else
-                                        <td class="whitespace-nowrap border-l border-krem-garis px-6 py-4">
-                                            {{ $h->skor_pengetahuan === null ? '—' : number_format((float) $h->skor_pengetahuan, 2, ',', '.').'%' }}
-                                        </td>
+                                        <td class="whitespace-nowrap border-l border-krem-garis px-6 py-4">{{ $h->kelompok_usia }} bln</td>
                                         <td class="whitespace-nowrap px-6 py-4">
-                                            @if ($h->kategori_pengetahuan)
-                                                <span class="rounded-full px-3 py-1 text-sm font-bold {{ $warna[$h->kategori_pengetahuan] ?? 'bg-krem-tua text-ink' }}">
-                                                    {{ $h->kategori_pengetahuan }}
-                                                </span>
-                                            @else
-                                                —
-                                            @endif
-                                        </td>
-                                        <td class="whitespace-nowrap px-6 py-4">
-                                            {{ $h->skor_sikap === null ? '—' : number_format((float) $h->skor_sikap, 2, ',', '.') }}
+                                            {{ $h->skor_total === null ? '—' : number_format((float) $h->skor_total, 2, ',', '.').'%' }}
                                         </td>
                                     @endif
                                 @endforeach

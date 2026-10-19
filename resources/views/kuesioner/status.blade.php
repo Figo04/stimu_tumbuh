@@ -3,7 +3,7 @@
     @php $selesaiSemua = $hasil->has('post'); @endphp
 
     <div class="mx-auto max-w-2xl px-4 py-6">
-        <h1 class="text-3xl font-extrabold">Tes Pemahaman</h1>
+        <h1 class="text-3xl font-extrabold">Tes Tumbuh Kembang</h1>
 
         @if (session('status'))
             <x-auth-session-status class="mt-4" :status="session('status')" />

@@ -19,16 +19,16 @@
     </p>
 
     <div class="space-y-6">
-        @foreach (\App\Models\KuesionerSoal::TIPE as $tipe => $labelTipe)
-            @php($daftar = $soal->get($tipe, collect()))
+        @foreach (\App\Services\UsiaAnakService::KELOMPOK_USIA as $kelompok)
+            @php($daftar = $soal->get($kelompok, collect()))
             <section class="overflow-hidden rounded-3xl bg-white shadow-sm">
                 <h2 class="px-6 py-5 text-lg font-extrabold">
-                    Soal {{ $labelTipe }}
+                    Usia {{ $kelompok }} bulan
                     <span class="font-bold text-ink-muted">({{ $daftar->count() }} soal)</span>
                 </h2>
 
                 @if ($daftar->isEmpty())
-                    <p class="px-6 pb-6 text-ink-muted">Belum ada soal {{ strtolower($labelTipe) }}.</p>
+                    <p class="px-6 pb-6 text-ink-muted">Belum ada soal untuk kelompok usia ini — pre-test responden usia ini tidak bisa dibuka.</p>
                 @else
                     <div class="overflow-x-auto">
                         <table class="min-w-full">
@@ -36,7 +36,7 @@
                                 <tr>
                                     <th class="px-6 py-3">Nomor</th>
                                     <th class="px-6 py-3">Pertanyaan</th>
-                                    <th class="px-6 py-3">{{ $tipe === 'pengetahuan' ? 'Kunci Jawaban' : 'Skor Dibalik' }}</th>
+                                    <th class="px-6 py-3">Kategori</th>
                                     <th class="px-6 py-3">Dijawab</th>
                                     <th class="px-6 py-3"><span class="sr-only">Aksi</span></th>
                                 </tr>
@@ -46,13 +46,7 @@
                                     <tr>
                                         <td class="whitespace-nowrap px-6 py-4 align-top font-bold">{{ $s->urutan }}</td>
                                         <td class="px-6 py-4 align-top">{{ $s->pertanyaan }}</td>
-                                        <td class="whitespace-nowrap px-6 py-4 align-top">
-                                            @if ($tipe === 'pengetahuan')
-                                                {{ \App\Models\KuesionerSoal::JAWABAN_PENGETAHUAN[$s->jawaban_benar] ?? '—' }}
-                                            @else
-                                                {{ $s->reverse_scored ? 'Ya' : 'Tidak' }}
-                                            @endif
-                                        </td>
+                                        <td class="whitespace-nowrap px-6 py-4 align-top">{{ \App\Models\ItemPerkembangan::ASPEK[$s->aspek] }}</td>
                                         <td class="whitespace-nowrap px-6 py-4 align-top text-ink-muted">
                                             {{ $s->detail_count ? $s->detail_count.' responden' : '—' }}
                                         </td>

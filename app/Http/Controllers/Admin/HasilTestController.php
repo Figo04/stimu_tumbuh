@@ -21,12 +21,11 @@ class HasilTestController extends Controller
     {
         return view('admin.hasil-test.show', [
             'responden' => $responden,
-            // Urutan soal ikut bank soal (pengetahuan dulu, lalu urutan) — disortir di koleksi
-            // karena urutannya milik tabel soal, bukan tabel detail.
+            // Urutan soal ikut bank soal — disortir di koleksi karena urutannya
+            // milik tabel soal, bukan tabel detail.
             'hasil' => $responden->hasilKuesioner()->with('detail.soal')->get()
-                // 'pengetahuan' < 'sikap' secara alfabet → pengetahuan tampil lebih dulu.
                 ->each(fn ($h) => $h->setRelation('detail', $h->detail
-                    ->sortBy(fn ($d) => [$d->soal->tipe, $d->soal->urutan])->values()))
+                    ->sortBy(fn ($d) => [$d->soal->urutan, $d->soal->id])->values()))
                 ->keyBy('tipe_sesi'),
         ]);
     }

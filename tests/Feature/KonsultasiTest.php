@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Anak;
 use App\Models\User;
+use Database\Seeders\KuesionerSoalSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -10,10 +12,16 @@ class KonsultasiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(KuesionerSoalSeeder::class);
+    }
+
     public function test_tombol_berisi_nomor_dan_kode_responden_sejak_sebelum_pretest(): void
     {
         config(['services.wa_konsultasi' => '6281234567890']);
-        $user = User::factory()->create(['kode_responden' => 'RSP-007']);
+        $user = User::factory()->has(Anak::factory(), 'anak')->create(['kode_responden' => 'RSP-007']);
 
         $this->actingAs($user)->get('/pretest')->assertOk()
             ->assertSee('https://wa.me/6281234567890?text=', false)
@@ -24,7 +32,7 @@ class KonsultasiTest extends TestCase
     {
         config(['services.wa_konsultasi' => null]);
 
-        $this->actingAs(User::factory()->create())->get('/pretest')->assertOk()
+        $this->actingAs(User::factory()->has(Anak::factory(), 'anak')->create())->get('/pretest')->assertOk()
             ->assertDontSee('wa.me', false);
     }
 }

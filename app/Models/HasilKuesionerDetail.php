@@ -11,6 +11,11 @@ class HasilKuesionerDetail extends Model
 {
     protected $table = 'hasil_kuesioner_detail';
 
+    protected function casts(): array
+    {
+        return ['jawaban_responden' => 'boolean'];
+    }
+
     public function soal(): BelongsTo
     {
         return $this->belongsTo(KuesionerSoal::class, 'soal_id');

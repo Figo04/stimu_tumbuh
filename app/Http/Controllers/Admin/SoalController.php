@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ItemPerkembangan;
 use App\Models\KuesionerSoal;
+use App\Services\UsiaAnakService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -15,8 +17,8 @@ class SoalController extends Controller
     public function index(): View
     {
         return view('admin.soal.index', [
-            // Dikelompokkan di PHP, bukan lewat ORDER BY tipe: urutan tampil milik KuesionerSoal::TIPE.
-            'soal' => KuesionerSoal::withCount('detail')->orderBy('urutan')->orderBy('id')->get()->groupBy('tipe'),
+            // Dikelompokkan di PHP: urutan tampil milik UsiaAnakService::KELOMPOK_USIA.
+            'soal' => KuesionerSoal::withCount('detail')->orderBy('urutan')->orderBy('id')->get()->groupBy('kelompok_usia'),
         ]);
     }
 
@@ -44,7 +46,7 @@ class SoalController extends Controller
 
     public function update(Request $request, KuesionerSoal $soal): RedirectResponse
     {
-        // Tipe tidak ikut diubah (lihat aturan()): jawaban lama B/S vs SS..STS akan salah terskor.
+        // Kelompok usia & kategori tidak ikut diubah (lihat aturan()).
         $soal->update($this->data($request, $soal));
 
         return redirect()->route('admin.soal.index')->with('status', 'Soal diperbarui.');
@@ -64,31 +66,16 @@ class SoalController extends Controller
         return redirect()->route('admin.soal.index')->with('status', 'Soal dihapus.');
     }
 
-    /** Jawaban benar & reverse_scored dinormalkan menurut tipe (PRD §5). */
     private function data(Request $request, ?KuesionerSoal $soal = null): array
     {
-        $data = $request->validate($this->aturan($soal));
-        $tipe = $soal?->tipe ?? $data['tipe'];
-
-        return [...$data,
-            'jawaban_benar' => $tipe === 'pengetahuan' ? $data['jawaban_benar'] ?? null : null,
-            'reverse_scored' => $tipe === 'sikap' && $request->boolean('reverse_scored'),
-        ];
-    }
-
-    private function aturan(?KuesionerSoal $soal): array
-    {
-        return array_filter([
-            // Tipe hanya ditetapkan saat membuat soal: mengubahnya membuat jawaban yang
-            // sudah masuk tidak cocok dengan skala skornya. Salah pilih → hapus & buat ulang.
-            'tipe' => $soal ? null : ['required', Rule::in(array_keys(KuesionerSoal::TIPE))],
+        return $request->validate(array_filter([
+            // Kelompok usia & kategori hanya ditetapkan saat membuat soal: mengubahnya memindahkan
+            // soal yang sudah dijawab ke kelompok/skor aspek lain, sehingga pre & post tak lagi
+            // sebanding. Salah pilih → hapus & buat ulang.
+            'kelompok_usia' => $soal ? null : ['required', Rule::in(UsiaAnakService::KELOMPOK_USIA)],
+            'aspek' => $soal ? null : ['required', Rule::in(array_keys(ItemPerkembangan::ASPEK))],
             'pertanyaan' => ['required', 'string', 'max:1000'],
-            'jawaban_benar' => [
-                Rule::requiredIf(($soal?->tipe ?? request('tipe')) === 'pengetahuan'),
-                'nullable',
-                Rule::in(array_keys(KuesionerSoal::JAWABAN_PENGETAHUAN)),
-            ],
             'urutan' => ['required', 'integer', 'min:1', 'max:255'],
-        ]);
+        ]));
     }
 }

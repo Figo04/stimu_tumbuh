@@ -30,10 +30,8 @@ class DataPenelitianExport implements Export, WithMultipleSheets
         'Inisial Anak', 'Jenis Kelamin', 'Tanggal Lahir Anak', 'Usia Anak (bulan)', 'Kelompok Usia',
     ];
 
-    private const KOLOM_HASIL_TEST = [
-        'Pre-test Dikirim', 'Pre-test Skor Pengetahuan (%)', 'Pre-test Kategori', 'Pre-test Skor Sikap',
-        'Post-test Dikirim', 'Post-test Skor Pengetahuan (%)', 'Post-test Kategori', 'Post-test Skor Sikap',
-    ];
+    /** Skor pre/post: persen "Ya" per kategori checklist + total, sama dengan Tabel 4. */
+    private const SKOR_HASIL_TEST = ['motorik', 'berpikir_belajar', 'komunikasi', 'sosial_emosional', 'total'];
 
     /** @var Collection<int, User>|null */
     private ?Collection $responden = null;
@@ -63,9 +61,22 @@ class DataPenelitianExport implements Export, WithMultipleSheets
             new SheetTabel('Tabel 5 - Penggunaan Aplikasi', [
                 'Kode Responden', 'Materi Dibuka', 'Materi Selesai', 'Video Ditonton',
                 'Materi Kelompok Usia Saat Ini', 'Progres Materi',
-                ...self::KOLOM_HASIL_TEST,
+                ...self::kolomHasilTest(),
             ], $this->penggunaan()),
         ];
+    }
+
+    private static function kolomHasilTest(): array
+    {
+        $label = ItemPerkembangan::ASPEK + ['total' => 'Total'];
+        $kolom = [];
+
+        foreach (['Pre-test', 'Post-test'] as $tes) {
+            $kolom = [...$kolom, "$tes Dikirim", "$tes Kelompok Usia",
+                ...array_map(fn ($k) => "$tes Skor {$label[$k]} (%)", self::SKOR_HASIL_TEST)];
+        }
+
+        return $kolom;
     }
 
     /** CSV ringkas (PRD §3.4): identitas + hasil test, satu baris per responden. */
@@ -77,7 +88,7 @@ class DataPenelitianExport implements Export, WithMultipleSheets
             $baris[] = [...$this->barisIdentitas($r), ...$this->barisHasilTest($r)];
         }
 
-        return [[...self::KOLOM_IDENTITAS, ...self::KOLOM_HASIL_TEST], $baris];
+        return [[...self::KOLOM_IDENTITAS, ...self::kolomHasilTest()], $baris];
     }
 
     /** @return Collection<int, User> */
@@ -123,8 +134,8 @@ class DataPenelitianExport implements Export, WithMultipleSheets
 
         foreach (['pre', 'post'] as $tipe) {
             $hasil = $r->hasilKuesioner->firstWhere('tipe_sesi', $tipe);
-            $baris = [...$baris, $hasil?->submitted_at?->format('Y-m-d'), self::angka($hasil?->skor_pengetahuan),
-                $hasil?->kategori_pengetahuan, self::angka($hasil?->skor_sikap)];
+            $baris = [...$baris, $hasil?->submitted_at?->format('Y-m-d'), $hasil?->kelompok_usia,
+                ...array_map(fn ($k) => self::angka($hasil?->{"skor_$k"}), self::SKOR_HASIL_TEST)];
         }
 
         return $baris;

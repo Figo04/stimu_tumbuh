@@ -8,8 +8,8 @@
 
     {{-- mulai: kartu pembuka dulu (mockup "Tes"), soal tampil setelah tombol Mulai; langsung ke soal bila validasi gagal. --}}
     <div class="mx-auto max-w-2xl px-4 py-6" x-data="{ mulai: @js($errors->any()) }">
-        <h1 class="text-3xl font-extrabold">Tes Pemahaman</h1>
-        <p class="mt-1 text-lg text-ink-muted">Jawab sesuai yang {{ $sapaan }} ketahui dan rasakan.</p>
+        <h1 class="text-3xl font-extrabold">Tes Tumbuh Kembang</h1>
+        <p class="mt-1 text-lg text-ink-muted">Jawab sesuai kemampuan {{ $anak->nama_inisial }} yang {{ $sapaan }} amati sehari-hari.</p>
 
         <section x-show="! mulai" class="mt-6 rounded-3xl bg-white p-6 shadow-lg shadow-ink/5">
             <span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-soft text-brand">
@@ -18,9 +18,9 @@
             <h2 class="mt-5 text-2xl font-extrabold">{{ $tipe === 'pre' ? 'Selesaikan pre-test lebih dulu' : 'Saatnya mengisi post-test' }}</h2>
             <p class="mt-3 text-lg leading-relaxed text-ink-muted">
                 @if ($tipe === 'pre')
-                    Ini bukan ujian. Jawablah dengan santai sesuai yang {{ $sapaan }} ketahui dan rasakan. Setelah selesai, semua materi akan terbuka.
+                    Ini bukan ujian. Jawab Ya atau Tidak sesuai yang {{ $sapaan }} amati pada {{ $anak->nama_inisial }}. Setelah selesai, semua materi akan terbuka.
                 @else
-                    {{ $sapaan }} sudah menyelesaikan seluruh materi. Isi kembali pertanyaan yang sama untuk melihat perubahan setelah mempelajari materi.
+                    {{ $sapaan }} sudah menyelesaikan seluruh materi. Isi kembali pertanyaan yang sama untuk melihat perkembangan {{ $anak->nama_inisial }} setelah stimulasi.
                 @endif
             </p>
             <ul class="mt-4 space-y-2 text-ink-muted">
@@ -42,32 +42,24 @@
                 </p>
             @endif
 
-            @foreach ($soal as $jenis => $items)
-                @php
-                    $pilihan = $jenis === 'pengetahuan'
-                        ? \App\Models\KuesionerSoal::JAWABAN_PENGETAHUAN
-                        : \App\Models\KuesionerSoal::JAWABAN_SIKAP;
-                @endphp
+            <p class="text-lg text-ink-muted">
+                Usia {{ str_replace('-', '–', $kelompokUsia) }} bulan. Apakah {{ $anak->nama_inisial }} <strong class="text-ink">sudah bisa</strong> melakukan hal berikut?
+            </p>
 
+            {{-- Pola tampilan sama dengan checklist Perkembangan (perkembangan/index). --}}
+            @foreach (\App\Models\ItemPerkembangan::ASPEK as $aspek => $label)
+                @continue(! $soal->has($aspek))
                 <section class="rounded-3xl bg-white p-5 shadow-sm">
-                    <p class="text-sm font-bold uppercase tracking-wide text-brand">Bagian {{ $loop->iteration }}</p>
-                    <h2 class="mt-1 text-xl font-extrabold">{{ \App\Models\KuesionerSoal::TIPE[$jenis] }}</h2>
-                    <p class="mt-1 text-ink-muted">
-                        {{ $jenis === 'pengetahuan'
-                            ? 'Pilih Benar atau Salah untuk setiap pernyataan.'
-                            : 'Pilih seberapa setuju '.$sapaan.' dengan setiap pernyataan.' }}
-                    </p>
-
-                    @foreach ($items as $s)
+                    <x-chip-aspek :aspek="$aspek" />
+                    @foreach ($soal[$aspek] as $s)
                         <fieldset class="border-b border-krem-garis py-5 last:border-0 last:pb-0">
                             <legend class="float-left mb-3 w-full text-lg">{{ $loop->iteration }}. {{ $s->pertanyaan }}</legend>
-                            {{-- Skala sikap 1 kolom di HP agar urutan Sangat Setuju → Sangat Tidak Setuju terbaca. --}}
-                            <div class="clear-left grid gap-3 {{ $jenis === 'pengetahuan' ? 'grid-cols-2' : 'grid-cols-1 sm:grid-cols-2' }}">
-                                @foreach ($pilihan as $kode => $teks)
-                                    <label class="flex cursor-pointer items-center gap-3 rounded-2xl border border-krem-garis px-4 py-3.5 font-bold has-[:checked]:border-brand has-[:checked]:bg-brand-soft has-[:checked]:text-brand">
-                                        <input type="radio" name="jawaban[{{ $s->id }}]" value="{{ $kode }}" required
-                                               class="h-5 w-5 shrink-0 border-krem-garis text-brand focus:ring-brand"
-                                               @checked(old("jawaban.{$s->id}") === $kode)>
+                            <div class="clear-left grid grid-cols-2 gap-3">
+                                @foreach (\App\Models\KuesionerSoal::JAWABAN as $nilai => $teks)
+                                    <label class="flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-krem-garis px-4 py-3.5 font-bold has-[:checked]:border-brand has-[:checked]:bg-brand-soft has-[:checked]:text-brand">
+                                        <input type="radio" name="jawaban[{{ $s->id }}]" value="{{ $nilai }}" required
+                                               class="h-5 w-5 border-krem-garis text-brand focus:ring-brand"
+                                               @checked(old("jawaban.{$s->id}") === (string) $nilai)>
                                         {{ $teks }}
                                     </label>
                                 @endforeach

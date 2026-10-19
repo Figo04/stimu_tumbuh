@@ -22,7 +22,7 @@ class SoalTest extends TestCase
     private function soal(array $atribut = []): KuesionerSoal
     {
         return KuesionerSoal::create($atribut + [
-            'tipe' => 'pengetahuan', 'pertanyaan' => 'Soal uji', 'jawaban_benar' => 'B', 'urutan' => 1,
+            'kelompok_usia' => '12-18', 'aspek' => 'motorik', 'pertanyaan' => 'Soal uji', 'urutan' => 1,
         ]);
     }
 
@@ -30,66 +30,56 @@ class SoalTest extends TestCase
     private function jawab(KuesionerSoal $soal): void
     {
         $hasil = HasilKuesioner::create([
-            'user_id' => User::factory()->create()->id, 'tipe_sesi' => 'pre', 'submitted_at' => now(),
+            'user_id' => User::factory()->create()->id, 'tipe_sesi' => 'pre', 'kelompok_usia' => '12-18', 'submitted_at' => now(),
         ]);
         HasilKuesionerDetail::create([
-            'hasil_kuesioner_id' => $hasil->id, 'soal_id' => $soal->id, 'jawaban_responden' => 'B',
+            'hasil_kuesioner_id' => $hasil->id, 'soal_id' => $soal->id, 'jawaban_responden' => true,
         ]);
     }
 
-    public function test_admin_bisa_menambah_soal_pengetahuan(): void
+    public function test_admin_bisa_menambah_soal_per_kelompok_usia_dan_kategori(): void
     {
-        $this->actingAs($this->admin(), 'admin')
+        $admin = $this->admin();
+        $this->actingAs($admin, 'admin')
             ->post(route('admin.soal.store'), [
-                'tipe' => 'pengetahuan', 'pertanyaan' => 'ASI eksklusif diberikan 6 bulan.',
-                'jawaban_benar' => 'B', 'reverse_scored' => '1', 'urutan' => 3,
+                'kelompok_usia' => '18-24', 'aspek' => 'komunikasi',
+                'pertanyaan' => 'Apakah anak menyebut nama benda?', 'urutan' => 3,
             ])
             ->assertRedirect(route('admin.soal.index'));
 
         $soal = KuesionerSoal::sole();
-        $this->assertSame('B', $soal->jawaban_benar);
-        // reverse_scored hanya berlaku untuk sikap — dikirim pun diabaikan (PRD §5).
-        $this->assertFalse($soal->reverse_scored);
+        $this->assertSame('18-24', $soal->kelompok_usia);
+        $this->assertSame('komunikasi', $soal->aspek);
+
+        $this->actingAs($admin, 'admin')->get(route('admin.soal.index'))
+            ->assertOk()->assertSeeInOrder(['Usia 18-24 bulan', 'Apakah anak menyebut nama benda?', 'Komunikasi']);
     }
 
-    public function test_soal_sikap_disimpan_tanpa_jawaban_benar_dan_bisa_reverse_scored(): void
+    public function test_kelompok_usia_dan_kategori_wajib_valid(): void
     {
         $this->actingAs($this->admin(), 'admin')
-            ->post(route('admin.soal.store'), [
-                'tipe' => 'sikap', 'pertanyaan' => 'Stimulasi itu merepotkan.',
-                'jawaban_benar' => 'B', 'reverse_scored' => '1', 'urutan' => 1,
-            ])
-            ->assertRedirect(route('admin.soal.index'));
-
-        $soal = KuesionerSoal::sole();
-        $this->assertNull($soal->jawaban_benar);
-        $this->assertTrue($soal->reverse_scored);
-    }
-
-    public function test_soal_pengetahuan_wajib_punya_jawaban_benar(): void
-    {
-        $this->actingAs($this->admin(), 'admin')
-            ->post(route('admin.soal.store'), ['tipe' => 'pengetahuan', 'pertanyaan' => 'Tanpa kunci.', 'urutan' => 1])
-            ->assertSessionHasErrors('jawaban_benar');
+            ->post(route('admin.soal.store'), ['kelompok_usia' => '0-3', 'aspek' => 'motorik_kasar', 'pertanyaan' => 'Soal.', 'urutan' => 1])
+            ->assertSessionHasErrors(['kelompok_usia', 'aspek']);
 
         $this->assertSame(0, KuesionerSoal::count());
     }
 
-    public function test_admin_bisa_mengubah_soal_tapi_tipenya_tetap(): void
+    public function test_admin_bisa_mengubah_soal_tapi_kelompok_dan_kategorinya_tetap(): void
     {
         $soal = $this->soal();
 
         $this->actingAs($this->admin(), 'admin')
             ->put(route('admin.soal.update', $soal), [
-                'tipe' => 'sikap', 'pertanyaan' => 'Pertanyaan diperbaiki.', 'jawaban_benar' => 'S', 'urutan' => 2,
+                'kelompok_usia' => '24-36', 'aspek' => 'komunikasi', 'pertanyaan' => 'Pertanyaan diperbaiki.', 'urutan' => 2,
             ])
             ->assertRedirect(route('admin.soal.index'));
 
         $soal->refresh();
         $this->assertSame('Pertanyaan diperbaiki.', $soal->pertanyaan);
-        $this->assertSame('S', $soal->jawaban_benar);
-        // Tipe tidak ikut berubah: jawaban B/S yang sudah masuk tak bisa diskor sebagai skala sikap.
-        $this->assertSame('pengetahuan', $soal->tipe);
+        $this->assertEquals(2, $soal->urutan);
+        // Tidak ikut berubah: jawaban yang sudah masuk terskor di kelompok & kategori lamanya.
+        $this->assertSame('12-18', $soal->kelompok_usia);
+        $this->assertSame('motorik', $soal->aspek);
     }
 
     public function test_soal_yang_belum_dijawab_bisa_dihapus(): void

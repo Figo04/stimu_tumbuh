@@ -18,7 +18,7 @@ class PerkembanganTest extends TestCase
     {
         $user = User::factory()->create();
         Anak::factory()->create(['user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow(13)->toDateString()]);
-        HasilKuesioner::create(['user_id' => $user->id, 'tipe_sesi' => 'pre', 'submitted_at' => now()]);
+        HasilKuesioner::create(['user_id' => $user->id, 'tipe_sesi' => 'pre', 'kelompok_usia' => '12-18', 'submitted_at' => now()]);
 
         return $user;
     }

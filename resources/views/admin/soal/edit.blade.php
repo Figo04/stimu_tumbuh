@@ -6,7 +6,7 @@
             <p class="mb-5 rounded-2xl bg-hangat-bg px-4 py-3 text-sm">
                 Soal ini sudah dijawab <strong>{{ $soal->detail_count }} responden</strong>. Jawaban dan skor yang
                 terlanjur tersimpan <strong>tidak dihitung ulang</strong> setelah soal diubah — aman untuk
-                memperbaiki ejaan, tapi mengubah makna pertanyaan atau jawaban benarnya membuat hasil lama
+                memperbaiki ejaan, tapi mengubah makna pertanyaan membuat hasil lama
                 tidak lagi sebanding dengan hasil baru.
             </p>
         @endif

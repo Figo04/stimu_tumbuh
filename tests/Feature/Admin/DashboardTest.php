@@ -23,9 +23,9 @@ class DashboardTest extends TestCase
         [$a, $b] = [User::factory()->create(['nama' => 'Ibu A']), User::factory()->create()];
         User::factory()->create();
 
-        HasilKuesioner::create(['user_id' => $a->id, 'tipe_sesi' => 'pre', 'submitted_at' => now()]);
-        HasilKuesioner::create(['user_id' => $a->id, 'tipe_sesi' => 'post', 'submitted_at' => now()]);
-        HasilKuesioner::create(['user_id' => $b->id, 'tipe_sesi' => 'pre', 'submitted_at' => now()]);
+        HasilKuesioner::create(['user_id' => $a->id, 'tipe_sesi' => 'pre', 'kelompok_usia' => '12-18', 'submitted_at' => now()]);
+        HasilKuesioner::create(['user_id' => $a->id, 'tipe_sesi' => 'post', 'kelompok_usia' => '12-18', 'submitted_at' => now()]);
+        HasilKuesioner::create(['user_id' => $b->id, 'tipe_sesi' => 'pre', 'kelompok_usia' => '12-18', 'submitted_at' => now()]);
 
         AktivitasStimulasi::create([
             'user_id' => $a->id, 'tanggal' => now()->subDay()->toDateString(),
@@ -86,9 +86,9 @@ class DashboardTest extends TestCase
             ]);
         }
 
-        HasilKuesioner::create(['user_id' => $a->id, 'tipe_sesi' => 'pre', 'submitted_at' => now()]);
-        HasilKuesioner::create(['user_id' => $a->id, 'tipe_sesi' => 'post', 'submitted_at' => now()]);
-        HasilKuesioner::create(['user_id' => $b->id, 'tipe_sesi' => 'pre', 'submitted_at' => now()]);
+        HasilKuesioner::create(['user_id' => $a->id, 'tipe_sesi' => 'pre', 'kelompok_usia' => '12-18', 'submitted_at' => now()]);
+        HasilKuesioner::create(['user_id' => $a->id, 'tipe_sesi' => 'post', 'kelompok_usia' => '12-18', 'submitted_at' => now()]);
+        HasilKuesioner::create(['user_id' => $b->id, 'tipe_sesi' => 'pre', 'kelompok_usia' => '12-18', 'submitted_at' => now()]);
 
         $admin = Admin::create(['nama' => 'Admin', 'email' => 'admin@example.com', 'password' => 'rahasia123']);
 

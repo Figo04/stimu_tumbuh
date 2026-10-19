@@ -21,8 +21,18 @@ class KuesionerController extends Controller
 
     public function show(Request $request, string $tipe): View|RedirectResponse
     {
-        return $this->tolak($request->user(), $tipe)
-            ?? view('kuesioner.pretest', ['tipe' => $tipe, 'soal' => $this->soal()->groupBy('tipe')]);
+        if ($tolak = $this->tolak($request->user(), $tipe)) {
+            return $tolak;
+        }
+
+        $kelompokUsia = $this->kelompokUsia($request->user(), $tipe);
+
+        return view('kuesioner.pretest', [
+            'tipe' => $tipe,
+            'anak' => $request->user()->anak,
+            'kelompokUsia' => $kelompokUsia,
+            'soal' => $this->soal($kelompokUsia)->groupBy('aspek'),
+        ]);
     }
 
     /**
@@ -59,25 +69,26 @@ class KuesionerController extends Controller
             return $tolak;
         }
 
-        $soal = $this->soal();
+        $kelompokUsia = $this->kelompokUsia($request->user(), $tipe);
+        $soal = $this->soal($kelompokUsia);
+
+        // Hanya soal kelompok usia ini; soal_id asing ditolak lewat array:ids.
         $rules = ['jawaban' => ['required', 'array:'.$soal->pluck('id')->implode(',')]];
         $attributes = [];
-        foreach ($soal->groupBy('tipe') as $tipeSoal => $items) {
-            $pilihan = $tipeSoal === 'pengetahuan' ? KuesionerSoal::JAWABAN_PENGETAHUAN : KuesionerSoal::JAWABAN_SIKAP;
-            foreach ($items->values() as $i => $s) {
-                $rules["jawaban.{$s->id}"] = ['required', Rule::in(array_keys($pilihan))];
-                $attributes["jawaban.{$s->id}"] = 'soal '.$tipeSoal.' nomor '.($i + 1);
-            }
+        foreach ($soal as $s) {
+            $rules["jawaban.{$s->id}"] = ['required', Rule::in(array_keys(KuesionerSoal::JAWABAN))];
+            $attributes["jawaban.{$s->id}"] = 'jawaban "'.$s->pertanyaan.'"';
         }
-        $jawaban = $request->validate($rules, [], $attributes)['jawaban'];
+        $jawaban = array_map(fn ($j) => $j === '1', $request->validate($rules, [], $attributes)['jawaban']);
 
         try {
-            DB::transaction(function () use ($request, $tipe, $soal, $jawaban) {
+            DB::transaction(function () use ($request, $tipe, $kelompokUsia, $soal, $jawaban) {
                 $hasil = HasilKuesioner::create([
                     'user_id' => $request->user()->id,
                     'tipe_sesi' => $tipe,
+                    'kelompok_usia' => $kelompokUsia,
                     'submitted_at' => now(),
-                ] + SkorService::skorKuesioner($soal, $jawaban));
+                ] + SkorService::skorPerkembangan($soal, $jawaban));
                 $hasil->detail()->createMany($soal->map(fn ($s) => [
                     'soal_id' => $s->id,
                     'jawaban_responden' => $jawaban[$s->id],
@@ -107,9 +118,24 @@ class KuesionerController extends Controller
         return null;
     }
 
-    private function soal()
+    /**
+     * Pre-test: kelompok usia anak saat ini (lewat UsiaAnakService di model Anak).
+     * Post-test: kelompok yang dijawab saat pre-test, supaya item pre & post sama
+     * walau anak sudah naik kelompok usia.
+     */
+    private function kelompokUsia(User $user, string $tipe): string
     {
-        return KuesionerSoal::orderBy('tipe')->orderBy('urutan')->get();
+        return $tipe === 'post'
+            ? $user->hasilKuesioner()->where('tipe_sesi', 'pre')->value('kelompok_usia')
+            : $user->anak()->firstOrFail()->kelompok_usia;
+    }
+
+    private function soal(string $kelompokUsia)
+    {
+        $soal = KuesionerSoal::where('kelompok_usia', $kelompokUsia)->orderBy('urutan')->orderBy('id')->get();
+        abort_if($soal->isEmpty(), 404);
+
+        return $soal;
     }
 
     private function sudahDikirim(string $tipe): RedirectResponse

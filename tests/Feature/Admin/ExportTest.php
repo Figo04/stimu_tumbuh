@@ -59,8 +59,9 @@ class ExportTest extends TestCase
         ]);
 
         HasilKuesioner::create([
-            'user_id' => $user->id, 'tipe_sesi' => 'pre', 'skor_pengetahuan' => 80,
-            'kategori_pengetahuan' => 'Baik', 'skor_sikap' => 32, 'submitted_at' => '2026-02-01 09:00:00',
+            'user_id' => $user->id, 'tipe_sesi' => 'pre', 'kelompok_usia' => '12-18',
+            'skor_motorik' => 100, 'skor_berpikir_belajar' => 50, 'skor_komunikasi' => 0,
+            'skor_sosial_emosional' => 25, 'skor_total' => 47.06, 'submitted_at' => '2026-02-01 09:00:00',
         ]);
 
         return $user;
@@ -101,7 +102,11 @@ class ExportTest extends TestCase
 
         // Tabel 5: 1 dari 2 materi kelompok usia anak saat ini + status/skor kedua test.
         $this->assertSame(['RSP-001', 1, 1, 1, 2, '1 dari 2'], array_slice($sheet[4]->array()[0], 0, 6));
-        $this->assertSame(['2026-02-01', 80.0, 'Baik', 32.0, null, null, null, null], array_slice($sheet[4]->array()[0], 6));
+        $this->assertSame([
+            '2026-02-01', '12-18', 100.0, 50.0, 0.0, 25.0, 47.06,
+            null, null, null, null, null, null, null,
+        ], array_slice($sheet[4]->array()[0], 6));
+        $this->assertSame('Pre-test Skor Berpikir & Belajar (%)', $sheet[4]->headings()[9]);
     }
 
     public function test_responden_tanpa_data_anak_tidak_menggagalkan_export(): void
@@ -141,7 +146,7 @@ class ExportTest extends TestCase
         $this->assertStringContainsString('"Kode Responden";"Nama Orang Tua";Email;', $isi);
         // Skor berkoma desimal agar langsung terbaca Excel locale Indonesia.
         $this->assertStringContainsString('RSP-001;"Ibu Uji";', $isi);
-        $this->assertStringContainsString(';80,00;Baik;32,00;', $isi);
+        $this->assertStringContainsString(';2026-02-01;12-18;100,00;50,00;0,00;25,00;47,06;', $isi);
         // Ringkas: tanpa kolom aktivitas/perkembangan.
         $this->assertStringNotContainsString('Tengkurap', $isi);
     }

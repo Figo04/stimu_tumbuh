@@ -50,46 +50,45 @@ class RespondenTest extends TestCase
             ->assertSee('BBLR (berat lahir rendah)');
     }
 
-    public function test_hasil_test_menampilkan_skor_dan_kategori_atau_status_belum(): void
+    public function test_hasil_test_menampilkan_kelompok_usia_dan_skor_atau_status_belum(): void
     {
         $sudah = User::factory()->create(['nama' => 'Ibu Sudah']);
         $belum = User::factory()->create(['nama' => 'Ibu Belum']);
 
         HasilKuesioner::create([
-            'user_id' => $sudah->id, 'tipe_sesi' => 'pre', 'skor_pengetahuan' => 80,
-            'kategori_pengetahuan' => 'Baik', 'skor_sikap' => 32, 'submitted_at' => now(),
+            'user_id' => $sudah->id, 'tipe_sesi' => 'pre', 'kelompok_usia' => '18-24',
+            'skor_total' => 82.35, 'submitted_at' => now(),
         ]);
 
         $this->actingAs($this->admin(), 'admin')->get(route('admin.hasil-test.index'))
             ->assertOk()
-            ->assertSeeInOrder(['Ibu Sudah', '80,00%', 'Baik', '32,00'])
+            ->assertSeeInOrder(['Ibu Sudah', '18-24 bln', '82,35%'])
             // Post-test milik $sudah dan kedua test milik $belum masih kosong.
             ->assertSee('Belum dikerjakan');
     }
 
-    public function test_detail_hasil_test_menampilkan_jawaban_per_soal(): void
+    public function test_detail_hasil_test_menampilkan_skor_kategori_dan_jawaban_per_soal(): void
     {
         $user = User::factory()->create();
         $hasil = HasilKuesioner::create([
-            'user_id' => $user->id, 'tipe_sesi' => 'pre', 'skor_pengetahuan' => 50,
-            'kategori_pengetahuan' => 'Kurang', 'skor_sikap' => 6, 'submitted_at' => now(),
+            'user_id' => $user->id, 'tipe_sesi' => 'pre', 'kelompok_usia' => '12-18',
+            'skor_motorik' => 100, 'skor_komunikasi' => 0, 'skor_total' => 50, 'submitted_at' => now(),
         ]);
 
-        $pengetahuan = KuesionerSoal::create([
-            'tipe' => 'pengetahuan', 'pertanyaan' => 'Soal pengetahuan uji', 'jawaban_benar' => 'B', 'urutan' => 1,
+        $soal = fn ($aspek, $urutan, $pertanyaan) => KuesionerSoal::create([
+            'kelompok_usia' => '12-18', 'aspek' => $aspek, 'pertanyaan' => $pertanyaan, 'urutan' => $urutan,
         ]);
-        $sikap = KuesionerSoal::create([
-            'tipe' => 'sikap', 'pertanyaan' => 'Soal sikap uji', 'reverse_scored' => true, 'urutan' => 1,
-        ]);
+        // Dibuat terbalik: tampilan harus urut menurut `urutan`, bukan id.
+        $komunikasi = $soal('komunikasi', 2, 'Soal komunikasi uji');
+        $motorik = $soal('motorik', 1, 'Soal motorik uji');
 
-        // Pengetahuan dijawab salah; sikap dijawab "S" = Setuju (bukan "Salah").
-        HasilKuesionerDetail::create(['hasil_kuesioner_id' => $hasil->id, 'soal_id' => $pengetahuan->id, 'jawaban_responden' => 'S']);
-        HasilKuesionerDetail::create(['hasil_kuesioner_id' => $hasil->id, 'soal_id' => $sikap->id, 'jawaban_responden' => 'S']);
+        HasilKuesionerDetail::create(['hasil_kuesioner_id' => $hasil->id, 'soal_id' => $komunikasi->id, 'jawaban_responden' => false]);
+        HasilKuesionerDetail::create(['hasil_kuesioner_id' => $hasil->id, 'soal_id' => $motorik->id, 'jawaban_responden' => true]);
 
         $this->actingAs($this->admin(), 'admin')->get(route('admin.hasil-test.show', $user))
             ->assertOk()
-            ->assertSeeInOrder(['Soal pengetahuan uji', 'Salah', 'Soal sikap uji', 'Setuju'])
-            ->assertSee('(reverse)')
+            ->assertSeeInOrder(['50,00%', '12-18 bulan', 'Motorik', '100,00%'])
+            ->assertSeeInOrder(['Soal motorik uji', 'Ya', 'Soal komunikasi uji', 'Tidak'])
             // Post-test belum dikerjakan → bagiannya tetap tampil dengan status kosong.
             ->assertSee('Belum dikerjakan responden ini.');
     }

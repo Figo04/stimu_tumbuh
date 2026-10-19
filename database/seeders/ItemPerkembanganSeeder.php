@@ -9,7 +9,8 @@ class ItemPerkembanganSeeder extends Seeder
 {
     // Dari dokumen klien "Kuesioner Tumbuh Kembang utk web" (13 Okt 2026), teks disalin apa adanya.
     // Usia 12–17 bln → 12-18, 18–23 bln → 18-24, 24 bln → 24-36. Urutan = nomor di dokumen.
-    private const ITEM = [
+    // Juga sumber soal awal pre/post-test (KuesionerSoalSeeder).
+    public const ITEM = [
         '12-18' => [
             ['motorik', 'Apakah anak dapat berjalan menuju Ibu saat dipanggil dari jarak dekat?'],
             ['motorik', 'Apakah anak dapat mendorong mainan sambil berjalan tanpa mudah jatuh?'],
