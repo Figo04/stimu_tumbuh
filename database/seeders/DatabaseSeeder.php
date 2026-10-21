@@ -18,9 +18,13 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([AdminSeeder::class, KuesionerSoalSeeder::class, MateriSeeder::class, ItemPerkembanganSeeder::class]);
 
-        User::factory()->has(Anak::factory(), 'anak')->create([
-            'nama' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Akun uji (password factory "password") hanya di lokal: di hosting ia jadi celah login
+        // dan responden palsu di data penelitian.
+        if (app()->isLocal()) {
+            User::factory()->has(Anak::factory(), 'anak')->create([
+                'nama' => 'Test User',
+                'email' => 'test@example.com',
+            ]);
+        }
     }
 }
