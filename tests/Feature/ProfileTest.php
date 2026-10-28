@@ -17,15 +17,27 @@ class ProfileTest extends TestCase
             'nama' => 'Test User',
             'email' => 'test@example.com',
             'hubungan_dengan_anak' => 'ayah',
+            'umur' => 31,
             'no_hp' => '081234567890',
             'pendidikan_terakhir' => 'SMA',
+            'pekerjaan' => 'Wiraswasta',
+            'asuransi' => 'Tidak punya',
             'kecamatan' => 'Sukajadi',
+            'alamat' => 'Jl. Melati 1',
             'anak' => [
                 'nama_inisial' => 'AB',
                 'tanggal_lahir' => now()->subMonthsNoOverflow(14)->toDateString(),
                 'jenis_kelamin' => 'P',
                 'bb_lahir_gram' => 3100,
-                'kondisi_lahir' => 'sehat',
+                'pb_lahir_cm' => 49,
+                'usia_gestasi_minggu' => 38,
+                'jenis_persalinan' => 'normal',
+                'kondisi_lahir' => ['sehat'],
+                'anemia_hamil' => '0',
+                'penyakit_hamil' => '0',
+                'penyakit_keturunan' => '1',
+                'penyakit_keturunan_ket' => 'Asma',
+                'kebiasaan_ibu' => ['tidak_ada'],
             ],
         ], $override);
     }
@@ -84,6 +96,10 @@ class ProfileTest extends TestCase
         $this->assertSame('P', $user->anak->jenis_kelamin);
         $this->assertSame(3100, $user->anak->bb_lahir_gram);
         $this->assertSame('12-18', $user->anak->kelompok_usia);
+        $this->assertSame([31, 'Tidak punya'], [$user->umur, $user->asuransi]);
+        $this->assertSame('Ada: Asma', $user->anak->riwayatIbu()['Penyakit keturunan']);
+
+        $this->actingAs($user)->get('/profile')->assertOk()->assertSee(['31 tahun', 'Tidak punya', 'Ada: Asma', 'Sehat']);
     }
 
     public function test_email_verification_status_is_unchanged_when_the_email_address_is_unchanged(): void

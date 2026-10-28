@@ -25,8 +25,8 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 class DataPenelitianExport implements Export, WithMultipleSheets
 {
     private const KOLOM_IDENTITAS = [
-        'Kode Responden', 'Nama Orang Tua', 'Email', 'No. HP', 'Hubungan dengan Anak',
-        'Pendidikan Terakhir', 'Pekerjaan', 'Kecamatan', 'Alamat', 'Tanggal Daftar',
+        'Kode Responden', 'Nama Orang Tua', 'Email', 'No. HP', 'Hubungan dengan Anak', 'Umur Orang Tua',
+        'Pendidikan Terakhir', 'Pekerjaan', 'Asuransi', 'Kecamatan', 'Alamat', 'Tanggal Daftar',
         'Inisial Anak', 'Jenis Kelamin', 'Tanggal Lahir Anak', 'Usia Anak (bulan)', 'Kelompok Usia',
     ];
 
@@ -48,6 +48,7 @@ class DataPenelitianExport implements Export, WithMultipleSheets
             new SheetTabel('Tabel 2 - Kondisi Saat Lahir', [
                 'Kode Responden', 'Inisial Anak', 'Usia Gestasi (minggu)', 'Jenis Persalinan',
                 'BB Lahir (gram)', 'PB Lahir (cm)', 'Lingkar Kepala (cm)', 'Kondisi Lahir',
+                'Anemia Saat Hamil', 'Penyakit Saat Hamil', 'Penyakit Keturunan', 'Kebiasaan Ibu',
             ], $this->kondisiLahir()),
             new SheetTabel('Tabel 3 - Aktivitas Stimulasi', [
                 'Kode Responden', 'Tanggal', 'Usia Anak (bulan)', 'Aspek', 'Jenis Stimulasi',
@@ -115,8 +116,10 @@ class DataPenelitianExport implements Export, WithMultipleSheets
             $r->email,
             $r->no_hp,
             $r->hubungan_dengan_anak,
+            $r->umur,
             $r->pendidikan_terakhir,
             $r->pekerjaan,
+            $r->asuransi,
             $r->kecamatan,
             $r->alamat,
             $r->created_at?->format('Y-m-d'),
@@ -158,7 +161,8 @@ class DataPenelitianExport implements Export, WithMultipleSheets
                 $r->anak->bb_lahir_gram,
                 self::angka($r->anak->pb_lahir_cm),
                 self::angka($r->anak->lingkar_kepala_cm),
-                Anak::KONDISI_LAHIR[$r->anak->kondisi_lahir] ?? null,
+                Anak::labelGanda(Anak::KONDISI_LAHIR, $r->anak->kondisi_lahir),
+                ...array_values($r->anak->riwayatIbu()),
             ])
             ->values()
             ->all();

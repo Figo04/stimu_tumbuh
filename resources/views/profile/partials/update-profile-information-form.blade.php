@@ -12,25 +12,29 @@
         'Berat lahir' => filled($anak?->bb_lahir_gram) ? number_format($anak->bb_lahir_gram, 0, ',', '.').' gram' : '—',
         'Panjang lahir' => $angka($anak?->pb_lahir_cm, 'cm'),
         'Lingkar kepala' => $angka($anak?->lingkar_kepala_cm, 'cm'),
-        'Kondisi saat lahir' => \App\Models\Anak::KONDISI_LAHIR[$anak?->kondisi_lahir] ?? '—',
+        'Kondisi saat lahir' => \App\Models\Anak::labelGanda(\App\Models\Anak::KONDISI_LAHIR, $anak?->kondisi_lahir) ?? '—',
+        ...array_map(fn ($v) => $v ?? '—', $anak?->riwayatIbu() ?? []),
     ];
     $dataOrtu = [
         'Nama' => $user->nama,
         'Hubungan' => ucfirst($user->hubungan_dengan_anak),
+        'Umur' => filled($user->umur) ? $user->umur.' tahun' : null,
         'Email' => $user->email,
         'Nomor HP' => $user->no_hp,
         'Pendidikan' => $user->pendidikan_terakhir,
         'Pekerjaan' => $user->pekerjaan,
+        'Asuransi' => $user->asuransi,
         'Kecamatan' => $user->kecamatan,
         'Alamat' => $user->alamat,
     ];
-    $galatOrtu = $errors->hasAny(['nama', 'hubungan_dengan_anak', 'email', 'no_hp', 'pendidikan_terakhir', 'pekerjaan', 'kecamatan', 'alamat']);
+    $galatOrtu = $errors->hasAny(['nama', 'hubungan_dengan_anak', 'umur', 'email', 'no_hp', 'pendidikan_terakhir', 'pekerjaan', 'asuransi', 'kecamatan', 'alamat']);
 @endphp
 
 {{-- Satu form untuk dua kartu (ProfileUpdateRequest memvalidasi orang tua + anak sekaligus).
-     Kartu yang tidak sedang diubah tetap mengirim nilai tersimpannya lewat input tersembunyi (x-show). --}}
+     Kartu yang tidak sedang diubah tetap mengirim nilai tersimpannya lewat input tersembunyi (x-show).
+     Akun lama yang belum punya data primer (umur, riwayat ibu) langsung dibuka agar kolom wajibnya terlihat. --}}
 <form method="post" action="{{ route('profile.update') }}" class="space-y-5"
-      x-data="{ ubahAnak: @js(! $anak || $errors->has('anak.*')), ubahOrtu: @js($galatOrtu) }">
+      x-data="{ ubahAnak: @js(! $anak || $anak->anemia_hamil === null || $errors->has('anak.*')), ubahOrtu: @js($galatOrtu || blank($user->umur)) }">
     @csrf
     @method('patch')
 
@@ -79,34 +83,46 @@
                 <x-input-error class="mt-2" :messages="$errors->get('anak.jenis_kelamin')" />
             </fieldset>
 
+            <fieldset>
+                <legend class="font-bold text-ink">Kondisi saat lahir (boleh pilih lebih dari satu)</legend>
+                <div class="mt-2 grid grid-cols-2 gap-3">
+                    @foreach (\App\Models\Anak::KONDISI_LAHIR as $value => $label)
+                        <label class="flex cursor-pointer items-center gap-3 rounded-2xl border border-krem-garis px-4 py-3.5 has-[:checked]:border-brand has-[:checked]:bg-brand-soft">
+                            <input type="checkbox" name="anak[kondisi_lahir][]" value="{{ $value }}" class="h-5 w-5 rounded border-krem-garis text-brand focus:ring-brand" @checked(in_array($value, old('anak.kondisi_lahir', $anak?->kondisi_lahir ?? []), true))>
+                            <span class="font-semibold">{{ $label }}</span>
+                        </label>
+                    @endforeach
+                </div>
+                <x-input-error class="mt-2" :messages="$errors->get('anak.kondisi_lahir')" />
+            </fieldset>
+
+            <div>
+                <x-input-label for="anak_jenis_persalinan" value="Jenis persalinan" />
+                <select id="anak_jenis_persalinan" name="anak[jenis_persalinan]" class="{{ $field }}" required>
+                    <option value="">— Pilih —</option>
+                    @foreach (\App\Models\Anak::JENIS_PERSALINAN as $value => $text)
+                        <option value="{{ $value }}" @selected(old('anak.jenis_persalinan', $anak?->jenis_persalinan) === $value)>{{ $text }}</option>
+                    @endforeach
+                </select>
+                <x-input-error class="mt-2" :messages="$errors->get('anak.jenis_persalinan')" />
+            </div>
+
             @foreach ([
-                'kondisi_lahir' => ['Kondisi saat lahir (tidak wajib)', \App\Models\Anak::KONDISI_LAHIR],
-                'jenis_persalinan' => ['Jenis persalinan (tidak wajib)', \App\Models\Anak::JENIS_PERSALINAN],
-            ] as $name => [$label, $opsi])
+                'bb_lahir_gram' => ['Berat lahir (gram)', '1', true],
+                'pb_lahir_cm' => ['Panjang lahir (cm)', '0.1', true],
+                'lingkar_kepala_cm' => ['Lingkar kepala saat lahir (cm, tidak wajib)', '0.1', false],
+                'usia_gestasi_minggu' => ['Usia kehamilan saat lahir (minggu)', '1', true],
+            ] as $name => [$label, $step, $wajib])
                 <div>
                     <x-input-label for="anak_{{ $name }}" :value="$label" />
-                    <select id="anak_{{ $name }}" name="anak[{{ $name }}]" class="{{ $field }}">
-                        <option value="">— Pilih —</option>
-                        @foreach ($opsi as $value => $text)
-                            <option value="{{ $value }}" @selected(old('anak.'.$name, $anak?->$name) === $value)>{{ $text }}</option>
-                        @endforeach
-                    </select>
+                    <x-text-input id="anak_{{ $name }}" name="anak[{{ $name }}]" type="number" inputmode="decimal" step="{{ $step }}" class="mt-2 block w-full" :value="old('anak.'.$name, $anak?->$name)" :required="$wajib" />
                     <x-input-error class="mt-2" :messages="$errors->get('anak.'.$name)" />
                 </div>
             @endforeach
 
-            @foreach ([
-                'bb_lahir_gram' => ['Berat lahir (gram, tidak wajib)', '1'],
-                'pb_lahir_cm' => ['Panjang lahir (cm, tidak wajib)', '0.1'],
-                'lingkar_kepala_cm' => ['Lingkar kepala saat lahir (cm, tidak wajib)', '0.1'],
-                'usia_gestasi_minggu' => ['Usia kehamilan saat lahir (minggu, tidak wajib)', '1'],
-            ] as $name => [$label, $step])
-                <div>
-                    <x-input-label for="anak_{{ $name }}" :value="$label" />
-                    <x-text-input id="anak_{{ $name }}" name="anak[{{ $name }}]" type="number" inputmode="decimal" step="{{ $step }}" class="mt-2 block w-full" :value="old('anak.'.$name, $anak?->$name)" />
-                    <x-input-error class="mt-2" :messages="$errors->get('anak.'.$name)" />
-                </div>
-            @endforeach
+            <h3 class="border-t border-krem-garis pt-5 text-lg font-extrabold">Riwayat Kehamilan & Kesehatan Ibu</h3>
+
+            @include('profile.partials.riwayat-ibu')
 
             <x-primary-button class="w-full">Simpan</x-primary-button>
         </div>
@@ -146,39 +162,47 @@
             </div>
 
             <div>
+                <x-input-label for="umur" value="Umur (tahun)" />
+                <x-text-input id="umur" name="umur" type="number" inputmode="numeric" min="15" max="70" class="mt-2 block w-full" :value="old('umur', $user->umur)" required />
+                <x-input-error class="mt-2" :messages="$errors->get('umur')" />
+            </div>
+
+            <div>
                 <x-input-label for="email" value="Email" />
                 <x-text-input id="email" name="email" type="email" class="mt-2 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
                 <x-input-error class="mt-2" :messages="$errors->get('email')" />
             </div>
 
             <div>
-                <x-input-label for="no_hp" value="Nomor HP / WhatsApp (tidak wajib)" />
-                <x-text-input id="no_hp" name="no_hp" type="tel" inputmode="numeric" class="mt-2 block w-full" :value="old('no_hp', $user->no_hp)" autocomplete="tel" placeholder="08xxxxxxxxxx" />
+                <x-input-label for="no_hp" value="Nomor HP / WhatsApp" />
+                <x-text-input id="no_hp" name="no_hp" type="tel" inputmode="numeric" class="mt-2 block w-full" :value="old('no_hp', $user->no_hp)" autocomplete="tel" placeholder="08xxxxxxxxxx" required />
                 <x-input-error class="mt-2" :messages="$errors->get('no_hp')" />
             </div>
 
-            <div>
-                <x-input-label for="pendidikan_terakhir" value="Pendidikan terakhir (tidak wajib)" />
-                <select id="pendidikan_terakhir" name="pendidikan_terakhir" class="{{ $field }}">
-                    <option value="">— Pilih —</option>
-                    @foreach ($pendidikan as $value)
-                        <option value="{{ $value }}" @selected(old('pendidikan_terakhir', $user->pendidikan_terakhir) === $value)>{{ $value }}</option>
-                    @endforeach
-                </select>
-                <x-input-error class="mt-2" :messages="$errors->get('pendidikan_terakhir')" />
-            </div>
-
-            @foreach (['pekerjaan' => 'Pekerjaan (tidak wajib)', 'kecamatan' => 'Kecamatan (tidak wajib)'] as $name => $label)
+            @foreach (['pendidikan_terakhir' => ['Pendidikan terakhir', $pendidikan], 'asuransi' => ['Kepemilikan asuransi kesehatan', $asuransi]] as $name => [$label, $opsi])
                 <div>
                     <x-input-label for="{{ $name }}" :value="$label" />
-                    <x-text-input id="{{ $name }}" name="{{ $name }}" type="text" class="mt-2 block w-full" :value="old($name, $user->$name)" />
+                    <select id="{{ $name }}" name="{{ $name }}" class="{{ $field }}" required>
+                        <option value="">— Pilih —</option>
+                        @foreach ($opsi as $value)
+                            <option value="{{ $value }}" @selected(old($name, $user->$name) === $value)>{{ $value }}</option>
+                        @endforeach
+                    </select>
+                    <x-input-error class="mt-2" :messages="$errors->get($name)" />
+                </div>
+            @endforeach
+
+            @foreach (['pekerjaan' => 'Pekerjaan', 'kecamatan' => 'Kecamatan'] as $name => $label)
+                <div>
+                    <x-input-label for="{{ $name }}" :value="$label" />
+                    <x-text-input id="{{ $name }}" name="{{ $name }}" type="text" class="mt-2 block w-full" :value="old($name, $user->$name)" required />
                     <x-input-error class="mt-2" :messages="$errors->get($name)" />
                 </div>
             @endforeach
 
             <div>
-                <x-input-label for="alamat" value="Alamat (tidak wajib)" />
-                <textarea id="alamat" name="alamat" rows="2" class="{{ $field }}" autocomplete="street-address">{{ old('alamat', $user->alamat) }}</textarea>
+                <x-input-label for="alamat" value="Alamat" />
+                <textarea id="alamat" name="alamat" rows="2" class="{{ $field }}" autocomplete="street-address" required>{{ old('alamat', $user->alamat) }}</textarea>
                 <x-input-error class="mt-2" :messages="$errors->get('alamat')" />
             </div>
 

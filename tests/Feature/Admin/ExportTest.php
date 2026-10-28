@@ -30,7 +30,9 @@ class ExportTest extends TestCase
         $user = User::factory()->create(['kode_responden' => 'RSP-001', 'nama' => 'Ibu Uji']);
         $anak = Anak::factory()->create([
             'user_id' => $user->id, 'nama_inisial' => 'AZ', 'tanggal_lahir' => now()->subMonthsNoOverflow(14),
-            'jenis_persalinan' => 'sc', 'kondisi_lahir' => 'bblr', 'bb_lahir_gram' => 2200,
+            'jenis_persalinan' => 'sc', 'kondisi_lahir' => ['bblr'], 'bb_lahir_gram' => 2200,
+            'anemia_hamil' => false, 'penyakit_hamil' => true, 'penyakit_hamil_ket' => 'Diabetes',
+            'penyakit_keturunan' => false, 'kebiasaan_ibu' => ['tidak_ada'],
         ]);
 
         $materi = Materi::factory()->create(['judul' => 'Materi Uji', 'kelompok_usia' => '12-18']);
@@ -83,11 +85,11 @@ class ExportTest extends TestCase
 
         // Tabel 1: satu baris per responden, usia dihitung lewat UsiaAnakService.
         $this->assertSame(['RSP-001', 'Ibu Uji'], array_slice($sheet[0]->array()[0], 0, 2));
-        $this->assertSame([14, '12-18'], array_slice($sheet[0]->array()[0], 13, 2));
+        $this->assertSame([14, '12-18'], array_slice($sheet[0]->array()[0], 15, 2));
 
-        // Tabel 2: label enum, bukan kode mentah.
+        // Tabel 2: label enum, bukan kode mentah; riwayat ibu di kolom akhir.
         $this->assertSame(['RSP-001', 'AZ', null, 'Caesar (SC)', 2200], array_slice($sheet[1]->array()[0], 0, 5));
-        $this->assertSame('BBLR (berat lahir rendah)', $sheet[1]->array()[0][7]);
+        $this->assertSame(['BBLR (berat lahir rendah)', 'Tidak anemia', 'Ada: Diabetes', 'Tidak ada', 'Tidak ada'], array_slice($sheet[1]->array()[0], 7));
 
         // Tabel 3: satu baris per entri; usia = usia pada TANGGAL ENTRI (14 − 2 = 12 bln), bukan hari ini.
         $aktivitas = $sheet[2]->array();

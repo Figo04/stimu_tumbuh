@@ -21,6 +21,7 @@ class ProfileController extends Controller
         return view('profile.edit', [
             'user' => $request->user()->load('anak'),
             'pendidikan' => RegisteredUserController::PENDIDIKAN,
+            'asuransi' => RegisteredUserController::ASURANSI,
         ]);
     }
 

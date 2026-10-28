@@ -36,18 +36,20 @@ class RespondenTest extends TestCase
 
     public function test_detail_responden_menampilkan_kondisi_lahir(): void
     {
-        $user = User::factory()->create(['pekerjaan' => 'Guru']);
+        $user = User::factory()->create(['pekerjaan' => 'Guru', 'umur' => 29, 'asuransi' => 'BPJS Kesehatan']);
         Anak::factory()->create([
             'user_id' => $user->id, 'tanggal_lahir' => now()->subMonthsNoOverflow(2),
-            'bb_lahir_gram' => 2300, 'jenis_persalinan' => 'sc', 'kondisi_lahir' => 'bblr',
+            'bb_lahir_gram' => 2300, 'jenis_persalinan' => 'sc', 'kondisi_lahir' => ['prematur', 'bblr'],
+            'anemia_hamil' => true, 'kebiasaan_ibu' => ['merokok', 'alkohol'],
         ]);
 
         $this->actingAs($this->admin(), 'admin')->get(route('admin.responden.show', $user))
             ->assertOk()
-            ->assertSee('Guru')
+            ->assertSee(['Guru', '29 tahun', 'BPJS Kesehatan'])
             ->assertSee('2.300 gram')
             ->assertSee('Caesar (SC)')
-            ->assertSee('BBLR (berat lahir rendah)');
+            ->assertSee('Prematur, BBLR (berat lahir rendah)')
+            ->assertSee(['Riwayat Kehamilan', 'Anemia', 'Merokok, Konsumsi alkohol']);
     }
 
     public function test_hasil_test_menampilkan_kelompok_usia_dan_skor_atau_status_belum(): void

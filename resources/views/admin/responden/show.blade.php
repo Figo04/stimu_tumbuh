@@ -7,8 +7,10 @@
         'Email' => $responden->email,
         'No. HP' => $responden->no_hp,
         'Hubungan dengan anak' => ucfirst($responden->hubungan_dengan_anak),
+        'Umur' => $responden->umur ? $responden->umur.' tahun' : null,
         'Pendidikan terakhir' => $responden->pendidikan_terakhir,
         'Pekerjaan' => $responden->pekerjaan,
+        'Asuransi' => $responden->asuransi,
         'Kecamatan' => $responden->kecamatan,
         'Alamat' => $responden->alamat,
         'Terdaftar' => $responden->created_at?->format('d/m/Y H:i'),
@@ -29,8 +31,10 @@
         'Berat lahir' => $anak->bb_lahir_gram ? number_format($anak->bb_lahir_gram, 0, ',', '.').' gram' : null,
         'Panjang lahir' => $anak->pb_lahir_cm ? $anak->pb_lahir_cm.' cm' : null,
         'Lingkar kepala' => $anak->lingkar_kepala_cm ? $anak->lingkar_kepala_cm.' cm' : null,
-        'Kondisi lahir' => \App\Models\Anak::KONDISI_LAHIR[$anak->kondisi_lahir] ?? null,
+        'Kondisi lahir' => \App\Models\Anak::labelGanda(\App\Models\Anak::KONDISI_LAHIR, $anak->kondisi_lahir),
     ] : [];
+
+    $riwayatIbu = $anak?->riwayatIbu() ?? [];
 @endphp
 
 <x-admin-layout judul="Responden {{ $responden->kode_responden }}">
@@ -43,6 +47,7 @@
             ['Identitas Orang Tua', $orangTua],
             ['Identitas Anak', $identitasAnak],
             ['Kondisi Anak Saat Lahir', $kondisiLahir],
+            ['Riwayat Kehamilan & Kesehatan Ibu', $riwayatIbu],
         ] as [$judul, $baris])
             <section class="overflow-hidden rounded-3xl bg-white shadow-sm">
                 <h2 class="px-6 py-5 text-lg font-extrabold">{{ $judul }}</h2>
