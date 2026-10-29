@@ -111,6 +111,19 @@ class ExportTest extends TestCase
         $this->assertSame('Pre-test Skor Berpikir & Belajar (%)', $sheet[4]->headings()[9]);
     }
 
+    public function test_skor_nol_tertulis_nol_di_file_excel_bukan_sel_kosong(): void
+    {
+        $this->responden();
+
+        $file = tempnam(sys_get_temp_dir(), 'xlsx');
+        file_put_contents($file, Excel::raw(new DataPenelitianExport, \Maatwebsite\Excel\Excel::XLSX));
+        $tabel4 = \PhpOffice\PhpSpreadsheet\IOFactory::load($file)->getSheetByName('Tabel 4 - Perkembangan');
+        unlink($file);
+
+        // Baris 2 (data): skor sosial-emosional 0 harus 0, bukan kosong.
+        $this->assertSame(0.0, $tabel4->getCell('H2')->getValue());
+    }
+
     public function test_responden_tanpa_data_anak_tidak_menggagalkan_export(): void
     {
         User::factory()->create(['kode_responden' => 'RSP-002']);

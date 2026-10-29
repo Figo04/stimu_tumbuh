@@ -5,13 +5,15 @@ namespace App\Exports;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Concerns\WithTitle;
 
 /**
  * Satu sheet = judul + baris heading + baris data.
  * Dipakai lima kali oleh DataPenelitianExport, jadi tidak perlu lima kelas sheet.
+ * Strict null: tanpa ini skor 0 ditulis sebagai sel kosong (tak terbedakan dari "belum test").
  */
-class SheetTabel implements FromArray, ShouldAutoSize, WithHeadings, WithTitle
+class SheetTabel implements FromArray, ShouldAutoSize, WithHeadings, WithStrictNullComparison, WithTitle
 {
     /**
      * @param  array<int, string>  $heading
